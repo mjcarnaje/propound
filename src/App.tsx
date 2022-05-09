@@ -1,39 +1,64 @@
+import { Center, Spinner } from "@chakra-ui/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
-import { Provider } from "react-redux";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { Navbar } from "./components/Navbar";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
-import { IndexPage } from "./screen/IndexPage";
+import { useAppDispatch, useAppSelector } from "./hooks/redux";
+import { DashboardPage } from "./screen/DashboardPage";
+import { LandingPage } from "./screen/LandingPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
-import { setUser } from "./store/reducer/auth";
-import { store } from "./store/store";
+import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
 
 function App() {
-  const navigate = useNavigate();
+  const location = useLocation();
+
+  const dispatch = useAppDispatch();
+  const { user, loading } = useAppSelector(selectAuth);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const userRef = doc(userCollection, user.uid);
-        const userDoc = await getDoc(userRef);
-        store.dispatch(setUser(userDoc.data()));
-      } else {
-        navigate("/t/login");
+      try {
+        dispatch(setLoading(true));
+        if (user) {
+          const userRef = doc(userCollection, user.uid);
+          const userDoc = await getDoc(userRef);
+          dispatch(setUser(userDoc.data()));
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        dispatch(setLoading(false));
       }
     });
     return unsubscribe;
   }, []);
 
+  if (loading && !location.pathname.includes("login")) {
+    return (
+      <Center flexDir="column" minH="100vh">
+        <Navbar />
+        <Center flexGrow={1}>
+          <Spinner />
+        </Center>
+      </Center>
+    );
+  }
+
   return (
-    <Provider store={store}>
-      <Routes>
-        <Route path="/" element={<IndexPage />} />
+    <Routes>
+      <Route element={<ProtectedRoute isAllowed={!!user} />}>
+        <Route path="/" element={<DashboardPage />} />
+      </Route>
+      <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
         <Route path="/t/login" element={<TeacherLoginPage />} />
         <Route path="/s/login" element={<StudentLoginPage />} />
-      </Routes>
-    </Provider>
+      </Route>
+      <Route path="/landing" element={<LandingPage />} />
+    </Routes>
   );
 }
 

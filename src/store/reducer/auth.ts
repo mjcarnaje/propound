@@ -18,12 +18,18 @@ type IAuthState = {
 };
 
 const initialState: IAuthState = {
-  loading: false,
+  loading: true,
   token: null,
   user: null,
 };
 
-export const signOut = createAsyncThunk("auth/signOut", async () => {});
+export const signOut = createAsyncThunk("auth/signOut", async () => {
+  try {
+    await auth.signOut();
+  } catch (err) {
+    console.error(err);
+  }
+});
 
 export const signInWithGoogle = createAsyncThunk<
   Omit<IAuthState, "loading">,
@@ -67,8 +73,7 @@ export const signInWithGoogle = createAsyncThunk<
 
     return { token, user: userDataDoc };
   } catch (err) {
-    console.log(err);
-    throw err;
+    console.error(err);
   }
 });
 
@@ -78,6 +83,9 @@ export const authSlice = createSlice({
   reducers: {
     setUser: (state, { payload }: PayloadAction<UserDocType>) => {
       state.user = payload;
+    },
+    setLoading: (state, { payload }: PayloadAction<boolean>) => {
+      state.loading = payload;
     },
   },
   extraReducers: (builder) => {
@@ -99,7 +107,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUser } = authSlice.actions;
+export const { setUser, setLoading } = authSlice.actions;
 export const selectAuth = (state: RootState) => state.auth;
 
 export default authSlice.reducer;

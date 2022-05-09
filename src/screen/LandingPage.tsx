@@ -8,10 +8,9 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import React from "react";
 import { Navbar } from "../components/Navbar";
 
-export const IndexPage = () => (
+export const LandingPage = () => (
   <Box as="section" height="100vh" overflowY="auto">
     <Navbar />
     <Container py={{ base: "16", md: "24" }}>
