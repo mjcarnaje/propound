@@ -1,3 +1,5 @@
+import { ROLE } from "./role";
+
 export interface UserDocType {
   uid: string;
   displayName: string;

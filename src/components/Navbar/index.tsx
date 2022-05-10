@@ -18,10 +18,11 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FiSearch } from "react-icons/fi";
+import { AiOutlineFileAdd } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
+import CreateClass from "../CreateClass";
 import { Logo } from "../Logo";
 import { Sidebar } from "./Sidebar";
 import { ToggleButton } from "./ToggleButton";
@@ -46,17 +47,16 @@ export const Navbar = () => {
             <Logo />
             {isDesktop && (
               <ButtonGroup variant="ghost" spacing="1">
-                <Button aria-current="page">Home</Button>
+                <Button as={Link} to="/" aria-current="page">
+                  Home
+                </Button>
               </ButtonGroup>
             )}
           </HStack>
           {isDesktop ? (
             <HStack spacing="4">
-              <ButtonGroup variant="ghost" spacing="1">
-                <IconButton
-                  icon={<FiSearch fontSize="1.25rem" />}
-                  aria-label="Search"
-                />
+              <ButtonGroup variant="ghost" spacing="4">
+                {user && user.role === "TEACHER" && <CreateClass user={user} />}
                 {!user ? (
                   <>
                     <Menu>
