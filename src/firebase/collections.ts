@@ -11,4 +11,4 @@ const createCollection = <T = DocumentData>(collectionName: string) => {
   return collection(firestore, collectionName) as CollectionReference<T>;
 };
 
-export const userCollection = createCollection<UserDocType>("users");
+export const userCollection = createCollection<UserDocType>("user");
