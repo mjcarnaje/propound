@@ -1,27 +1,27 @@
 import { SimpleGrid, Spinner } from "@chakra-ui/react";
 import { onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { classCollection } from "../../firebase/collections";
-import { ClassDocType } from "../../types/class";
+import { gameCollection } from "../../firebase/collections";
+import { GameDocType } from "../../types/game";
 import { UserDocType } from "../../types/user";
-import ClassCard from "./ClassCard";
+import GameCard from "./GameCard";
 
-interface ClassesProps {
+interface GamesProps {
   user: UserDocType;
 }
 
-const Classes: React.FC<ClassesProps> = ({ user }) => {
-  const [classes, setClasses] = useState<ClassDocType[]>([]);
+const Games: React.FC<GamesProps> = ({ user }) => {
+  const [games, setGames] = useState<GameDocType[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const q = query(classCollection, where("teacher.uid", "==", user.uid));
+    const q = query(gameCollection, where("teacher.uid", "==", user.uid));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const res: ClassDocType[] = [];
+      const res: GameDocType[] = [];
       querySnapshot.forEach((doc) => {
         res.push({ ...doc.data(), id: doc.id });
       });
-      setClasses(res);
+      setGames(res);
     });
     return () => unsubscribe();
   }, []);
@@ -29,11 +29,11 @@ const Classes: React.FC<ClassesProps> = ({ user }) => {
   return (
     <SimpleGrid gap={{ base: "4", md: "6" }} columns={{ base: 1, md: 3 }}>
       {loading && <Spinner />}
-      {classes.map((classDoc) => (
-        <ClassCard data={classDoc} key={classDoc.id} />
+      {games.map((gameDoc) => (
+        <GameCard data={gameDoc} key={gameDoc.id} />
       ))}
     </SimpleGrid>
   );
 };
 
-export default Classes;
+export default Games;

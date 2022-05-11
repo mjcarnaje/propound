@@ -4,9 +4,10 @@ export interface StudentDocType {
   email: string;
 }
 
-export interface ClassDocType {
+export interface GameDocType {
   id: string;
   name: string;
+  code: string;
   teacher: {
     uid: string;
     name: string;
@@ -14,4 +15,5 @@ export interface ClassDocType {
     email: string;
   };
   students: StudentDocType[];
+  status: "PUBLISHED" | "DRAFT";
 }

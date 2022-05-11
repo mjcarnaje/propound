@@ -20,10 +20,12 @@ import {
 } from "@chakra-ui/react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { __DEV__ } from "../../constant";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
-import CreateClass from "../CreateClass";
+import CreateGame from "../CreateGame";
 import { Logo } from "../Logo";
+import ResetFirebase from "../ResetFirebase";
 import { Sidebar } from "./Sidebar";
 import { ToggleButton } from "./ToggleButton";
 
@@ -56,7 +58,8 @@ export const Navbar = () => {
           {isDesktop ? (
             <HStack spacing="4">
               <ButtonGroup variant="ghost" spacing="4">
-                {user && user.role === "TEACHER" && <CreateClass user={user} />}
+                {user && user.role === "TEACHER" && <CreateGame user={user} />}
+                {__DEV__ && <ResetFirebase />}
                 {!user ? (
                   <>
                     <Menu>

@@ -53,6 +53,13 @@ function App() {
       <Route element={<ProtectedRoute isAllowed={!!user} />}>
         <Route path="/" element={<DashboardPage />} />
       </Route>
+      <Route
+        element={
+          <ProtectedRoute isAllowed={!!user && user.role === "TEACHER"} />
+        }
+      >
+        <Route path="/g/c/:id" element={<DashboardPage />} />
+      </Route>
       <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
         <Route path="/t/login" element={<TeacherLoginPage />} />
         <Route path="/s/login" element={<StudentLoginPage />} />

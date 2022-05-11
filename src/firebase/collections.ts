@@ -3,7 +3,7 @@ import {
   CollectionReference,
   DocumentData,
 } from "firebase/firestore";
-import { ClassDocType } from "../types/class";
+import { GameDocType } from "../types/game";
 import { UserDocType } from "../types/user";
 import { firestore } from "./config";
 
@@ -12,4 +12,4 @@ const createCollection = <T = DocumentData>(collectionName: string) => {
 };
 
 export const userCollection = createCollection<UserDocType>("user");
-export const classCollection = createCollection<ClassDocType>("class");
+export const gameCollection = createCollection<GameDocType>("game");

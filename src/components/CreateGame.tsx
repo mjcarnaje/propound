@@ -19,32 +19,33 @@ import {
 import { addDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import { classCollection } from "../firebase/collections";
+import { gameCollection } from "../firebase/collections";
 import { UserDocType } from "../types/user";
-import { generateId } from "../utils/id";
+import { generateCode, generateId } from "../utils/id";
 
-interface CreateClassProps {
+interface CreateGameProps {
   user: UserDocType;
 }
 
-const CreateClass: React.FC<CreateClassProps> = ({ user }) => {
+const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [className, setClassName] = useState("");
+  const [gameName, setGameName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  async function createClass() {
-    if (!className) {
-      setError("Class name is required");
+  async function CreateGame() {
+    if (!gameName) {
+      setError("Game name is required");
       return;
     }
 
     try {
       setLoading(true);
-      await addDoc(classCollection, {
+      await addDoc(gameCollection, {
         id: generateId(),
-        name: className,
+        name: gameName,
+        code: generateCode(),
         teacher: {
           uid: user.uid,
           name: user.displayName,
@@ -52,6 +53,7 @@ const CreateClass: React.FC<CreateClassProps> = ({ user }) => {
           photoURL: user.photoURL,
         },
         students: [],
+        status: "DRAFT",
       });
     } catch (err) {
       toast({
@@ -62,37 +64,37 @@ const CreateClass: React.FC<CreateClassProps> = ({ user }) => {
     } finally {
       onClose();
       setLoading(false);
-      setClassName("");
+      setGameName("");
     }
   }
 
   return (
     <>
-      <Tooltip label="Create class">
+      <Tooltip label="Create game">
         <IconButton
           onClick={onOpen}
           icon={<AiOutlineFileAdd fontSize="1.5rem" />}
-          aria-label="Search"
+          aria-label="Create game"
         />
       </Tooltip>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create class</ModalHeader>
+          <ModalHeader>Create game</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired isInvalid={!!error}>
-              <FormLabel>Class name</FormLabel>
+              <FormLabel>Game name</FormLabel>
               <Input
-                value={className}
+                value={gameName}
                 onChange={(e) => {
                   if (error) {
                     setError(null);
                   }
-                  setClassName(e.target.value);
+                  setGameName(e.target.value);
                 }}
-                placeholder="Class name"
+                placeholder="Game name"
               />
               {error && <FormErrorMessage>{error}</FormErrorMessage>}
             </FormControl>
@@ -100,7 +102,7 @@ const CreateClass: React.FC<CreateClassProps> = ({ user }) => {
           <ModalFooter>
             <Button
               isLoading={loading}
-              onClick={createClass}
+              onClick={CreateGame}
               variant="solid"
               colorScheme="purple"
               mr={3}
@@ -115,4 +117,4 @@ const CreateClass: React.FC<CreateClassProps> = ({ user }) => {
   );
 };
 
-export default CreateClass;
+export default CreateGame;
