@@ -19,7 +19,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const res: GameDocType[] = [];
       querySnapshot.forEach((doc) => {
-        res.push({ ...doc.data(), id: doc.id });
+        res.push(doc.data());
       });
       setGames(res);
     });

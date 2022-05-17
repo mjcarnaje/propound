@@ -16,9 +16,10 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { addDoc } from "firebase/firestore";
+import { addDoc, doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 import { gameCollection } from "../firebase/collections";
 import { UserDocType } from "../types/user";
 import { generateCode, generateId } from "../utils/id";
@@ -28,22 +29,25 @@ interface CreateGameProps {
 }
 
 const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [gameName, setGameName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  async function CreateGame() {
+  async function createGame() {
     if (!gameName) {
       setError("Game name is required");
       return;
     }
 
+    const id = generateId();
+
     try {
       setLoading(true);
-      await addDoc(gameCollection, {
-        id: generateId(),
+      await setDoc(doc(gameCollection, id), {
+        id,
         name: gameName,
         code: generateCode(),
         teacher: {
@@ -54,6 +58,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
         },
         students: [],
         status: "DRAFT",
+        type: null,
       });
     } catch (err) {
       toast({
@@ -65,6 +70,10 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
       onClose();
       setLoading(false);
       setGameName("");
+
+      if (!error) {
+        navigate(`/g/${id}`);
+      }
     }
   }
 
@@ -102,7 +111,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
           <ModalFooter>
             <Button
               isLoading={loading}
-              onClick={CreateGame}
+              onClick={createGame}
               variant="solid"
               colorScheme="purple"
               mr={3}

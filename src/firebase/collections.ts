@@ -1,6 +1,7 @@
 import {
   collection,
   CollectionReference,
+  doc,
   DocumentData,
 } from "firebase/firestore";
 import { GameDocType } from "../types/game";

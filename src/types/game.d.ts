@@ -4,6 +4,10 @@ export interface StudentDocType {
   email: string;
 }
 
+export type GameType = "MATCH_UP" | "GAME_SHOW" | "MISSING_WORD" | null;
+
+export type GameStatus = "PUBLISHED" | "DRAFT";
+
 export interface GameDocType {
   id: string;
   name: string;
@@ -15,5 +19,6 @@ export interface GameDocType {
     email: string;
   };
   students: StudentDocType[];
-  status: "PUBLISHED" | "DRAFT";
+  status: GameStatus;
+  type: GameType;
 }

@@ -1,13 +1,30 @@
-import { Avatar, Box, Heading, HStack, Text } from "@chakra-ui/react";
-import { GameDocType } from "../../types/game";
+import {
+  Avatar,
+  Box,
+  Heading,
+  HStack,
+  Tag,
+  TagProps,
+  Text,
+} from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { GameDocType, GameStatus } from "../../types/game";
 
 interface GameCardProps {
   data: GameDocType;
 }
 
 const GameCard: React.FC<GameCardProps> = ({ data }) => {
+  const navigate = useNavigate();
+
+  const statusColors: Record<GameStatus, TagProps["colorScheme"]> = {
+    DRAFT: "gray",
+    PUBLISHED: "green",
+  };
+
   return (
     <Box
+      onClick={() => navigate(`/g/${data.id}`)}
       transition="all 0.2s"
       _hover={{ bg: "gray.50", shadow: "md" }}
       cursor="pointer"
@@ -24,13 +41,18 @@ const GameCard: React.FC<GameCardProps> = ({ data }) => {
         <Text fontWeight="medium">Code:</Text>
         <Text>{data.code}</Text>
       </HStack>
-      <HStack mt={4}>
-        <Avatar
-          boxSize="8"
-          src={data.teacher.photoURL}
-          name={data.teacher.name}
-        />
-        <Text fontWeight="medium">{data.teacher.name}</Text>
+      <HStack justify="space-between" mt={4}>
+        <HStack>
+          <Avatar
+            boxSize="8"
+            src={data.teacher.photoURL}
+            name={data.teacher.name}
+          />
+          <Text fontWeight="medium">{data.teacher.name}</Text>
+        </HStack>
+        <Tag size="sm" variant="solid" colorScheme={statusColors[data.status]}>
+          {data.status}
+        </Tag>
       </HStack>
     </Box>
   );

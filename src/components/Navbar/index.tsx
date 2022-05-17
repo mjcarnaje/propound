@@ -42,6 +42,7 @@ export const Navbar = () => {
       w="full"
       bg="bg-surface"
       boxShadow={useColorModeValue("sm", "sm-dark")}
+      height="86px"
     >
       <Container py={{ base: "3", lg: "4" }}>
         <Flex justify="space-between">

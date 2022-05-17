@@ -1,7 +1,7 @@
 import { IconButton } from "@chakra-ui/react";
 import { deleteDoc, getDocs, query } from "firebase/firestore";
 import React from "react";
-import { RiAlarmWarningFill } from "react-icons/ri";
+import { TiFolderDelete } from "react-icons/ti";
 import { gameCollection } from "../firebase/collections";
 
 const ResetFirebase = () => {
@@ -26,8 +26,9 @@ const ResetFirebase = () => {
     <IconButton
       isLoading={loading}
       onClick={resetFirebase}
-      icon={<RiAlarmWarningFill fontSize="1.5rem" />}
+      icon={<TiFolderDelete fontSize="1.5rem" />}
       aria-label="Reset firebase"
+      color="red.300"
     />
   );
 };

@@ -8,6 +8,8 @@ import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { DashboardPage } from "./screen/DashboardPage";
+import CreateGame from "./screen/Game/CreateGame";
+import GameDashboard from "./screen/Game/GameDashboard";
 import { LandingPage } from "./screen/LandingPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
@@ -58,7 +60,8 @@ function App() {
           <ProtectedRoute isAllowed={!!user && user.role === "TEACHER"} />
         }
       >
-        <Route path="/g/c/:id" element={<DashboardPage />} />
+        <Route path="/g/:id" element={<GameDashboard />} />
+        <Route path="/g/c/:game" element={<CreateGame />} />
       </Route>
       <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
         <Route path="/t/login" element={<TeacherLoginPage />} />
