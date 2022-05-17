@@ -8,12 +8,17 @@ import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { DashboardPage } from "./screen/DashboardPage";
-import CreateGame from "./screen/Game/CreateGame";
-import GameDashboard from "./screen/Game/GameDashboard";
+import Dashboard from "./screen/Game/Dashboard";
+import DashboardPreGame from "./screen/Game/DashboardPreGame";
+import DasboardLearn from "./screen/Game/DashboardLearn";
+import DashboardPostGame from "./screen/Game/DashboardPostGame";
+import DasboardStudents from "./screen/Game/DashboardStudents";
 import { LandingPage } from "./screen/LandingPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
 import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
+import DashboardLearn from "./screen/Game/DashboardLearn";
+import DashboardStudents from "./screen/Game/DashboardStudents";
 
 function App() {
   const location = useLocation();
@@ -55,14 +60,14 @@ function App() {
       <Route element={<ProtectedRoute isAllowed={!!user} />}>
         <Route path="/" element={<DashboardPage />} />
       </Route>
-      <Route
-        element={
-          <ProtectedRoute isAllowed={!!user && user.role === "TEACHER"} />
-        }
-      >
-        <Route path="/g/:id" element={<GameDashboard />} />
-        <Route path="/g/c/:game" element={<CreateGame />} />
+
+      <Route path="/g/:id" element={<Dashboard />}>
+        <Route path="pre-game" element={<DashboardPreGame />} />
+        <Route path="post-game" element={<DashboardPostGame />} />
+        <Route path="learn" element={<DashboardLearn />} />
+        <Route path="students" element={<DashboardStudents />} />
       </Route>
+
       <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
         <Route path="/t/login" element={<TeacherLoginPage />} />
         <Route path="/s/login" element={<StudentLoginPage />} />

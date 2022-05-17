@@ -17,7 +17,7 @@ export const TeacherLoginPage = () => {
 
   return (
     <Box
-      bgGradient={{ sm: "linear(to-r, purple.600, purple.700)" }}
+      bgGradient={{ sm: "linear(to-r, orange.300, orange.500)" }}
       py={{ base: "12", md: "24" }}
       minHeight="100vh"
       display="flex"
@@ -57,7 +57,7 @@ export const TeacherLoginPage = () => {
             <Text fontSize="sm" color="muted">
               Having trouble logging in?
             </Text>
-            <Button variant="link" colorScheme="purple" size="sm">
+            <Button variant="link" colorScheme="orange" size="sm">
               Contact us
             </Button>
           </Stack>

@@ -16,11 +16,11 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { addDoc, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { gameCollection } from "../firebase/collections";
+import { gameCollection, userCollection } from "../firebase/collections";
 import { UserDocType } from "../types/user";
 import { generateCode, generateId } from "../utils/id";
 
@@ -59,6 +59,11 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
         students: [],
         status: "DRAFT",
         type: null,
+      });
+      const userRef = doc(userCollection, user.uid);
+
+      await updateDoc(userRef, {
+        createdGames: [...user.createdGames, id],
       });
     } catch (err) {
       toast({

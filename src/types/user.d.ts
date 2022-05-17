@@ -1,11 +1,13 @@
 import { ROLE } from "./role";
 
-export interface UserDocType {
+export interface BaseUserDocType {
   uid: string;
   displayName: string;
   email: string;
   photoURL: string;
+}
+export interface UserDocType extends BaseUserDocType {
   role: ROLE;
-  createdCourses: string[];
-  enrolledCourses: string[];
+  createdGames: string[];
+  enrolledGames: string[];
 }

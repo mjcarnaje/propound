@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Modal,
   ModalBody,
@@ -32,7 +33,7 @@ const SetGameType: React.FC<SetGameTypeProps> = () => {
   const games: GameType[] = ["GAME_SHOW", "MATCH_UP", "MISSING_WORD"];
 
   return (
-    <>
+    <Box p={8}>
       <Tooltip label="Set game">
         <Button onClick={onOpen} leftIcon={<AiOutlinePlus />} variant="solid">
           Set game
@@ -64,7 +65,7 @@ const SetGameType: React.FC<SetGameTypeProps> = () => {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </>
+    </Box>
   );
 };
 

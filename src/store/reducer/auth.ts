@@ -50,9 +50,9 @@ export const signInWithGoogle = createAsyncThunk<
         uid: user.uid,
         displayName: userData.displayName,
         email: userData.email,
-        enrolledCourses: [],
+        enrolledGames: [],
         photoURL: userData.photoURL,
-        createdCourses: [],
+        createdGames: [],
         role,
       };
       await setDoc(userRef, userDataDoc);
