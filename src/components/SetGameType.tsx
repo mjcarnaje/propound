@@ -5,28 +5,22 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
   Tooltip,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 import { GameType } from "../types/game";
 import { toProperCase } from "../utils/stringl";
 
 interface SetGameTypeProps {}
 
 const SetGameType: React.FC<SetGameTypeProps> = () => {
-  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   async function setGameType(game: GameType) {
-    navigate(`/g/c/${game}`);
     onClose();
   }
 

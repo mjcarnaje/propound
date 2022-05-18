@@ -52,14 +52,15 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
         code: generateCode(),
         teacher: {
           uid: user.uid,
-          name: user.displayName,
+          displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
         },
-        students: [],
+        studentIds: [],
         status: "DRAFT",
         type: null,
       });
+
       const userRef = doc(userCollection, user.uid);
 
       await updateDoc(userRef, {

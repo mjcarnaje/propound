@@ -1,3 +1,5 @@
+import { BaseUserDocType } from "./user";
+
 export type GameType = "MATCH_UP" | "GAME_SHOW" | "MISSING_WORD" | null;
 
 export type GameStatus = "PUBLISHED" | "DRAFT";
@@ -7,7 +9,11 @@ export interface GameDocType {
   name: string;
   code: string;
   teacher: BaseUserDocType;
-  students: BaseUserDocType[];
+  studentIds: string[];
   status: GameStatus;
   type: GameType;
+}
+
+export interface GameStudentDocType extends BaseUserDocType {
+  result: string | null;
 }

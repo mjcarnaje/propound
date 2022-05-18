@@ -10,16 +10,20 @@ import {
   useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { CustomSelect, Option } from "../../components/CustomSelect";
 import GameCode from "../../components/game/GameCode";
 import { Navbar } from "../../components/Navbar";
-import { gameCollection, userCollection } from "../../firebase/collections";
+import {
+  gameCollection,
+  gameSubCollection,
+  userCollection,
+} from "../../firebase/collections";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
-import { GameDocType } from "../../types/game";
+import { GameDocType, GameStudentDocType } from "../../types/game";
 
 interface DashboardProps {}
 
@@ -59,10 +63,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
     try {
       setLoading(true);
       const gameRef = doc(gameCollection, id);
+
       const gameDoc = await getDoc(gameRef);
+
       if (gameDoc.exists()) {
         const game = gameDoc.data();
-        if (game.students.some((s) => s.uid === user.uid)) {
+        if (game.studentIds.some((uid) => uid === user.uid)) {
           toast({
             title: "You are already in this game",
             description: "",
@@ -79,16 +85,19 @@ const Dashboard: React.FC<DashboardProps> = () => {
         });
 
         await updateDoc(gameRef, {
-          students: [
-            ...game.students,
-            {
-              uid: user.uid,
-              displayName: user.displayName,
-              email: user.email,
-              photoURL: user.photoURL,
-            },
-          ],
+          studentIds: [...game.studentIds, user.uid],
         });
+
+        await setDoc(
+          doc(gameSubCollection<GameStudentDocType>(id, "student"), user.uid),
+          {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            result: null,
+          }
+        );
       }
     } catch (err) {
       toast({
