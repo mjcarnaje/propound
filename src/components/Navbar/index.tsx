@@ -9,7 +9,6 @@ import {
   DrawerOverlay,
   Flex,
   HStack,
-  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -18,14 +17,13 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AiOutlineFileAdd } from "react-icons/ai";
+import { deleteDoc, getDocs, query } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { __DEV__ } from "../../constant";
+import { gameCollection } from "../../firebase/collections";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
 import CreateGame from "../CreateGame";
 import { Logo } from "../Logo";
-import ResetFirebase from "../ResetFirebase";
 import { Sidebar } from "./Sidebar";
 import { ToggleButton } from "./ToggleButton";
 
@@ -60,7 +58,6 @@ export const Navbar = () => {
             <HStack spacing="4">
               <ButtonGroup variant="ghost" spacing="4">
                 {user && user.role === "TEACHER" && <CreateGame user={user} />}
-                {__DEV__ && <ResetFirebase />}
                 {!user ? (
                   <>
                     <Menu>
@@ -87,6 +84,21 @@ export const Navbar = () => {
                         src={user.photoURL}
                       />
                       <MenuList>
+                        <MenuItem
+                          onClick={async () => {
+                            try {
+                              const games = query(gameCollection);
+                              const querySnapshot = await getDocs(games);
+                              querySnapshot.forEach((doc) => {
+                                deleteDoc(doc.ref);
+                              });
+                            } catch (err) {
+                              console.log(err);
+                            }
+                          }}
+                        >
+                          Reset
+                        </MenuItem>
                         <MenuItem onClick={() => dispatch(signOut())}>
                           Sign out
                         </MenuItem>
