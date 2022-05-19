@@ -46,9 +46,9 @@ const GameCard: React.FC<GameCardProps> = ({ data }) => {
           <Avatar
             boxSize="8"
             src={data.teacher.photoURL}
-            name={data.teacher.name}
+            name={data.teacher.displayName}
           />
-          <Text fontWeight="medium">{data.teacher.name}</Text>
+          <Text fontWeight="medium">{data.teacher.displayName}</Text>
         </HStack>
         <Tag size="sm" variant="solid" colorScheme={statusColors[data.status]}>
           {data.status}

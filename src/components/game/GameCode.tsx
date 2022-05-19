@@ -1,7 +1,6 @@
-import { Box, HStack, IconButton, Text, Tooltip } from "@chakra-ui/react";
+import { HStack, IconButton, Text, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import { AiOutlineCopy } from "react-icons/ai";
-import { BASE_URL } from "../../constant";
 
 interface GameCodeProps {
   gameId: string;
@@ -10,11 +9,13 @@ interface GameCodeProps {
 
 const GameCode: React.FC<GameCodeProps> = ({ gameId, code }) => {
   function copyToClipboard() {
-    navigator.clipboard.writeText(`${BASE_URL}/g/${gameId}?code=${code}`);
+    navigator.clipboard.writeText(
+      `${import.meta.env.VITE_URL}/g/${gameId}?code=${code}`
+    );
   }
 
   return (
-    <HStack>
+    <HStack alignItems="center">
       <Text fontSize={15}>Game code</Text>
       <Text fontSize={18} color="orange.500" fontWeight="semibold">
         {code}
