@@ -32,7 +32,7 @@ export const LandingPage = () => (
               size="xs"
               textTransform="uppercase"
               fontWeight="semibold"
-              color="purple.600"
+              color="orange.500"
               letterSpacing="wide"
             >
               Propound
@@ -40,14 +40,14 @@ export const LandingPage = () => (
             <Heading
               as="h1"
               size="3xl"
-              color="purple.600"
+              color="orange.500"
               mt="8"
               fontWeight="extrabold"
               letterSpacing="tight"
             >
               Get world class talents for your project
             </Heading>
-            <Text color="gray.600" mt="4" fontSize="lg" fontWeight="medium">
+            <Text color="gray.500" mt="4" fontSize="lg" fontWeight="medium">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </Text>
@@ -55,7 +55,7 @@ export const LandingPage = () => (
               <Button
                 size="lg"
                 minW="210px"
-                colorScheme="purple"
+                colorScheme="orange"
                 height="14"
                 px="8"
               >
@@ -86,7 +86,7 @@ export const LandingPage = () => (
               zIndex="1"
               h={{ lg: "100%" }}
               objectFit="cover"
-              src="https://www.msuiit.edu.ph/assets/img/colleges/ced/industrial-technology.png"
+              src="https://www.ice.org.uk/media/osmpo3wv/how-does-civil-engineering-exploit-technology-to-eliminate-error.jpg"
               alt="Screening talent"
             />
             <Box

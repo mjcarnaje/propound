@@ -12,7 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { CustomSelect, Option } from "../../components/CustomSelect";
 import GameCode from "../../components/game/GameCode";
 import { Navbar } from "../../components/Navbar";
@@ -131,6 +137,10 @@ const Dashboard: React.FC<DashboardProps> = () => {
     }
   }, [id]);
 
+  if (!user || user.role !== "TEACHER") {
+    return <Navigate to="/s/login" replace />;
+  }
+
   const links = [
     {
       label: "Pre-game",
@@ -149,6 +159,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
       to: `/g/${id}/students`,
     },
   ];
+
   return (
     <Box as="section" h="1px" minH="100vh">
       <Navbar />
