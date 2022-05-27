@@ -1,105 +1,140 @@
 import {
   Box,
   Button,
-  Container,
   Heading,
-  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Text,
-  useBreakpointValue,
+  useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
-import { Navbar } from "../components/Navbar";
 import { FaLightbulb } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import LandingPageSvg from "../assets/landing_page.svg?component";
+import { Logo } from "../components/Logo";
+import { Navbar } from "../components/Navbar";
 
-export const LandingPage = () => (
-  <>
-    <Navbar />
-    <Box as="section" bg="gray.50" pt="16" pb="24">
-      <Box
-        maxW={{ base: "xl", md: "7xl" }}
-        mx="auto"
-        px={{ base: "6", md: "8" }}
-      >
-        <Stack
-          direction={{ base: "column", lg: "row" }}
-          spacing={{ base: "3rem", lg: "2rem" }}
-          mt="8"
-          align={{ lg: "center" }}
-          justify="space-between"
-        >
-          <Box flex="1" maxW={{ lg: "520px" }}>
-            <Text
-              size="xs"
-              textTransform="uppercase"
-              fontWeight="semibold"
-              color="orange.500"
-              letterSpacing="wide"
-            >
-              Propound
-            </Text>
-            <Heading
-              as="h1"
-              size="3xl"
-              color="orange.500"
-              mt="8"
-              fontWeight="extrabold"
-              letterSpacing="tight"
-            >
-              Get world class talents for your project
-            </Heading>
-            <Text color="gray.500" mt="4" fontSize="lg" fontWeight="medium">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Text>
-            <Stack direction={{ base: "column", md: "row" }} spacing="4" mt="8">
+export const LandingPage = () => {
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  return (
+    <>
+      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay
+          style={{
+            background:
+              "url(https://www.ice.org.uk/media/osmpo3wv/how-does-civil-engineering-exploit-technology-to-eliminate-error.jpg) center/cover no-repeat",
+          }}
+          filter="auto"
+          blur="20px"
+          opacity="0.5"
+        />
+        <ModalContent>
+          <ModalHeader></ModalHeader>
+          <ModalCloseButton />
+          <ModalBody py={8}>
+            <VStack>
+              <Box pb={8}>
+                <Logo boxSize={28} />
+              </Box>
               <Button
-                size="lg"
-                minW="210px"
+                onClick={() => navigate("/t/login")}
                 colorScheme="orange"
-                height="14"
-                px="8"
+                size="lg"
+                w="full"
               >
-                Get Started
+                Teacher
               </Button>
               <Button
+                onClick={() => navigate("/s/login")}
+                colorScheme="orange"
                 size="lg"
-                bg="white"
-                color="gray.900"
-                _hover={{ bg: "gray.50" }}
-                height="14"
-                px="8"
-                shadow="base"
-                leftIcon={<Box as={FaLightbulb} fontSize="xl" />}
+                w="full"
               >
-                Learn more
+                Student
               </Button>
-            </Stack>
-          </Box>
-          <Box
-            pos="relative"
-            w={{ base: "full", lg: "560px" }}
-            h={{ base: "auto", lg: "560px" }}
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      <Navbar isLanding />
+
+      <Box as="section">
+        <Box
+          maxW={{ base: "xl", md: "8xl" }}
+          px={{ base: "6", md: "8" }}
+          mx="auto"
+        >
+          <Stack
+            direction={{ base: "column", lg: "row" }}
+            spacing={{ base: "3rem", lg: "2rem" }}
+            align={{ lg: "center" }}
+            justify="space-between"
           >
-            <Image
-              w="full"
-              pos="relative"
-              zIndex="1"
-              h={{ lg: "100%" }}
-              objectFit="cover"
-              src="https://www.ice.org.uk/media/osmpo3wv/how-does-civil-engineering-exploit-technology-to-eliminate-error.jpg"
-              alt="Screening talent"
-            />
-            <Box
-              pos="absolute"
-              w="100%"
-              h="100%"
-              top="-4"
-              left="-4"
-              bg="gray.200"
-            />
-          </Box>
-        </Stack>
+            <Box w={{ base: "full", md: "50%" }} flex="1">
+              <Heading
+                as="h1"
+                size="3xl"
+                color="orange.500"
+                mt="8"
+                fontWeight="extrabold"
+                letterSpacing="tight"
+              >
+                Welcome to proPound
+              </Heading>
+              <Text
+                color="gray.500"
+                mt="4"
+                fontSize="xl"
+                fontStyle="italic"
+                fontWeight="medium"
+              >
+                A fun learning medium for Civil Technology
+              </Text>
+
+              <Stack
+                direction={{ base: "column", md: "row" }}
+                spacing="4"
+                mt="8"
+              >
+                <Button
+                  size="lg"
+                  minW="210px"
+                  colorScheme="orange"
+                  height="14"
+                  px="8"
+                  onClick={onOpen}
+                >
+                  Login
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/about")}
+                  bg="white"
+                  color="gray.900"
+                  _hover={{ bg: "gray.50" }}
+                  height="14"
+                  px="8"
+                  shadow="base"
+                  leftIcon={<Box as={FaLightbulb} fontSize="xl" />}
+                >
+                  Learn more
+                </Button>
+              </Stack>
+            </Box>
+            <Box w={{ base: "full", md: "50%" }} pos="relative">
+              <LandingPageSvg style={{ width: "100%" }} />
+            </Box>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
-  </>
-);
+    </>
+  );
+};

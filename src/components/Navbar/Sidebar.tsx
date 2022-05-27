@@ -16,7 +16,7 @@ import {
   FiSearch,
   FiSettings,
 } from "react-icons/fi";
-import { Logo } from "../Logo";
+import { LogoWithText } from "../LogoWithText";
 import { UserProfile } from "../UserProfile";
 import { NavButton } from "./NavButton";
 
@@ -33,7 +33,7 @@ export const Sidebar = () => (
     >
       <Stack justify="space-between" spacing="1">
         <Stack spacing={{ base: "5", sm: "6" }} shouldWrapChildren>
-          <Logo />
+          <LogoWithText />
           <InputGroup>
             <InputLeftElement pointerEvents="none">
               <Icon as={FiSearch} color="muted" boxSize="5" />

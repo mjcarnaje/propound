@@ -7,18 +7,17 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
+import { AboutPage } from "./screen/AboutPage";
 import { DashboardPage } from "./screen/DashboardPage";
 import Dashboard from "./screen/Game/Dashboard";
-import DashboardPreGame from "./screen/Game/DashboardPreGame";
-import DasboardLearn from "./screen/Game/DashboardLearn";
+import DashboardLearn from "./screen/Game/DashboardLearn";
 import DashboardPostGame from "./screen/Game/DashboardPostGame";
-import DasboardStudents from "./screen/Game/DashboardStudents";
+import DashboardPreGame from "./screen/Game/DashboardPreGame";
+import DashboardStudents from "./screen/Game/DashboardStudents";
 import { LandingPage } from "./screen/LandingPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
 import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
-import DashboardLearn from "./screen/Game/DashboardLearn";
-import DashboardStudents from "./screen/Game/DashboardStudents";
 
 function App() {
   const location = useLocation();
@@ -57,9 +56,16 @@ function App() {
 
   return (
     <Routes>
-      <Route element={<ProtectedRoute isAllowed={!!user} />}>
+      <Route
+        element={<ProtectedRoute redirectPath="/landing" isAllowed={!!user} />}
+      >
         <Route path="/" element={<DashboardPage />} />
       </Route>
+
+      <Route element={<ProtectedRoute isAllowed={!user} />}>
+        <Route path="/landing" element={<LandingPage />} />
+      </Route>
+      <Route path="/about" element={<AboutPage />} />
 
       <Route path="/g/:id" element={<Dashboard />}>
         <Route path="pre-game" element={<DashboardPreGame />} />
@@ -72,7 +78,6 @@ function App() {
         <Route path="/t/login" element={<TeacherLoginPage />} />
         <Route path="/s/login" element={<StudentLoginPage />} />
       </Route>
-      <Route path="/landing" element={<LandingPage />} />
     </Routes>
   );
 }

@@ -7,7 +7,7 @@ import {
   Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
-import { Logo } from "../components/Logo";
+import { LogoWithText } from "../components/LogoWithText";
 import { GoogleIcon } from "../components/ProviderIcons";
 import { useAppDispatch } from "../hooks/redux";
 import { signInWithGoogle } from "../store/reducer/auth";
@@ -35,7 +35,7 @@ export const TeacherLoginPage = () => {
       >
         <Stack spacing="8">
           <Stack spacing="6" align="center">
-            <Logo />
+            <LogoWithText />
             <Stack spacing="3" textAlign="center">
               <Heading size="xs">Teacher Login</Heading>
               <Text color="muted">Log in to your account</Text>
@@ -51,14 +51,6 @@ export const TeacherLoginPage = () => {
               iconSpacing="3"
             >
               Continue with Google
-            </Button>
-          </Stack>
-          <Stack spacing="0.5" align="center">
-            <Text fontSize="sm" color="muted">
-              Having trouble logging in?
-            </Text>
-            <Button variant="link" colorScheme="orange" size="sm">
-              Contact us
             </Button>
           </Stack>
           <Text fontSize="xs" color="subtle" textAlign="center">
