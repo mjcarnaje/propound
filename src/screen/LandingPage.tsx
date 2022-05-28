@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaLightbulb } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import LandingPageSvg from "../assets/landing_page.svg?component";
+import LandingPageSvg from "../assets/svgs/landing_page.svg?component";
 import { Logo } from "../components/Logo";
 import { Navbar } from "../components/Navbar";
 

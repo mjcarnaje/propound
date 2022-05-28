@@ -17,7 +17,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { deleteDoc, getDocs, query } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { gameCollection } from "../../firebase/collections";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
@@ -33,6 +33,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ isLanding }) => {
   const { user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const isDesktop = useBreakpointValue({ base: false, lg: true });
   const { isOpen, onToggle, onClose } = useDisclosure();
@@ -42,7 +43,9 @@ export const Navbar: React.FC<NavbarProps> = ({ isLanding }) => {
       <Box px={{ base: "4", md: "36" }} py={{ base: "3", lg: "4" }}>
         <Flex justify="space-between">
           <HStack spacing="8">
-            <LogoWithText />
+            <Box cursor="pointer" onClick={() => navigate("/")}>
+              <LogoWithText />
+            </Box>
             {isDesktop && !isLanding && (
               <ButtonGroup variant="ghost" spacing="1">
                 <Button as={Link} to="/" aria-current="page">
