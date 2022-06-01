@@ -96,11 +96,11 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create game</ModalHeader>
+          <ModalHeader>Create game class</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired isInvalid={!!error}>
-              <FormLabel>Game name</FormLabel>
+              <FormLabel>Activiy name</FormLabel>
               <Input
                 value={gameName}
                 onChange={(e) => {
