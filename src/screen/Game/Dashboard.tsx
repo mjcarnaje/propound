@@ -44,6 +44,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<GameDocType>();
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const [tabIndex, setTabIndex] = useState(0);
 
   async function getGameData() {
     try {
@@ -176,8 +177,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                   {data?.name}
                 </Text>
                 <Text color="muted" fontSize="sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Saepe
-                  minima deleniti sequi fuga atque aut, vel illum facilis eius
+                  {data?.instruction}
                 </Text>
               </Box>
               <Stack alignItems="center" direction="row">

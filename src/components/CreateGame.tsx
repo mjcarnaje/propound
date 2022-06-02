@@ -12,9 +12,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Textarea,
   Tooltip,
   useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
@@ -28,17 +30,29 @@ interface CreateGameProps {
   user: UserDocType;
 }
 
+const defaultInput = {
+  name: "",
+  instruction: "",
+};
+
 const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const [gameName, setGameName] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const [input, setInputs] = useState(defaultInput);
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setInputs({ ...input, [e.target.name]: e.target.value });
+  }
+
   async function createGame() {
-    if (!gameName) {
-      setError("Game name is required");
+    if (input.name.length === 0) {
+      setError("Activity name is required");
       return;
     }
 
@@ -48,7 +62,8 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
       setLoading(true);
       await setDoc(doc(gameCollection, id), {
         id,
-        name: gameName,
+        name: input.name,
+        instruction: input.instruction,
         code: generateCode(),
         teacher: {
           uid: user.uid,
@@ -58,7 +73,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
         },
         studentIds: [],
         status: "DRAFT",
-        type: null,
+        games: [],
       });
 
       const userRef = doc(userCollection, user.uid);
@@ -75,7 +90,6 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
     } finally {
       onClose();
       setLoading(false);
-      setGameName("");
 
       if (!error) {
         navigate(`/g/${id}`);
@@ -96,23 +110,31 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create game class</ModalHeader>
+          <ModalHeader>Create Game-Learning</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl isRequired isInvalid={!!error}>
-              <FormLabel>Activiy name</FormLabel>
-              <Input
-                value={gameName}
-                onChange={(e) => {
-                  if (error) {
-                    setError(null);
-                  }
-                  setGameName(e.target.value);
-                }}
-                placeholder="Game name"
-              />
-              {error && <FormErrorMessage>{error}</FormErrorMessage>}
-            </FormControl>
+            <VStack>
+              <FormControl isRequired isInvalid={!!error}>
+                <FormLabel>Game topic</FormLabel>
+                <Input
+                  name="name"
+                  value={input.name}
+                  onChange={handleChange}
+                  placeholder="Game topic"
+                />
+                {error && <FormErrorMessage>{error}</FormErrorMessage>}
+              </FormControl>
+              <FormControl isRequired isInvalid={!!error}>
+                <FormLabel>About the lesson / Instruction</FormLabel>
+                <Textarea
+                  name="instruction"
+                  value={input.instruction}
+                  onChange={handleChange}
+                  placeholder="About the lesson / Instruction"
+                />
+                {error && <FormErrorMessage>{error}</FormErrorMessage>}
+              </FormControl>
+            </VStack>
           </ModalBody>
           <ModalFooter>
             <Button
