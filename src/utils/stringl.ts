@@ -5,3 +5,7 @@ export function toProperCase(str: string): string {
       c ? c.toUpperCase() : " " + d.toUpperCase()
     );
 }
+
+export function getLetter(n: number): string {
+  return String.fromCharCode(97 + n);
+}

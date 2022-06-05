@@ -5,7 +5,7 @@ import {
   doc,
   DocumentData,
 } from "firebase/firestore";
-import { GameDocType } from "../types/game";
+import { AcitivityDocType } from "../types/game";
 import { UserDocType } from "../types/user";
 import { firestore } from "./config";
 
@@ -21,7 +21,7 @@ const createCollection = <T = DocumentData>(
 };
 
 export const userCollection = createCollection<UserDocType>("user");
-export const gameCollection = createCollection<GameDocType>("game");
+export const gameCollection = createCollection<AcitivityDocType>("game");
 export const gameSubCollection = <T extends any>(
   id,
   ...pathSegments: string[]

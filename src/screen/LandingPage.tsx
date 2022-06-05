@@ -15,9 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { FaLightbulb } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+// @ts-expect-error
 import LandingPageSvg from "../assets/svgs/landing_page.svg?component";
 import { Logo } from "../components/Logo";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../components/navbar";
 
 export const LandingPage = () => {
   const navigate = useNavigate();

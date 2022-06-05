@@ -1,15 +1,9 @@
+import { GameShowTemplate } from "./game-show";
 import { BaseUserDocType } from "./user";
-
-export type GameType = "MATCH_UP" | "GAME_SHOW" | "MISSING_WORD" | null;
 
 export type GameStatus = "PUBLISHED" | "DRAFT";
 
 export type LearningMaterialType = "YOUTUBE" | "PDF" | "PPT" | "WORD" | "LINK";
-
-export type Game = {
-  id: string;
-  type: GameType;
-};
 
 export type LearningMaterial = {
   id: string;
@@ -18,7 +12,7 @@ export type LearningMaterial = {
   title: string;
 };
 
-export interface GameDocType {
+export interface AcitivityDocType {
   id: string;
   name: string;
   instruction: string;
@@ -26,9 +20,14 @@ export interface GameDocType {
   teacher: BaseUserDocType;
   studentIds: string[];
   status: GameStatus;
-  games: Game[];
 }
 
 export interface GameStudentDocType extends BaseUserDocType {
   result: string | null;
 }
+
+export type GameType = "PRE_TEST" | "POST_TEST";
+
+export type GameTemplate = "GAME_SHOW" | "MATCH_UP" | "MISSING_WORD";
+
+export type GameDocTemplate = GameShowTemplate;

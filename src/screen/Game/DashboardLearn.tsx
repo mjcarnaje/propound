@@ -47,6 +47,7 @@ import { useParams } from "react-router-dom";
 import { gameCollection, gameSubCollection } from "../../firebase/collections";
 import { firestore, storage } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
+import useStorage from "../../hooks/useStorage";
 import { selectAuth } from "../../store/reducer/auth";
 import { LearningMaterial, LearningMaterialType } from "../../types/game";
 import { generateId } from "../../utils/id";
@@ -57,11 +58,8 @@ const DashboardLearn: React.FC = () => {
   const { id } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-  const [progress, setProgress] = useState(0);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [fething, setFetching] = useState(false);
-  const [status, setStatus] = useState("");
   const [type, setType] = useState<"LINK" | "FILE">(null);
   const [inputs, setInputs] = useState({
     title: "",
@@ -72,78 +70,13 @@ const DashboardLearn: React.FC = () => {
     LearningMaterial[]
   >([]);
 
+  const { progress, url, setUrl, uploading, uploadFile } = useStorage();
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   }
 
-  function uploadFile(file: File) {
-    const pdfRef = ref(storage, `${id}/${file.name}`);
-
-    const uploadTask = uploadBytesResumable(pdfRef, file);
-
-    uploadTask.on(
-      "state_changed",
-      ({ bytesTransferred, totalBytes, state }) => {
-        setProgress((bytesTransferred / totalBytes) * 100);
-
-        setUploading(true);
-
-        switch (state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-          case "success":
-            console.log("Upload is successful");
-            break;
-          case "canceled":
-            console.log("Upload is canceled");
-            break;
-          case "error":
-            console.log("Upload is failed");
-            break;
-        }
-      },
-      (error) => {
-        switch (error.code) {
-          case "storage/unauthorized":
-            toast({
-              title: "Error",
-              description: "You do not have permission to upload files",
-              status: "error",
-            });
-            break;
-          case "storage/canceled":
-            toast({
-              title: "Error",
-              description: "You have cancelled the upload",
-              status: "error",
-            });
-            break;
-          case "storage/unknown":
-            toast({
-              title: "Error",
-              description: "Unknown error",
-              status: "error",
-            });
-            break;
-        }
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setUploading(false);
-          if (downloadURL) {
-            setStatus("success");
-            setInputs((inputs) => ({ ...inputs, url: downloadURL }));
-          }
-        });
-      }
-    );
-  }
-
-  function fileChangeHandler(e) {
+  async function fileChangeHandler(e) {
     const file = e.target.files[0];
 
     const allowedExtensions = ["pdf", "doc", "docx", "ppt", "pptx"];
@@ -157,7 +90,7 @@ const DashboardLearn: React.FC = () => {
       return;
     }
 
-    uploadFile(file);
+    await uploadFile(file, `${id}/${file.name}`);
   }
 
   async function save() {
@@ -222,7 +155,6 @@ const DashboardLearn: React.FC = () => {
         title: "",
         url: "",
       });
-      setStatus(null);
       setSaving(false);
       setType(null);
     }
@@ -253,6 +185,17 @@ const DashboardLearn: React.FC = () => {
   useEffect(() => {
     getLearningMaterials();
   }, []);
+
+  useEffect(() => {
+    if (url) {
+      setInputs((inputs) => ({ ...inputs, url }));
+      toast({
+        status: "success",
+        title: "File uploaded",
+        description: "File uploaded successfully",
+      });
+    }
+  }, [url]);
 
   if (fething) {
     return (
@@ -320,7 +263,7 @@ const DashboardLearn: React.FC = () => {
                     name="file"
                     onChange={fileChangeHandler}
                   />
-                  {status === "success" ? (
+                  {url ? (
                     <Alert status="success">
                       <AlertIcon />
                       {`${inputs.title} uploaded successfully`}
@@ -389,7 +332,10 @@ const DashboardLearn: React.FC = () => {
         <Button
           leftIcon={<MdAddChart fontSize="24px" />}
           fontWeight="semibold"
-          onClick={onOpen}
+          onClick={() => {
+            onOpen();
+            setUrl(null);
+          }}
           colorScheme="green"
         >
           Learning Material

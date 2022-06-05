@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import CEDLogo from "../assets/images/CED logo.png";
 import MSUIITLogo from "../assets/images/MSU-IIT logo.png";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../components/navbar";
 
 export const AboutPage = () => {
   const navigate = useNavigate();

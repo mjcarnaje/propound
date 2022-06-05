@@ -21,7 +21,7 @@ import {
 } from "react-router-dom";
 import { CustomSelect, Option } from "../../components/CustomSelect";
 import GameCode from "../../components/game/GameCode";
-import { Navbar } from "../../components/Navbar";
+import { Navbar } from "../../components/navbar";
 import {
   gameCollection,
   gameSubCollection,
@@ -29,7 +29,7 @@ import {
 } from "../../firebase/collections";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
-import { GameDocType, GameStudentDocType } from "../../types/game";
+import { AcitivityDocType, GameStudentDocType } from "../../types/game";
 
 interface DashboardProps {}
 
@@ -42,7 +42,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<GameDocType>();
+  const [data, setData] = useState<AcitivityDocType>();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [tabIndex, setTabIndex] = useState(0);
 

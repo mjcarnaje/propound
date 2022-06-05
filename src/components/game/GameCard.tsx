@@ -8,10 +8,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { GameDocType, GameStatus } from "../../types/game";
+import { AcitivityDocType, GameStatus } from "../../types/game";
 
 interface GameCardProps {
-  data: GameDocType;
+  data: AcitivityDocType;
 }
 
 const GameCard: React.FC<GameCardProps> = ({ data }) => {

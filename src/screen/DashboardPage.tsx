@@ -1,6 +1,6 @@
 import { Box, Container } from "@chakra-ui/react";
 import Classes from "../components/game/TeacherGames";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../components/navbar";
 import { useAppSelector } from "../hooks/redux";
 import { selectAuth } from "../store/reducer/auth";
 

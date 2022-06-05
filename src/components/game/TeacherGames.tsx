@@ -2,7 +2,7 @@ import { SimpleGrid, Spinner } from "@chakra-ui/react";
 import { onSnapshot, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { gameCollection } from "../../firebase/collections";
-import { GameDocType } from "../../types/game";
+import { AcitivityDocType } from "../../types/game";
 import { UserDocType } from "../../types/user";
 import GameCard from "./GameCard";
 
@@ -11,13 +11,13 @@ interface GamesProps {
 }
 
 const Games: React.FC<GamesProps> = ({ user }) => {
-  const [games, setGames] = useState<GameDocType[]>([]);
+  const [games, setGames] = useState<AcitivityDocType[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const q = query(gameCollection, where("teacher.uid", "==", user.uid));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const res: GameDocType[] = [];
+      const res: AcitivityDocType[] = [];
       querySnapshot.forEach((doc) => {
         res.push(doc.data());
       });

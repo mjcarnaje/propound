@@ -2,7 +2,7 @@ import { Center, Spinner } from "@chakra-ui/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { Navbar } from "./components/Navbar";
+import { Navbar } from "./components/navbar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
