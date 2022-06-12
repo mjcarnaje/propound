@@ -1,61 +1,39 @@
 import {
   Avatar,
   Box,
-  Center,
   HStack,
   SimpleGrid,
   Spinner,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { getDocs, query } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import { useFirestoreQuery } from "@react-query-firebase/firestore";
+import { collection, query } from "firebase/firestore";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { gameSubCollection } from "../../firebase/collections";
-import { GameStudentDocType } from "../../types/game";
+import { firestore } from "../../firebase/config";
 
 const DashboardStudents: React.FC = () => {
   const { id } = useParams();
-  const toast = useToast();
-  const [loading, setLoading] = useState(false);
-  const [students, setStudents] = useState<GameStudentDocType[]>([]);
 
-  async function getStudents() {
-    try {
-      setLoading(true);
-      const q = query(gameSubCollection<GameStudentDocType>(id, "student"));
-      const querySnapshot = await getDocs(q);
+  const ref = query(collection(firestore, "game", id, "students"));
+  const studentsQuery = useFirestoreQuery(["game", id, "students"], ref);
 
-      const res: GameStudentDocType[] = [];
-      querySnapshot.forEach((doc) => {
-        res.push(doc.data());
-      });
-      setStudents(res);
-    } catch (error) {
-      toast({
-        title: "Something went wrong",
-        description: error.message,
-        status: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    getStudents();
-  }, []);
-
-  if (loading) {
+  if (studentsQuery.isLoading) {
     return (
-      <Center py={8}>
+      <Box py={12}>
         <Spinner />
-      </Center>
+      </Box>
     );
   }
 
+  const snapshot = studentsQuery.data;
+  const students = snapshot.docs.map((docSnapshot) => docSnapshot.data());
+
   return (
-    <Box py={6}>
+    <Box py={12}>
+      {students.length === 0 && (
+        <Text>No students have joined this game yet.</Text>
+      )}
       <SimpleGrid columns={2} spacing={4}>
         {students.map((student) => (
           <HStack key={student.uid}>

@@ -42,10 +42,15 @@ const defaultQuestion: GameShowQuestionType = {
 
 interface GameShowProps {
   activityId: string;
+  type: "PRE_TEST" | "POST_TEST";
   gameShowData?: GameShowTemplate | null;
 }
 
-const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
+const GameShow: React.FC<GameShowProps> = ({
+  activityId,
+  type,
+  gameShowData,
+}) => {
   const toast = useToast();
 
   const gameCollection = collection(
@@ -55,13 +60,13 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
     "games"
   ).withConverter<GameShowTemplate>(null);
 
-  const ref = doc(gameCollection, "PRE_TEST");
+  const ref = doc(gameCollection, type);
   const { mutate, isLoading } = useFirestoreDocumentMutation(ref);
 
   const defaultValues = gameShowData || {
     __typename: "GAME_SHOW",
-    id: "PRE_TEST",
-    type: "PRE_TEST",
+    id: type,
+    type: type,
     questions: [defaultQuestion],
   };
 

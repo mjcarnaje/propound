@@ -29,14 +29,14 @@ const DashboardPreGame: React.FC = () => {
   );
 
   const GameTemplates: Record<GameTemplate, JSX.Element> = {
-    GAME_SHOW: <GameShow activityId={id} />,
+    GAME_SHOW: <GameShow activityId={id} type="PRE_TEST" />,
     MATCH_UP: <MatchUp />,
     MISSING_WORD: <MissingWord />,
   };
 
   if (preTest.isLoading) {
     return (
-      <Box py={8}>
+      <Box py={12}>
         <Spinner />
       </Box>
     );
@@ -44,7 +44,7 @@ const DashboardPreGame: React.FC = () => {
 
   if (preTest.isError) {
     return (
-      <Box py={8}>
+      <Box py={12}>
         <Text>Error</Text>
       </Box>
     );
@@ -60,7 +60,7 @@ const DashboardPreGame: React.FC = () => {
         </Box>
       )}
       {data.exists() && isGameShowTemplate(data.data()) && (
-        <GameShow activityId={id} gameShowData={data.data()} />
+        <GameShow activityId={id} gameShowData={data.data()} type="PRE_TEST" />
       )}
       {!data.exists() && gameTemplate && GameTemplates[gameTemplate]}
     </VStack>
