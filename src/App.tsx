@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { AboutPage } from "./screen/AboutPage";
 import { DashboardPage } from "./screen/DashboardPage";
 import Dashboard from "./screen/Game/Dashboard";
+import DashboardIndex from "./screen/Game/DashboardIndex";
 import DashboardLearn from "./screen/Game/DashboardLearn";
 import DashboardPostGame from "./screen/Game/DashboardPostGame";
 import DashboardPreGame from "./screen/Game/DashboardPreGame";
@@ -74,6 +75,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
 
         <Route path="/g/:id" element={<Dashboard />}>
+          <Route path="/g/:id" element={<DashboardIndex />} />
           <Route path="pre-game" element={<DashboardPreGame />} />
           <Route path="post-game" element={<DashboardPostGame />} />
           <Route path="learn" element={<DashboardLearn />} />

@@ -24,7 +24,7 @@ const GameCard: React.FC<GameCardProps> = ({ data }) => {
 
   return (
     <Box
-      onClick={() => navigate(`/g/${data.id}/pre-game`)}
+      onClick={() => navigate(`/g/${data.id}/`)}
       transition="all 0.2s"
       _hover={{ bg: "gray.50", shadow: "md" }}
       cursor="pointer"
