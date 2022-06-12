@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { FieldErrors, useFormContext, useWatch } from "react-hook-form";
+import { AiFillCheckCircle } from "react-icons/ai";
 import { BsImage } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import useStorage from "../../../hooks/useStorage";
@@ -21,12 +22,14 @@ import { getLetter } from "../../../utils/stringl";
 
 interface GameShowChoiceProps {
   error: FieldErrors<GameShowChoiceType>;
+  choiceId: string;
   questionIdx: number;
   choiceIdx: number;
 }
 
 const GameShowChoice: React.FC<GameShowChoiceProps> = ({
   error,
+  choiceId,
   questionIdx,
   choiceIdx,
 }) => {
@@ -62,41 +65,79 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
     name: `questions.${questionIdx}.choices.${choiceIdx}.photoURL`,
   });
 
+  const answerId = useWatch({
+    control,
+    name: `questions.${questionIdx}.answer`,
+  });
+
+  const isAnswer = answerId === choiceId;
+
   return (
-    <Box w="full" shadow="xs" borderRadius={8} p={4} bg="white">
+    <Box
+      position="relative"
+      w="full"
+      shadow="base"
+      borderRadius={8}
+      p={4}
+      bg="white"
+      borderWidth={2}
+      borderColor={isAnswer ? "green.500" : "transparent"}
+    >
+      <Icon
+        onClick={() => setValue(`questions.${questionIdx}.answer`, choiceId)}
+        cursor="pointer"
+        color={isAnswer ? "green.500" : "gray.600"}
+        bg="white"
+        position="absolute"
+        top={-2}
+        right={-2}
+        as={AiFillCheckCircle}
+        boxSize={5}
+      />
       <FormControl isInvalid={!!error?.choice}>
-        <HStack>
+        <HStack spacing={2}>
           <FormLabel
             htmlFor={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
+            mr={1}
           >
-            {getLetter(choiceIdx)}
+            {`${getLetter(choiceIdx)})`}
           </FormLabel>
-          {photoURL ? (
-            <AspectRatio cursor="pointer" w="40px" ratio={1}>
-              <Image src={photoURL} alt="choice photo" objectFit="cover" />
-            </AspectRatio>
-          ) : (
-            <>
-              <input
-                hidden
-                id="fileUpload"
-                type="file"
-                name="file"
-                onChange={fileChangeHandler}
-              />
-              <IconButton
+
+          <Box>
+            {photoURL ? (
+              <AspectRatio
+                borderRadius={4}
+                overflow="hidden"
                 cursor="pointer"
-                as="label"
-                htmlFor="fileUpload"
-                isLoading={uploading}
-                colorScheme="orange"
-                variant="ghost"
-                aria-label="Upload choice image"
-                fontSize="20px"
-                icon={<Icon as={BsImage} />}
-              />
-            </>
-          )}
+                w="40px"
+                ratio={1}
+              >
+                <Image src={photoURL} alt="choice photo" objectFit="cover" />
+              </AspectRatio>
+            ) : (
+              <>
+                <input
+                  hidden
+                  id="fileUpload"
+                  type="file"
+                  name="file"
+                  onChange={fileChangeHandler}
+                />
+                <IconButton
+                  cursor="pointer"
+                  as="label"
+                  htmlFor="fileUpload"
+                  isLoading={uploading}
+                  colorScheme="orange"
+                  variant="ghost"
+                  aria-label="Upload choice image"
+                  fontSize="20px"
+                  icon={<Icon as={BsImage} />}
+                />
+              </>
+            )}
+          </Box>
+
           <Input
             id={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
             placeholder="choice"

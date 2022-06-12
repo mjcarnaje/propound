@@ -1,8 +1,6 @@
-import { BaseUserDocType } from "./../types/user.d";
 import {
   collection,
   CollectionReference,
-  doc,
   DocumentData,
 } from "firebase/firestore";
 import { AcitivityDocType } from "../types/game";
@@ -22,6 +20,7 @@ const createCollection = <T = DocumentData>(
 
 export const userCollection = createCollection<UserDocType>("user");
 export const gameCollection = createCollection<AcitivityDocType>("game");
+
 export const gameSubCollection = <T extends any>(
   id,
   ...pathSegments: string[]

@@ -1,6 +1,7 @@
 import { Center, Spinner } from "@chakra-ui/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Navbar } from "./components/navbar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -18,6 +19,8 @@ import { LandingPage } from "./screen/LandingPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
 import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
+
+const queryClient = new QueryClient();
 
 function App() {
   const location = useLocation();
@@ -55,30 +58,34 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route
-        element={<ProtectedRoute redirectPath="/landing" isAllowed={!!user} />}
-      >
-        <Route path="/" element={<DashboardPage />} />
-      </Route>
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        <Route
+          element={
+            <ProtectedRoute redirectPath="/landing" isAllowed={!!user} />
+          }
+        >
+          <Route path="/" element={<DashboardPage />} />
+        </Route>
 
-      <Route element={<ProtectedRoute isAllowed={!user} />}>
-        <Route path="/landing" element={<LandingPage />} />
-      </Route>
-      <Route path="/about" element={<AboutPage />} />
+        <Route element={<ProtectedRoute isAllowed={!user} />}>
+          <Route path="/landing" element={<LandingPage />} />
+        </Route>
+        <Route path="/about" element={<AboutPage />} />
 
-      <Route path="/g/:id" element={<Dashboard />}>
-        <Route path="pre-game" element={<DashboardPreGame />} />
-        <Route path="post-game" element={<DashboardPostGame />} />
-        <Route path="learn" element={<DashboardLearn />} />
-        <Route path="students" element={<DashboardStudents />} />
-      </Route>
+        <Route path="/g/:id" element={<Dashboard />}>
+          <Route path="pre-game" element={<DashboardPreGame />} />
+          <Route path="post-game" element={<DashboardPostGame />} />
+          <Route path="learn" element={<DashboardLearn />} />
+          <Route path="students" element={<DashboardStudents />} />
+        </Route>
 
-      <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
-        <Route path="/t/login" element={<TeacherLoginPage />} />
-        <Route path="/s/login" element={<StudentLoginPage />} />
-      </Route>
-    </Routes>
+        <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
+          <Route path="/t/login" element={<TeacherLoginPage />} />
+          <Route path="/s/login" element={<StudentLoginPage />} />
+        </Route>
+      </Routes>
+    </QueryClientProvider>
   );
 }
 

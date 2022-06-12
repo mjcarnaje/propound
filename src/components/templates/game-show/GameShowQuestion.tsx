@@ -85,33 +85,42 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
         <FormLabel htmlFor={`questions.${questionIdx}.question`}>
           {`Question ${questionIdx + 1}`}
         </FormLabel>
+
         <HStack>
-          {photoURL ? (
-            <AspectRatio cursor="pointer" w="40px" ratio={1}>
-              <Image src={photoURL} alt="quiz photo" objectFit="cover" />
-            </AspectRatio>
-          ) : (
-            <>
-              <input
-                hidden
-                id="fileUpload"
-                type="file"
-                name="file"
-                onChange={fileChangeHandler}
-              />
-              <IconButton
+          <Box>
+            {photoURL ? (
+              <AspectRatio
+                borderRadius={4}
+                overflow="hidden"
                 cursor="pointer"
-                as="label"
-                htmlFor="fileUpload"
-                isLoading={uploading}
-                colorScheme="orange"
-                variant="ghost"
-                aria-label="Upload question image"
-                fontSize="20px"
-                icon={<Icon as={BsImage} />}
-              />
-            </>
-          )}
+                w="40px"
+                ratio={1}
+              >
+                <Image src={photoURL} alt="choice photo" objectFit="cover" />
+              </AspectRatio>
+            ) : (
+              <>
+                <input
+                  hidden
+                  id="fileUpload"
+                  type="file"
+                  name="file"
+                  onChange={fileChangeHandler}
+                />
+                <IconButton
+                  cursor="pointer"
+                  as="label"
+                  htmlFor="fileUpload"
+                  isLoading={uploading}
+                  colorScheme="orange"
+                  variant="ghost"
+                  aria-label="Upload choice image"
+                  fontSize="20px"
+                  icon={<Icon as={BsImage} />}
+                />
+              </>
+            )}
+          </Box>
           <Input
             id={`questions.${questionIdx}.question`}
             placeholder="question"
@@ -126,6 +135,7 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
         {fields.map((field, choiceIdx) => (
           <GameShowChoice
             key={field.keyId}
+            choiceId={field.id}
             error={error?.choices?.[choiceIdx]}
             questionIdx={questionIdx}
             choiceIdx={choiceIdx}

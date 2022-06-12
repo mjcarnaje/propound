@@ -1,14 +1,17 @@
 import {
   Box,
   Button,
+  Center,
   chakra,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
   Textarea,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
+import { doc, setDoc } from "firebase/firestore";
 import React from "react";
 import {
   FormProvider,
@@ -16,6 +19,7 @@ import {
   useFieldArray,
   useForm,
 } from "react-hook-form";
+import { gameSubCollection } from "../../../firebase/collections";
 import {
   GameShowQuestionType,
   GameShowTemplate,
@@ -35,13 +39,23 @@ const defaultQuestion: GameShowQuestionType = {
   photoURL: null,
 };
 
-const GameShow: React.FC = () => {
+interface GameShowProps {
+  activityId: string;
+  gameShowData?: GameShowTemplate | null;
+}
+
+const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
+  const toast = useToast();
+
+  const defaultValues = gameShowData || {
+    __typename: "GAME_SHOW",
+    id: "PRE_TEST",
+    type: "PRE_TEST",
+    questions: [defaultQuestion],
+  };
+
   const methods = useForm<GameShowTemplate>({
-    defaultValues: {
-      id: generateId(),
-      type: "PRE_TEST",
-      questions: [defaultQuestion],
-    },
+    defaultValues,
   });
 
   const {
@@ -57,8 +71,19 @@ const GameShow: React.FC = () => {
     keyName: "keyId",
   });
 
-  const onSubmit: SubmitHandler<GameShowTemplate> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<GameShowTemplate> = async (data) => {
+    try {
+      await setDoc(
+        doc(gameSubCollection<GameShowTemplate>(activityId, "games"), data.id),
+        data
+      );
+    } catch (err) {
+      toast({
+        title: "Error",
+        status: "error",
+        duration: 3000,
+      });
+    }
   };
   return (
     <FormProvider {...methods}>
@@ -92,7 +117,7 @@ const GameShow: React.FC = () => {
               {errors.instruction && errors.instruction.message}
             </FormErrorMessage>
           </FormControl>
-          <VStack w="full">
+          <VStack spacing={6} w="full">
             {fields.map((field, questionIdx) => (
               <GameShowQuestion
                 key={field.keyId}
@@ -102,21 +127,26 @@ const GameShow: React.FC = () => {
               />
             ))}
             <Box>
-              <Button onClick={() => append(defaultQuestion)}>
+              <Button size="sm" onClick={() => append(defaultQuestion)}>
                 Add Question
               </Button>
             </Box>
           </VStack>
         </VStack>
 
-        <Button
-          mt={4}
-          colorScheme="orange"
-          isLoading={isSubmitting}
-          type="submit"
-        >
-          Done
-        </Button>
+        <Center py={8}>
+          <Button
+            mx="auto"
+            size="lg"
+            px="16"
+            colorScheme="orange"
+            isLoading={isSubmitting}
+            loadingText="Saving..."
+            type="submit"
+          >
+            Save
+          </Button>
+        </Center>
       </chakra.form>
     </FormProvider>
   );
