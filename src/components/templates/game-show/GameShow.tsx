@@ -11,7 +11,8 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { doc, setDoc } from "firebase/firestore";
+import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import React from "react";
 import {
   FormProvider,
@@ -19,7 +20,7 @@ import {
   useFieldArray,
   useForm,
 } from "react-hook-form";
-import { gameSubCollection } from "../../../firebase/collections";
+import { firestore } from "../../../firebase/config";
 import {
   GameShowQuestionType,
   GameShowTemplate,
@@ -47,6 +48,16 @@ interface GameShowProps {
 const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
   const toast = useToast();
 
+  const gameCollection = collection(
+    firestore,
+    "game",
+    activityId,
+    "games"
+  ).withConverter<GameShowTemplate>(null);
+
+  const ref = doc(gameCollection, "PRE_TEST");
+  const { mutate, isLoading } = useFirestoreDocumentMutation(ref);
+
   const defaultValues = gameShowData || {
     __typename: "GAME_SHOW",
     id: "PRE_TEST",
@@ -62,7 +73,7 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
     control,
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = methods;
 
   const { fields, append, remove } = useFieldArray({
@@ -72,18 +83,22 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
   });
 
   const onSubmit: SubmitHandler<GameShowTemplate> = async (data) => {
-    try {
-      await setDoc(
-        doc(gameSubCollection<GameShowTemplate>(activityId, "games"), data.id),
-        data
-      );
-    } catch (err) {
-      toast({
-        title: "Error",
-        status: "error",
-        duration: 3000,
-      });
-    }
+    await mutate(data, {
+      onError: async (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          status: "error",
+        });
+      },
+      onSuccess: async () => {
+        toast({
+          title: "Success",
+          description: "Game Show saved successfully",
+          status: "success",
+        });
+      },
+    });
   };
   return (
     <FormProvider {...methods}>
@@ -140,7 +155,7 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, gameShowData }) => {
             size="lg"
             px="16"
             colorScheme="orange"
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             loadingText="Saving..."
             type="submit"
           >

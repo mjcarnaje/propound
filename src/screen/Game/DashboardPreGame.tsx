@@ -5,13 +5,14 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import SetGameType from "../../components/SetGameType";
 import GameShow from "../../components/templates/game-show/GameShow";
+import MatchUp from "../../components/templates/match-up/MatchUp";
+import MissingWord from "../../components/templates/missing-word/MissingWord";
 import { firestore } from "../../firebase/config";
 import { GameDocTemplate, GameTemplate } from "../../types/game";
 import { isGameShowTemplate } from "../../utils/template";
 
 const DashboardPreGame: React.FC = () => {
   const { id } = useParams();
-  const [loading, setLoading] = useState(false);
   const [gameTemplate, setGameTemplate] = useState<GameTemplate>(null);
 
   const ref = doc(
@@ -26,6 +27,12 @@ const DashboardPreGame: React.FC = () => {
     ["game", id, "games", "PRE_TEST"],
     ref
   );
+
+  const GameTemplates: Record<GameTemplate, JSX.Element> = {
+    GAME_SHOW: <GameShow activityId={id} />,
+    MATCH_UP: <MatchUp />,
+    MISSING_WORD: <MissingWord />,
+  };
 
   if (preTest.isLoading) {
     return (
@@ -55,6 +62,7 @@ const DashboardPreGame: React.FC = () => {
       {data.exists() && isGameShowTemplate(data.data()) && (
         <GameShow activityId={id} gameShowData={data.data()} />
       )}
+      {!data.exists() && gameTemplate && GameTemplates[gameTemplate]}
     </VStack>
   );
 };
