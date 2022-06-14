@@ -48,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <Box as="section" h="1px" minH="100vh">
       <Navbar />
-      <Container py={{ base: "4", md: "8" }} minH="calc(100vh - 86px)" h="1px">
+      <Container py={{ base: "4", md: "8" }} minH="100vh" h="1px">
         <Stack
           w="full"
           direction={{ base: "column", lg: "row" }}

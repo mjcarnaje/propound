@@ -1,8 +1,10 @@
 import {
+  AspectRatio,
   Avatar,
   Box,
   Heading,
   HStack,
+  Image,
   Tag,
   TagProps,
   Text,
@@ -29,31 +31,45 @@ const GameCard: React.FC<GameCardProps> = ({ data }) => {
       _hover={{ bg: "gray.50", shadow: "md" }}
       cursor="pointer"
       bg="white"
-      px={8}
-      py={4}
-      rounded="md"
+      rounded="lg"
       shadow="sm"
+      overflow="hidden"
     >
-      <Heading as="h4" size="md">
-        {data.name}
-      </Heading>
-      <HStack>
-        <Text fontWeight="medium">Code:</Text>
-        <Text>{data.code}</Text>
-      </HStack>
-      <HStack justify="space-between" mt={4}>
+      <AspectRatio bg="gray.50" maxW="400px" ratio={16 / 9}>
+        {!!data.coverPhoto ? (
+          <Image src={data.coverPhoto} objectFit="cover" />
+        ) : (
+          <Box>
+            <Text>No cover photo</Text>
+          </Box>
+        )}
+      </AspectRatio>
+      <Box p={4}>
+        <Heading as="h4" size="md">
+          {data.title}
+        </Heading>
         <HStack>
-          <Avatar
-            boxSize="8"
-            src={data.teacher.photoURL}
-            name={data.teacher.displayName}
-          />
-          <Text fontWeight="medium">{data.teacher.displayName}</Text>
+          <Text fontWeight="medium">Code:</Text>
+          <Text>{data.code}</Text>
         </HStack>
-        <Tag size="sm" variant="solid" colorScheme={statusColors[data.status]}>
-          {data.status}
-        </Tag>
-      </HStack>
+        <HStack justify="space-between" mt={4}>
+          <HStack>
+            <Avatar
+              boxSize="8"
+              src={data.teacher.photoURL}
+              name={data.teacher.displayName}
+            />
+            <Text fontWeight="medium">{data.teacher.displayName}</Text>
+          </HStack>
+          <Tag
+            size="sm"
+            variant="solid"
+            colorScheme={statusColors[data.status]}
+          >
+            {data.status}
+          </Tag>
+        </HStack>
+      </Box>
     </Box>
   );
 };

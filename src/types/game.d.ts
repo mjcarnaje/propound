@@ -14,8 +14,9 @@ export type LearningMaterial = {
 
 export interface AcitivityDocType {
   id: string;
-  name: string;
-  instruction: string;
+  title: string;
+  description: string;
+  coverPhoto: string;
   code: string;
   teacher: BaseUserDocType;
   studentIds: string[];

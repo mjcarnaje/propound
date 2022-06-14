@@ -31,8 +31,8 @@ interface CreateGameProps {
 }
 
 const defaultInput = {
-  name: "",
-  instruction: "",
+  title: "",
+  description: "",
 };
 
 const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
@@ -51,7 +51,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
   }
 
   async function createGame() {
-    if (input.name.length === 0) {
+    if (input.description.length === 0) {
       setError("Activity name is required");
       return;
     }
@@ -62,9 +62,10 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
       setLoading(true);
       await setDoc(doc(gameCollection, id), {
         id,
-        name: input.name,
-        instruction: input.instruction,
+        title: input.title,
+        description: input.description,
         code: generateCode(),
+        coverPhoto: null,
         teacher: {
           uid: user.uid,
           displayName: user.displayName,
@@ -114,22 +115,22 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
           <ModalBody pb={6}>
             <VStack>
               <FormControl isRequired isInvalid={!!error}>
-                <FormLabel>Game topic</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <Input
-                  name="name"
-                  value={input.name}
+                  name="title"
+                  value={input.title}
                   onChange={handleChange}
                   placeholder="Game topic"
                 />
                 {error && <FormErrorMessage>{error}</FormErrorMessage>}
               </FormControl>
               <FormControl isRequired isInvalid={!!error}>
-                <FormLabel>About the lesson / Instruction</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <Textarea
-                  name="instruction"
-                  value={input.instruction}
+                  name="description"
+                  value={input.description}
                   onChange={handleChange}
-                  placeholder="About the lesson / Instruction"
+                  placeholder="About the lesson"
                 />
                 {error && <FormErrorMessage>{error}</FormErrorMessage>}
               </FormControl>

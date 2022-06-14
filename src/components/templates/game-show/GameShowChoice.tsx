@@ -92,7 +92,7 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
         >
           <Icon
             cursor="pointer"
-            color={isAnswer ? "green.500" : "gray.500"}
+            color={isAnswer ? "green.500" : "gray.600"}
             bg="white"
             as={AiFillCheckCircle}
             boxSize={5}
