@@ -1,4 +1,4 @@
-import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Center, Spinner, Text, VStack } from "@chakra-ui/react";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import React, { useState } from "react";
@@ -36,17 +36,17 @@ const DashboardPostGame: React.FC = () => {
 
   if (preTest.isLoading) {
     return (
-      <Box py={12}>
+      <Center w="full" py={12}>
         <Spinner />
-      </Box>
+      </Center>
     );
   }
 
   if (preTest.isError) {
     return (
-      <Box py={12}>
+      <Center w="full" py={12}>
         <Text>Error</Text>
-      </Box>
+      </Center>
     );
   }
 
@@ -54,7 +54,7 @@ const DashboardPostGame: React.FC = () => {
 
   return (
     <VStack w="full" py={4}>
-      {!data.exists() && (
+      {!data.exists() && !gameTemplate && (
         <Box textAlign="center">
           <SetGameType setGameTemplate={setGameTemplate} />
         </Box>

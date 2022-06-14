@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Center,
   HStack,
   SimpleGrid,
   Spinner,
@@ -20,9 +21,9 @@ const DashboardStudents: React.FC = () => {
 
   if (studentsQuery.isLoading) {
     return (
-      <Box py={12}>
+      <Center w="full" py={12}>
         <Spinner />
-      </Box>
+      </Center>
     );
   }
 
@@ -30,9 +31,11 @@ const DashboardStudents: React.FC = () => {
   const students = snapshot.docs.map((docSnapshot) => docSnapshot.data());
 
   return (
-    <Box py={12}>
+    <Box w="full">
       {students.length === 0 && (
-        <Text>No students have joined this game yet.</Text>
+        <Center py={12}>
+          <Text>No students have joined this game yet.</Text>
+        </Center>
       )}
       <SimpleGrid columns={2} spacing={4}>
         {students.map((student) => (

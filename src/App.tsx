@@ -10,13 +10,16 @@ import { auth } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { AboutPage } from "./screen/AboutPage";
 import { DashboardPage } from "./screen/DashboardPage";
+import ExploreStudentPage from "./screen/ExploreStudentPage";
 import Dashboard from "./screen/Game/Dashboard";
 import DashboardIndex from "./screen/Game/DashboardIndex";
 import DashboardLearn from "./screen/Game/DashboardLearn";
 import DashboardPostGame from "./screen/Game/DashboardPostGame";
 import DashboardPreGame from "./screen/Game/DashboardPreGame";
+import DashboardSettings from "./screen/Game/DashboardSettings";
 import DashboardStudents from "./screen/Game/DashboardStudents";
 import { LandingPage } from "./screen/LandingPage";
+import RootPage from "./screen/RootPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
 import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
@@ -66,16 +69,21 @@ function App() {
             <ProtectedRoute redirectPath="/landing" isAllowed={!!user} />
           }
         >
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/t" element={<DashboardPage />} />
+          <Route path="/s" element={<ExploreStudentPage />} />
         </Route>
+
+        <Route path="/" element={<RootPage />} />
 
         <Route element={<ProtectedRoute isAllowed={!user} />}>
           <Route path="/landing" element={<LandingPage />} />
         </Route>
+
         <Route path="/about" element={<AboutPage />} />
 
         <Route path="/g/:id" element={<Dashboard />}>
           <Route path="/g/:id" element={<DashboardIndex />} />
+          <Route path="settings" element={<DashboardSettings />} />
           <Route path="pre-game" element={<DashboardPreGame />} />
           <Route path="post-game" element={<DashboardPostGame />} />
           <Route path="learn" element={<DashboardLearn />} />

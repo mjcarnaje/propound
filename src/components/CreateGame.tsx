@@ -73,7 +73,6 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
         },
         studentIds: [],
         status: "DRAFT",
-        games: [],
       });
 
       const userRef = doc(userCollection, user.uid);
@@ -141,7 +140,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
               isLoading={loading}
               onClick={createGame}
               variant="solid"
-              colorScheme="purple"
+              colorScheme="orange"
               mr={3}
             >
               Save

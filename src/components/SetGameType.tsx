@@ -1,18 +1,5 @@
-import {
-  Box,
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
-  Tooltip,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { AiOutlinePlus } from "react-icons/ai";
-import { GameTemplate, GameType } from "../types/game";
+import { Button, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import { GameTemplate } from "../types/game";
 import { toProperCase } from "../utils/stringl";
 
 interface SetGameTypeProps {
@@ -20,11 +7,8 @@ interface SetGameTypeProps {
 }
 
 const SetGameType: React.FC<SetGameTypeProps> = ({ setGameTemplate }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   async function setGameType(template: GameTemplate) {
     setGameTemplate(template);
-    onClose();
   }
 
   const gameTemplates: GameTemplate[] = [
@@ -34,34 +18,23 @@ const SetGameType: React.FC<SetGameTypeProps> = ({ setGameTemplate }) => {
   ];
 
   return (
-    <Box p={8}>
-      <Button onClick={onOpen} leftIcon={<AiOutlinePlus />} variant="solid">
-        Set game
-      </Button>
-
-      <Modal isOpen={isOpen} size="2xl" onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Set a game</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pt={8} pb={16}>
-            <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
-              {gameTemplates.map((template) => (
-                <Button
-                  key={template}
-                  onClick={() => setGameType(template)}
-                  variant="ghost"
-                  size="xl"
-                  loadingText="Setting game..."
-                >
-                  {toProperCase(template)}
-                </Button>
-              ))}
-            </SimpleGrid>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Box>
+    <VStack spacing={8} py={12}>
+      <Text fontSize={22} fontWeight="semibold">
+        Choose a game
+      </Text>
+      <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+        {gameTemplates.map((template) => (
+          <Button
+            key={template}
+            onClick={() => setGameType(template)}
+            variant="outline"
+            size="xl"
+          >
+            {toProperCase(template)}
+          </Button>
+        ))}
+      </SimpleGrid>
+    </VStack>
   );
 };
 

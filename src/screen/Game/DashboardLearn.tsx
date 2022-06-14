@@ -199,7 +199,7 @@ const DashboardLearn: React.FC = () => {
 
   if (fething) {
     return (
-      <Center py={8}>
+      <Center py={12}>
         <Spinner />
       </Center>
     );

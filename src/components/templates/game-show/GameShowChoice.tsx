@@ -9,6 +9,7 @@ import {
   IconButton,
   Image,
   Input,
+  Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
@@ -76,24 +77,29 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
     <Box
       position="relative"
       w="full"
-      shadow="base"
       borderRadius={8}
       p={4}
       bg="white"
-      borderWidth={2}
-      borderColor={isAnswer ? "green.500" : "transparent"}
+      borderWidth={isAnswer ? 2 : 1}
+      borderColor={isAnswer ? "green.500" : "gray.100"}
     >
-      <Icon
-        onClick={() => setValue(`questions.${questionIdx}.answer`, choiceId)}
-        cursor="pointer"
-        color={isAnswer ? "green.500" : "gray.600"}
-        bg="white"
-        position="absolute"
-        top={-2}
-        right={-2}
-        as={AiFillCheckCircle}
-        boxSize={5}
-      />
+      <Tooltip hasArrow label="Set as answer" placement="top">
+        <Box
+          onClick={() => setValue(`questions.${questionIdx}.answer`, choiceId)}
+          position="absolute"
+          top={-2}
+          right={-2}
+        >
+          <Icon
+            cursor="pointer"
+            color={isAnswer ? "green.500" : "gray.500"}
+            bg="white"
+            as={AiFillCheckCircle}
+            boxSize={5}
+          />
+        </Box>
+      </Tooltip>
+
       <FormControl isInvalid={!!error?.choice}>
         <HStack spacing={2}>
           <FormLabel
