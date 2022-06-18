@@ -138,12 +138,13 @@ const GameShow: React.FC<GameShowProps> = ({
             </FormErrorMessage>
           </FormControl>
           <VStack spacing={6} w="full">
-            {fields.map((field, questionIdx) => (
+            {fields.map((field, questionIdx, arr) => (
               <GameShowQuestion
                 key={field.keyId}
-                field={field}
                 error={errors.questions?.[questionIdx]}
                 questionIdx={questionIdx}
+                onRemoveQuestion={() => remove(questionIdx)}
+                onRemoveQuestionDisabled={arr.length === 1}
               />
             ))}
             <Box>

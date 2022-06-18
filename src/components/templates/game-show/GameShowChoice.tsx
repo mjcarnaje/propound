@@ -26,8 +26,8 @@ interface GameShowChoiceProps {
   choiceId: string;
   questionIdx: number;
   choiceIdx: number;
-  onRemove: () => void;
-  onRemoveDisabled: boolean;
+  onRemoveChoice: () => void;
+  onRemoveChoiceDisabled: boolean;
 }
 
 const GameShowChoice: React.FC<GameShowChoiceProps> = ({
@@ -35,8 +35,8 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
   choiceId,
   questionIdx,
   choiceIdx,
-  onRemove,
-  onRemoveDisabled,
+  onRemoveChoice,
+  onRemoveChoiceDisabled,
 }) => {
   const { id } = useParams();
   const toast = useToast();
@@ -163,7 +163,7 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
           size="sm"
         />
         <IconButton
-          isDisabled={onRemoveDisabled}
+          isDisabled={onRemoveChoiceDisabled}
           cursor="pointer"
           colorScheme="orange"
           variant="ghost"
@@ -174,7 +174,7 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
             if (isAnswer) {
               setValue(`questions.${questionIdx}.answer`, null);
             }
-            onRemove();
+            onRemoveChoice();
           }}
         />
       </HStack>

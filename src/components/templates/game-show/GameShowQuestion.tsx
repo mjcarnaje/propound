@@ -33,15 +33,17 @@ import { generateId } from "../../../utils/id";
 import GameShowChoice from "./GameShowChoice";
 
 interface GameShowQuestionProps {
-  field: FieldArrayWithId<GameShowTemplate, "questions", "keyId">;
   error: FieldErrors<GameShowQuestionType>;
   questionIdx: number;
+  onRemoveQuestion: () => void;
+  onRemoveQuestionDisabled: boolean;
 }
 
 const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
-  field,
   error,
   questionIdx,
+  onRemoveQuestion,
+  onRemoveQuestionDisabled,
 }) => {
   const { id } = useParams();
   const { url, uploading, uploadFile } = useStorage();
@@ -149,19 +151,20 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
               error={error?.choices?.[choiceIdx]}
               questionIdx={questionIdx}
               choiceIdx={choiceIdx}
-              onRemove={() => remove(choiceIdx)}
-              onRemoveDisabled={arr.length === 1}
+              onRemoveChoice={() => remove(choiceIdx)}
+              onRemoveChoiceDisabled={arr.length === 1}
             />
           ))}
         </SimpleGrid>
       </VStack>
       <VStack>
         <IconButton
+          disabled={onRemoveQuestionDisabled}
           cursor="pointer"
           variant="ghost"
           aria-label="Delete question"
           icon={<Icon as={DeleteIcon} />}
-          onClick={() => {}}
+          onClick={onRemoveQuestion}
         />
         <IconButton
           cursor="pointer"
