@@ -1,6 +1,8 @@
+import { CheckIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   AspectRatio,
   Box,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -9,12 +11,10 @@ import {
   IconButton,
   Image,
   Input,
-  Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { FieldErrors, useFormContext, useWatch } from "react-hook-form";
-import { AiFillCheckCircle } from "react-icons/ai";
 import { BsImage } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import useStorage from "../../../hooks/useStorage";
@@ -26,6 +26,8 @@ interface GameShowChoiceProps {
   choiceId: string;
   questionIdx: number;
   choiceIdx: number;
+  onRemove: () => void;
+  onRemoveDisabled: boolean;
 }
 
 const GameShowChoice: React.FC<GameShowChoiceProps> = ({
@@ -33,6 +35,8 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
   choiceId,
   questionIdx,
   choiceIdx,
+  onRemove,
+  onRemoveDisabled,
 }) => {
   const { id } = useParams();
   const toast = useToast();
@@ -78,45 +82,31 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
       position="relative"
       w="full"
       borderRadius={8}
-      p={4}
+      px={4}
+      pt={4}
       bg="white"
-      borderWidth={isAnswer ? 2 : 1}
+      borderWidth={2}
       borderColor={isAnswer ? "green.500" : "gray.100"}
     >
-      <Tooltip hasArrow label="Set as answer" placement="top">
-        <Box
-          onClick={() => setValue(`questions.${questionIdx}.answer`, choiceId)}
-          position="absolute"
-          top={-2}
-          right={-2}
-        >
-          <Icon
-            cursor="pointer"
-            color={isAnswer ? "green.500" : "gray.600"}
-            bg="white"
-            as={AiFillCheckCircle}
-            boxSize={5}
-          />
-        </Box>
-      </Tooltip>
-
       <FormControl isInvalid={!!error?.choice}>
-        <HStack spacing={2}>
+        <Flex align="center">
           <FormLabel
             htmlFor={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
-            mr={1}
+            fontWeight="semibold"
           >
-            {`${getLetter(choiceIdx)})`}
+            {`${getLetter(choiceIdx)}`}
           </FormLabel>
 
           <Box>
             {photoURL ? (
               <AspectRatio
+                borderWidth={1}
                 borderRadius={4}
                 overflow="hidden"
                 cursor="pointer"
                 w="40px"
                 ratio={1}
+                mr={2}
               >
                 <Image src={photoURL} alt="choice photo" objectFit="cover" />
               </AspectRatio>
@@ -129,17 +119,6 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
                   name="file"
                   onChange={fileChangeHandler}
                 />
-                <IconButton
-                  cursor="pointer"
-                  as="label"
-                  htmlFor="fileUpload"
-                  isLoading={uploading}
-                  colorScheme="orange"
-                  variant="ghost"
-                  aria-label="Upload choice image"
-                  fontSize="20px"
-                  icon={<Icon as={BsImage} />}
-                />
               </>
             )}
           </Box>
@@ -148,14 +127,57 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
             id={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
             placeholder="choice"
             {...register(
-              `questions.${questionIdx}.choices.${choiceIdx}.choice`
+              `questions.${questionIdx}.choices.${choiceIdx}.choice`,
+              { required: true }
             )}
           />
           <FormErrorMessage>
             {error?.choice && error.choice.message}
           </FormErrorMessage>
-        </HStack>
+        </Flex>
       </FormControl>
+      <HStack spacing={2} justify="flex-end" py={2}>
+        <IconButton
+          cursor="pointer"
+          colorScheme="green"
+          variant={isAnswer ? "solid" : "ghost"}
+          aria-label="Set as answer"
+          icon={<Icon as={CheckIcon} />}
+          size="sm"
+          onClick={() => {
+            setValue(
+              `questions.${questionIdx}.answer`,
+              isAnswer ? null : choiceId
+            );
+          }}
+        />
+        <IconButton
+          cursor="pointer"
+          as="label"
+          htmlFor="fileUpload"
+          isLoading={uploading}
+          colorScheme="orange"
+          variant="ghost"
+          aria-label="Upload choice image"
+          icon={<Icon as={BsImage} />}
+          size="sm"
+        />
+        <IconButton
+          isDisabled={onRemoveDisabled}
+          cursor="pointer"
+          colorScheme="orange"
+          variant="ghost"
+          aria-label="Delete choice"
+          icon={<Icon as={DeleteIcon} />}
+          size="sm"
+          onClick={() => {
+            if (isAnswer) {
+              setValue(`questions.${questionIdx}.answer`, null);
+            }
+            onRemove();
+          }}
+        />
+      </HStack>
     </Box>
   );
 };

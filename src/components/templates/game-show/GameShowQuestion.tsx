@@ -1,3 +1,4 @@
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   AspectRatio,
   Box,
@@ -28,6 +29,7 @@ import {
   GameShowQuestionType,
   GameShowTemplate,
 } from "../../../types/game-show";
+import { generateId } from "../../../utils/id";
 import GameShowChoice from "./GameShowChoice";
 
 interface GameShowQuestionProps {
@@ -80,69 +82,102 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
   });
 
   return (
-    <VStack spacing={4} w="full" shadow="sm" borderRadius={8} p={4} bg="white">
-      <FormControl isInvalid={!!error?.question}>
-        <FormLabel htmlFor={`questions.${questionIdx}.question`}>
-          {`Question ${questionIdx + 1}`}
-        </FormLabel>
+    <HStack w="full" align="flex-start">
+      <VStack
+        flexGrow={1}
+        spacing={4}
+        shadow="sm"
+        borderRadius={8}
+        p={4}
+        bg="white"
+      >
+        <FormControl isInvalid={!!error?.question}>
+          <FormLabel htmlFor={`questions.${questionIdx}.question`}>
+            {`Question ${questionIdx + 1}`}
+          </FormLabel>
 
-        <HStack>
-          <Box>
-            {photoURL ? (
-              <AspectRatio
-                borderRadius={4}
-                overflow="hidden"
-                cursor="pointer"
-                w="40px"
-                ratio={1}
-              >
-                <Image src={photoURL} alt="choice photo" objectFit="cover" />
-              </AspectRatio>
-            ) : (
-              <>
-                <input
-                  hidden
-                  id="fileUpload"
-                  type="file"
-                  name="file"
-                  onChange={fileChangeHandler}
-                />
-                <IconButton
+          <HStack>
+            <Box>
+              {photoURL ? (
+                <AspectRatio
+                  borderRadius={4}
+                  overflow="hidden"
                   cursor="pointer"
-                  as="label"
-                  htmlFor="fileUpload"
-                  isLoading={uploading}
-                  colorScheme="orange"
-                  variant="ghost"
-                  aria-label="Upload choice image"
-                  fontSize="20px"
-                  icon={<Icon as={BsImage} />}
-                />
-              </>
-            )}
-          </Box>
-          <Input
-            id={`questions.${questionIdx}.question`}
-            placeholder="question"
-            {...register(`questions.${questionIdx}.question`)}
-          />
-        </HStack>
-        <FormErrorMessage>
-          {error?.question && error.question.message}
-        </FormErrorMessage>
-      </FormControl>
-      <SimpleGrid w="full" columns={2} spacing={4}>
-        {fields.map((field, choiceIdx) => (
-          <GameShowChoice
-            key={field.keyId}
-            choiceId={field.id}
-            error={error?.choices?.[choiceIdx]}
-            questionIdx={questionIdx}
-            choiceIdx={choiceIdx}
-          />
-        ))}
-      </SimpleGrid>
-    </VStack>
+                  w="40px"
+                  ratio={1}
+                >
+                  <Image src={photoURL} alt="choice photo" objectFit="cover" />
+                </AspectRatio>
+              ) : (
+                <>
+                  <input
+                    hidden
+                    id="fileUpload"
+                    type="file"
+                    name="file"
+                    onChange={fileChangeHandler}
+                  />
+                  <IconButton
+                    cursor="pointer"
+                    as="label"
+                    htmlFor="fileUpload"
+                    isLoading={uploading}
+                    colorScheme="orange"
+                    variant="ghost"
+                    aria-label="Upload choice image"
+                    fontSize="20px"
+                    icon={<Icon as={BsImage} />}
+                  />
+                </>
+              )}
+            </Box>
+            <Input
+              id={`questions.${questionIdx}.question`}
+              placeholder="question"
+              {...register(`questions.${questionIdx}.question`)}
+            />
+          </HStack>
+          <FormErrorMessage>
+            {error?.question && error.question.message}
+          </FormErrorMessage>
+        </FormControl>
+        <SimpleGrid w="full" columns={2} spacing={4}>
+          {fields.map((field, choiceIdx, arr) => (
+            <GameShowChoice
+              key={field.keyId}
+              choiceId={field.id}
+              error={error?.choices?.[choiceIdx]}
+              questionIdx={questionIdx}
+              choiceIdx={choiceIdx}
+              onRemove={() => remove(choiceIdx)}
+              onRemoveDisabled={arr.length === 1}
+            />
+          ))}
+        </SimpleGrid>
+      </VStack>
+      <VStack>
+        <IconButton
+          cursor="pointer"
+          variant="ghost"
+          aria-label="Delete question"
+          icon={<Icon as={DeleteIcon} />}
+          onClick={() => {}}
+        />
+        <IconButton
+          cursor="pointer"
+          variant="ghost"
+          aria-label="Add choice"
+          icon={<Icon as={AddIcon} />}
+          onClick={() => {
+            append({
+              id: generateId(),
+              choice: "",
+              photoURL: null,
+            });
+          }}
+        />
+      </VStack>
+    </HStack>
   );
 };
 

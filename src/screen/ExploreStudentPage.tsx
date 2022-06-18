@@ -1,5 +1,11 @@
+import { Navbar } from "../components/navbar";
+
 const ExploreStudentPage = () => {
-  return <div>ExploreStudentPage</div>;
+  return (
+    <div>
+      <Navbar />
+    </div>
+  );
 };
 
 export default ExploreStudentPage;
