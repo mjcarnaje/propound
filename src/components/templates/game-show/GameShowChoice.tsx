@@ -12,6 +12,7 @@ import {
   Image,
   Input,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { FieldErrors, useFormContext, useWatch } from "react-hook-form";
@@ -89,14 +90,13 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
       borderColor={isAnswer ? "green.500" : "gray.100"}
     >
       <FormControl isInvalid={!!error?.choice}>
-        <Flex align="center">
+        <HStack spacing={1} align="center">
           <FormLabel
             htmlFor={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
             fontWeight="semibold"
           >
             {`${getLetter(choiceIdx)}`}
           </FormLabel>
-
           <Box>
             {photoURL ? (
               <AspectRatio
@@ -123,18 +123,20 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
             )}
           </Box>
 
-          <Input
-            id={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
-            placeholder="choice"
-            {...register(
-              `questions.${questionIdx}.choices.${choiceIdx}.choice`,
-              { required: true }
-            )}
-          />
-          <FormErrorMessage>
-            {error?.choice && error.choice.message}
-          </FormErrorMessage>
-        </Flex>
+          <VStack align="flex-start" w="full">
+            <Input
+              id={`questions.${questionIdx}.choices.${choiceIdx}.choice`}
+              placeholder="choice"
+              {...register(
+                `questions.${questionIdx}.choices.${choiceIdx}.choice`,
+                { required: `Choice ${choiceIdx + 1} is required.` }
+              )}
+            />
+            <FormErrorMessage>
+              {error?.choice && error.choice.message}
+            </FormErrorMessage>
+          </VStack>
+        </HStack>
       </FormControl>
       <HStack spacing={2} justify="flex-end" py={2}>
         <IconButton

@@ -98,7 +98,7 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
             {`Question ${questionIdx + 1}`}
           </FormLabel>
 
-          <HStack>
+          <HStack align="flex-start">
             <Box>
               {photoURL ? (
                 <AspectRatio
@@ -133,15 +133,19 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
                 </>
               )}
             </Box>
-            <Input
-              id={`questions.${questionIdx}.question`}
-              placeholder="question"
-              {...register(`questions.${questionIdx}.question`)}
-            />
+            <VStack align="flex-start" w="full">
+              <Input
+                id={`questions.${questionIdx}.question`}
+                placeholder="question"
+                {...register(`questions.${questionIdx}.question`, {
+                  required: `Question ${questionIdx + 1} is required.`,
+                })}
+              />
+              <FormErrorMessage>
+                {error?.question && error.question.message}
+              </FormErrorMessage>
+            </VStack>
           </HStack>
-          <FormErrorMessage>
-            {error?.question && error.question.message}
-          </FormErrorMessage>
         </FormControl>
         <SimpleGrid w="full" columns={2} spacing={4}>
           {fields.map((field, choiceIdx, arr) => (
