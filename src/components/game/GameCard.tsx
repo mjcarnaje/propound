@@ -49,8 +49,9 @@ const GameCard: React.FC<GameCardProps> = ({ data }) => {
           {data.title}
         </Heading>
         <HStack>
-          <Text fontWeight="medium">Code:</Text>
-          <Text>{data.code}</Text>
+          <Text fontStyle="italic">
+            {`${data.description.slice(0, 120)}...`}
+          </Text>
         </HStack>
         <HStack justify="space-between" mt={4}>
           <HStack>

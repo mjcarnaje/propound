@@ -23,6 +23,7 @@ import { doc } from "firebase/firestore";
 import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import DeleteActivity from "../../components/game/DeleteActivity";
 import { firestore } from "../../firebase/config";
 import useStorage from "../../hooks/useStorage";
 import { AcitivityDocType } from "../../types/game";
@@ -185,6 +186,7 @@ const DashboardSettings = () => {
             )}
           />
         </FormControl>
+        <DeleteActivity id={id} />
       </Stack>
       <Flex justify="center" py="4" px={{ base: "4", md: "6" }}>
         <Button isLoading={isLoading} loadingText="" type="submit">
