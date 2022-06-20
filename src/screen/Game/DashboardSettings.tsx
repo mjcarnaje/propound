@@ -11,6 +11,7 @@ import {
   Input,
   Spinner,
   Stack,
+  Switch,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -20,7 +21,7 @@ import {
 } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import { useEffect } from "react";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { firestore } from "../../firebase/config";
 import useStorage from "../../hooks/useStorage";
@@ -35,12 +36,13 @@ const DashboardSettings = () => {
   const activity = useFirestoreDocument(["game", id], ref);
   const { mutate, isLoading } = useFirestoreDocumentMutation(ref);
 
-  const { setValue, reset, control, register, handleSubmit } =
+  const { setValue, watch, reset, control, register, handleSubmit } =
     useForm<AcitivityDocType>({
       defaultValues: {
         title: "",
         description: "",
         coverPhoto: null,
+        status: "DRAFT",
       },
     });
 
@@ -159,6 +161,29 @@ const DashboardSettings = () => {
         <FormControl id="description">
           <FormLabel>Description</FormLabel>
           <Input defaultValue="description.." {...register("description")} />
+        </FormControl>
+
+        <FormControl display="flex" alignItems="center">
+          <FormLabel htmlFor="publish" mb="0">
+            Publish
+          </FormLabel>
+          <Controller
+            name="status"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Switch
+                {...field}
+                isChecked={watch("status") === "PUBLISHED"}
+                onChange={() => {
+                  setValue(
+                    "status",
+                    watch("status") === "DRAFT" ? "PUBLISHED" : "DRAFT"
+                  );
+                }}
+              />
+            )}
+          />
         </FormControl>
       </Stack>
       <Flex justify="center" py="4" px={{ base: "4", md: "6" }}>

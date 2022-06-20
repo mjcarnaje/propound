@@ -35,7 +35,6 @@ import {
   query,
   setDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { IconType } from "react-icons";
 import { BsLink45Deg, BsYoutube } from "react-icons/bs";
@@ -45,7 +44,7 @@ import { MdAddChart } from "react-icons/md";
 import { VscFilePdf } from "react-icons/vsc";
 import { useParams } from "react-router-dom";
 import { gameCollection, gameSubCollection } from "../../firebase/collections";
-import { firestore, storage } from "../../firebase/config";
+import { firestore } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import useStorage from "../../hooks/useStorage";
 import { selectAuth } from "../../store/reducer/auth";

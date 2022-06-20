@@ -16,9 +16,10 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { deleteDoc, getDocs, query } from "firebase/firestore";
+import { deleteDoc, getDocs, query, writeBatch } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 import { gameCollection } from "../../firebase/collections";
+import { firestore } from "../../firebase/config";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
 import CreateGame from "../CreateGame";
@@ -92,10 +93,20 @@ export const Navbar: React.FC<NavbarProps> = ({ isLanding }) => {
                               onClick={async () => {
                                 try {
                                   const games = query(gameCollection);
+
                                   const querySnapshot = await getDocs(games);
+
+                                  const batch = writeBatch(firestore);
+
+                                  if (querySnapshot.size === 0) {
+                                    return;
+                                  }
+
                                   querySnapshot.forEach((doc) => {
-                                    deleteDoc(doc.ref);
+                                    batch.delete(doc.ref);
                                   });
+
+                                  await batch.commit();
                                 } catch (err) {
                                   console.log(err);
                                 }

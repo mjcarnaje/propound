@@ -21,6 +21,8 @@ import DashboardStudents from "./screen/Game/DashboardStudents";
 import { LandingPage } from "./screen/LandingPage";
 import RootPage from "./screen/RootPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
+import Take from "./screen/Take/Take";
+import TakeIndex from "./screen/Take/TakeIndex";
 import { TeacherLoginPage } from "./screen/TeacherLoginPage";
 import { selectAuth, setLoading, setUser } from "./store/reducer/auth";
 
@@ -88,6 +90,10 @@ function App() {
           <Route path="post-game" element={<DashboardPostGame />} />
           <Route path="learn" element={<DashboardLearn />} />
           <Route path="students" element={<DashboardStudents />} />
+        </Route>
+
+        <Route path="/t/:id" element={<Take />}>
+          <Route path="/t/:id" element={<TakeIndex />} />
         </Route>
 
         <Route element={<ProtectedRoute redirectPath="/" isAllowed={!user} />}>
