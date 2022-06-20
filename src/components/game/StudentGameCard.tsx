@@ -8,15 +8,20 @@ import {
   Tag,
   TagProps,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AcitivityDocType, GameStatus } from "../../types/game";
 
 interface StudentGameCardProps {
   data: AcitivityDocType;
+  isJoined: boolean;
 }
 
-const StudentGameCard: React.FC<StudentGameCardProps> = ({ data }) => {
+const StudentGameCard: React.FC<StudentGameCardProps> = ({
+  data,
+  isJoined,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -39,11 +44,16 @@ const StudentGameCard: React.FC<StudentGameCardProps> = ({ data }) => {
           </Box>
         )}
       </AspectRatio>
-      <Box p={4}>
-        <Heading as="h4" size="md">
-          {data.title}
-        </Heading>
-        <HStack justify="space-between" mt={4}>
+      <VStack align="flex-start" spacing={4} p={4}>
+        <Box>
+          <Heading as="h4" size="md">
+            {data.title}
+          </Heading>
+          <Text fontStyle="italic">
+            {`${data.description.slice(0, 120)}...`}
+          </Text>
+        </Box>
+        <HStack w="full" justify="space-between">
           <HStack>
             <Avatar
               boxSize="8"
@@ -52,8 +62,9 @@ const StudentGameCard: React.FC<StudentGameCardProps> = ({ data }) => {
             />
             <Text fontWeight="medium">{data.teacher.displayName}</Text>
           </HStack>
+          {isJoined && <Tag colorScheme="green">Joined</Tag>}
         </HStack>
-      </Box>
+      </VStack>
     </Box>
   );
 };

@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Spinner,
   Text,
+  VStack,
 } from "@chakra-ui/react";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query } from "firebase/firestore";
@@ -39,9 +40,17 @@ const DashboardStudents: React.FC = () => {
       )}
       <SimpleGrid columns={2} spacing={4}>
         {students.map((student) => (
-          <HStack key={student.uid}>
-            <Avatar src={student.photoURL} name={student.displayName} />
-            <Text>{student.displayName}</Text>
+          <HStack w="full" key={student.uid} justify="space-between">
+            <HStack flexGrow={1} spacing={4}>
+              <Avatar src={student.photoURL} name={student.displayName} />
+              <VStack spacing={0} align="flex-start">
+                <Text fontWeight="medium">{student.displayName}</Text>
+                <Text fontStyle="initial">{student.email}</Text>
+              </VStack>
+            </HStack>
+            <Box>
+              <Text fontWeight="medium">{student.score}</Text>
+            </Box>
           </HStack>
         ))}
       </SimpleGrid>

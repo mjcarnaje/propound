@@ -16,7 +16,7 @@ import {
 import { FaLightbulb } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 // @ts-expect-error
-import LandingPageSvg from "../assets/svgs/landing_page.svg?component";
+import LandingPageSvg from "../assets/svgs/landing_page_1.svg?component";
 import { Logo } from "../components/Logo";
 import { Navbar } from "../components/navbar";
 
@@ -65,9 +65,41 @@ export const LandingPage = () => {
         </ModalContent>
       </Modal>
 
-      <Navbar isLanding />
+      <Navbar
+        isLanding
+        element={
+          <Stack direction={{ base: "column", md: "row" }} spacing="4">
+            <Button
+              size="lg"
+              onClick={() => navigate("/about")}
+              bg="white"
+              color="gray.900"
+              _hover={{ bg: "gray.50" }}
+              px="8"
+              leftIcon={<Box as={FaLightbulb} fontSize="xl" />}
+            >
+              Learn more
+            </Button>
+            <Button
+              size="lg"
+              minW="210px"
+              colorScheme="orange"
+              px="8"
+              onClick={onOpen}
+            >
+              Login
+            </Button>
+          </Stack>
+        }
+      />
 
-      <Box as="section">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minH="calc(100vh - 86px)"
+        as="section"
+      >
         <Box
           maxW={{ base: "xl", md: "8xl" }}
           px={{ base: "6", md: "8" }}
@@ -79,10 +111,10 @@ export const LandingPage = () => {
             align={{ lg: "center" }}
             justify="space-between"
           >
-            <Box w={{ base: "full", md: "50%" }} flex="1">
+            <Box w={{ base: "full", md: "40%" }} flex="1">
               <Heading
                 as="h1"
-                size="3xl"
+                size="4xl"
                 color="orange.500"
                 mt="8"
                 fontWeight="extrabold"
@@ -91,7 +123,7 @@ export const LandingPage = () => {
                 Welcome to proPound
               </Heading>
               <Text
-                color="gray.500"
+                color="gray.600"
                 mt="4"
                 fontSize="xl"
                 fontStyle="italic"
@@ -99,39 +131,14 @@ export const LandingPage = () => {
               >
                 A fun learning medium for Civil Technology
               </Text>
-
-              <Stack
-                direction={{ base: "column", md: "row" }}
-                spacing="4"
-                mt="8"
-              >
-                <Button
-                  size="lg"
-                  minW="210px"
-                  colorScheme="orange"
-                  height="14"
-                  px="8"
-                  onClick={onOpen}
-                >
-                  Login
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={() => navigate("/about")}
-                  bg="white"
-                  color="gray.900"
-                  _hover={{ bg: "gray.50" }}
-                  height="14"
-                  px="8"
-                  shadow="base"
-                  leftIcon={<Box as={FaLightbulb} fontSize="xl" />}
-                >
-                  Learn more
-                </Button>
-              </Stack>
             </Box>
-            <Box w={{ base: "full", md: "50%" }} pos="relative">
-              <LandingPageSvg style={{ width: "100%" }} />
+            <Box
+              display="flex"
+              w={{ base: "full", md: "60%" }}
+              justifyContent="center"
+              pos="relative"
+            >
+              <LandingPageSvg style={{ width: "90%" }} />
             </Box>
           </Stack>
         </Box>

@@ -10,12 +10,16 @@ const RootPage = () => {
     return <Spinner />;
   }
 
-  if (user.role === "STUDENT") {
+  if (user?.role === "STUDENT") {
     return <Navigate to="/s" />;
   }
 
-  if (user.role === "TEACHER") {
+  if (user?.role === "TEACHER") {
     return <Navigate to="/t" />;
+  }
+
+  if (!user) {
+    return <Navigate to="/landing" />;
   }
 
   return <div>RootPage</div>;

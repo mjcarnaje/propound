@@ -29,9 +29,10 @@ import { ToggleButton } from "./ToggleButton";
 
 interface NavbarProps {
   isLanding?: boolean;
+  element?: JSX.Element;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ isLanding }) => {
+export const Navbar: React.FC<NavbarProps> = ({ isLanding, element }) => {
   const { user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -148,6 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isLanding }) => {
               )}
             </>
           )}
+          {element}
         </Flex>
       </Box>
     </Box>

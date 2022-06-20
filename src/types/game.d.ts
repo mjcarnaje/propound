@@ -23,8 +23,9 @@ export interface AcitivityDocType {
   status: GameStatus;
 }
 
-export interface GameStudentDocType extends BaseUserDocType {
-  result: string | null;
+export interface AcitivityStudentDocType extends BaseUserDocType {
+  taken: boolean;
+  score: number;
 }
 
 export type GameType = "PRE_TEST" | "POST_TEST";

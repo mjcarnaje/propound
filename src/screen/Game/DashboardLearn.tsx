@@ -389,10 +389,7 @@ const DashboardLearn: React.FC = () => {
                       );
 
                       setLearningMaterials((learningMaterials) =>
-                        learningMaterials.filter(
-                          (learningMaterial) =>
-                            learningMaterial.id !== material.id
-                        )
+                        learningMaterials.filter(({ id }) => id !== material.id)
                       );
                     } catch (err) {
                       toast({
