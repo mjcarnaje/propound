@@ -12,6 +12,7 @@ import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query } from "firebase/firestore";
 import React from "react";
 import { useParams } from "react-router-dom";
+import Empty from "../../components/svg/EmptySvg";
 import { firestore } from "../../firebase/config";
 
 const DashboardStudents: React.FC = () => {
@@ -35,7 +36,10 @@ const DashboardStudents: React.FC = () => {
     <Box w="full">
       {students.length === 0 && (
         <Center py={12}>
-          <Text>No students have joined this game yet.</Text>
+          <Empty
+            maxHeight={300}
+            title="No students have joined this learning space yet."
+          />
         </Center>
       )}
       <SimpleGrid columns={2} spacing={4}>
