@@ -20,7 +20,7 @@ const SetGameType: React.FC<SetGameTypeProps> = ({ setGameTemplate }) => {
   return (
     <VStack spacing={8} py={12}>
       <Text fontSize={22} fontWeight="semibold">
-        Choose a game
+        Choose game type
       </Text>
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         {gameTemplates.map((template) => (

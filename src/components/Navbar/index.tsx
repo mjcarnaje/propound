@@ -48,13 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isLanding, element }) => {
             <Box cursor="pointer" onClick={() => navigate("/")}>
               <LogoWithText />
             </Box>
-            {isDesktop && !isLanding && (
-              <ButtonGroup variant="ghost" spacing="1">
-                <Button as={Link} to="/" aria-current="page">
-                  Home
-                </Button>
-              </ButtonGroup>
-            )}
           </HStack>
 
           {!isLanding && (

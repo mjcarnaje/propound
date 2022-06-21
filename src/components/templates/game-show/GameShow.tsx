@@ -113,7 +113,7 @@ const GameShow: React.FC<GameShowProps> = ({
             <FormLabel htmlFor="title">Title</FormLabel>
             <Input
               id="title"
-              placeholder="title"
+              placeholder="Title"
               {...register("title", {
                 required: "This is required",
                 minLength: { value: 4, message: "Minimum length should be 4" },
@@ -124,10 +124,10 @@ const GameShow: React.FC<GameShowProps> = ({
             </FormErrorMessage>
           </FormControl>
           <FormControl isInvalid={!!errors.instruction}>
-            <FormLabel htmlFor="instruction">Instruction</FormLabel>
+            <FormLabel htmlFor="instruction">Direction</FormLabel>
             <Textarea
               id="instruction"
-              placeholder="instruction"
+              placeholder="Direction"
               {...register("instruction", {
                 required: "This is required",
                 minLength: { value: 4, message: "Minimum length should be 4" },

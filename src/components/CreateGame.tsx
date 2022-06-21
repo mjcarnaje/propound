@@ -28,6 +28,7 @@ import { generateCode, generateId } from "../utils/id";
 
 interface CreateGameProps {
   user: UserDocType;
+  button?: (props: ReturnType<typeof useDisclosure>) => JSX.Element;
 }
 
 const defaultInput = {
@@ -35,9 +36,10 @@ const defaultInput = {
   description: "",
 };
 
-const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
+const CreateGame: React.FC<CreateGameProps> = ({ user, button }) => {
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const disclosure = useDisclosure();
+  const { isOpen, onOpen, onClose } = disclosure;
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -99,18 +101,22 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
 
   return (
     <>
-      <Tooltip label="Create game">
-        <IconButton
-          onClick={onOpen}
-          icon={<AiOutlineFileAdd fontSize="1.5rem" />}
-          aria-label="Create game"
-        />
+      <Tooltip label="Create">
+        {button ? (
+          button(disclosure)
+        ) : (
+          <IconButton
+            onClick={onOpen}
+            icon={<AiOutlineFileAdd fontSize="1.5rem" />}
+            aria-label="Create game"
+          />
+        )}
       </Tooltip>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create Game-Learning</ModalHeader>
+          <ModalHeader>Create Learning Space</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <VStack>
@@ -120,7 +126,7 @@ const CreateGame: React.FC<CreateGameProps> = ({ user }) => {
                   name="title"
                   value={input.title}
                   onChange={handleChange}
-                  placeholder="Game topic"
+                  placeholder="Title"
                 />
                 {error && <FormErrorMessage>{error}</FormErrorMessage>}
               </FormControl>
