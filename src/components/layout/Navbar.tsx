@@ -7,6 +7,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import { NavLink } from "react-router-dom";
 import { Logo } from "../Logo";
 import { Sidebar } from "./SideBar";
 import { ToggleButton } from "./ToggleButton";
@@ -22,7 +23,9 @@ export const Navbar = () => {
       boxShadow={useColorModeValue("sm", "sm-dark")}
     >
       <Flex justify="space-between">
-        <Logo />
+        <NavLink to="/">
+          <Logo height={20} />
+        </NavLink>
         <ToggleButton
           isOpen={isOpen}
           aria-label="Open Menu"
