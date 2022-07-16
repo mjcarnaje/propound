@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "src/screen/Take/.tsx"],
+  "include": ["src", "src/components/screen/Take/.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

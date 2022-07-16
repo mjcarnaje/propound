@@ -17,8 +17,8 @@ import { FaLightbulb } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 // @ts-expect-error
 import LandingPageSvg from "../assets/svgs/landing_page_1.svg?component";
+import { MainLayout } from "../components/layout/MainLayout";
 import { Logo } from "../components/Logo";
-import { Navbar } from "../components/navbar";
 
 export const LandingPage = () => {
   const navigate = useNavigate();
@@ -65,84 +65,58 @@ export const LandingPage = () => {
         </ModalContent>
       </Modal>
 
-      <Navbar
-        isLanding
-        element={
-          <Stack direction={{ base: "column", md: "row" }} spacing="4">
-            <Button
-              size="lg"
-              onClick={() => navigate("/about")}
-              bg="white"
-              color="gray.900"
-              _hover={{ bg: "gray.50" }}
-              px="8"
-              leftIcon={<Box as={FaLightbulb} fontSize="xl" />}
-            >
-              Learn more
-            </Button>
-            <Button
-              size="lg"
-              minW="210px"
-              colorScheme="orange"
-              px="8"
-              onClick={onOpen}
-            >
-              Login
-            </Button>
-          </Stack>
-        }
-      />
-
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minH="calc(100vh - 86px)"
-        as="section"
-      >
+      <MainLayout>
         <Box
-          maxW={{ base: "xl", md: "8xl" }}
-          px={{ base: "6", md: "8" }}
-          mx="auto"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minH="calc(100vh - 86px)"
+          as="section"
         >
-          <Stack
-            direction={{ base: "column", lg: "row" }}
-            spacing={{ base: "3rem", lg: "2rem" }}
-            align={{ lg: "center" }}
-            justify="space-between"
+          <Box
+            maxW={{ base: "xl", md: "8xl" }}
+            px={{ base: "6", md: "8" }}
+            mx="auto"
           >
-            <Box w={{ base: "full", md: "40%" }} flex="1">
-              <Heading
-                as="h1"
-                size="4xl"
-                color="orange.500"
-                mt="8"
-                fontWeight="extrabold"
-                letterSpacing="tight"
-              >
-                Welcome to proPound
-              </Heading>
-              <Text
-                color="gray.600"
-                mt="4"
-                fontSize="xl"
-                fontStyle="italic"
-                fontWeight="medium"
-              >
-                A fun learning medium for Civil Technology
-              </Text>
-            </Box>
-            <Box
-              display="flex"
-              w={{ base: "full", md: "60%" }}
-              justifyContent="center"
-              pos="relative"
+            <Stack
+              direction={{ base: "column", lg: "row" }}
+              spacing={{ base: "3rem", lg: "2rem" }}
+              align={{ lg: "center" }}
+              justify="space-between"
             >
-              <LandingPageSvg style={{ width: "90%" }} />
-            </Box>
-          </Stack>
+              <Box w={{ base: "full", md: "40%" }} flex="1">
+                <Heading
+                  as="h1"
+                  size="4xl"
+                  color="orange.500"
+                  mt="8"
+                  fontWeight="extrabold"
+                  letterSpacing="tight"
+                >
+                  Welcome to proPound
+                </Heading>
+                <Text
+                  color="gray.600"
+                  mt="4"
+                  fontSize="xl"
+                  fontStyle="italic"
+                  fontWeight="medium"
+                >
+                  A fun learning medium for Civil Technology
+                </Text>
+              </Box>
+              <Box
+                display="flex"
+                w={{ base: "full", md: "60%" }}
+                justifyContent="center"
+                pos="relative"
+              >
+                <LandingPageSvg style={{ width: "90%" }} />
+              </Box>
+            </Stack>
+          </Box>
         </Box>
-      </Box>
+      </MainLayout>
     </>
   );
 };

@@ -1,6 +1,6 @@
 import { Button, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { GameTemplate } from "../types/game";
-import { toProperCase } from "../utils/stringl";
+import { toProperCase } from "../utils/string";
 
 interface SetGameTypeProps {
   setGameTemplate: React.Dispatch<React.SetStateAction<GameTemplate>>;

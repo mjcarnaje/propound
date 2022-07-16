@@ -1,10 +1,10 @@
-import { Box, Button, Container, Input, Text } from "@chakra-ui/react";
+import { Box, Container, Spinner, Text } from "@chakra-ui/react";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import React from "react";
 import { useParams } from "react-router-dom";
 import JoinGame from "../../components/game/JoinGame";
-import { Navbar } from "../../components/navbar";
+import { MainLayout } from "../../components/layout/MainLayout";
 import { firestore } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
@@ -21,27 +21,17 @@ const Take: React.FC<TakeProps> = () => {
 
   if (activity.isLoading) {
     return (
-      <div>
-        <Navbar />
-        <Box h="1px" minH="100vh">
-          <Container py={4}>
-            <Text>Loading...</Text>
-          </Container>
-        </Box>
-      </div>
+      <MainLayout>
+        <Spinner />
+      </MainLayout>
     );
   }
 
   if (activity.isError) {
     return (
-      <div>
-        <Navbar />
-        <Box h="1px" minH="100vh">
-          <Container py={4}>
-            <Text>Error</Text>
-          </Container>
-        </Box>
-      </div>
+      <MainLayout>
+        <h1>Error</h1>
+      </MainLayout>
     );
   }
 
@@ -50,8 +40,7 @@ const Take: React.FC<TakeProps> = () => {
   const isJoined = data.studentIds.some((id) => id === user.uid);
 
   return (
-    <Box as="section" h="1px" minH="100vh">
-      <Navbar />
+    <MainLayout>
       <Container py={{ base: "4", md: "8" }} minH="100vh" h="1px">
         {!isJoined ? (
           <JoinGame id={id} studentIds={data.studentIds} code={data.code} />
@@ -61,7 +50,7 @@ const Take: React.FC<TakeProps> = () => {
           </Box>
         )}
       </Container>
-    </Box>
+    </MainLayout>
   );
 };
 

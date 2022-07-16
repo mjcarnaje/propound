@@ -1,8 +1,8 @@
-import { Box, Container, SimpleGrid, Spinner } from "@chakra-ui/react";
+import { Container, SimpleGrid, Spinner } from "@chakra-ui/react";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, limit, query, where } from "firebase/firestore";
 import StudentGameCard from "../components/game/StudentGameCard";
-import { Navbar } from "../components/navbar";
+import { MainLayout } from "../components/layout/MainLayout";
 import { firestore } from "../firebase/config";
 import { useAppSelector } from "../hooks/redux";
 import { selectAuth } from "../store/reducer/auth";
@@ -21,27 +21,24 @@ const ExploreStudentPage = () => {
 
   if (games.isLoading) {
     return (
-      <div>
-        <Navbar />
+      <MainLayout>
         <Spinner />
-      </div>
+      </MainLayout>
     );
   }
 
   if (games.isError) {
     return (
-      <div>
-        <Navbar />
+      <MainLayout>
         <h1>Error</h1>
-      </div>
+      </MainLayout>
     );
   }
 
   const snapshot = games.data;
 
   return (
-    <div>
-      <Navbar />
+    <MainLayout>
       <Container py={{ base: "16", md: "24" }}>
         <SimpleGrid gap={{ base: "4", md: "6" }} columns={{ base: 1, md: 3 }}>
           {snapshot.docs.map((docSnapshot) => {
@@ -56,7 +53,7 @@ const ExploreStudentPage = () => {
           })}
         </SimpleGrid>
       </Container>
-    </div>
+    </MainLayout>
   );
 };
 

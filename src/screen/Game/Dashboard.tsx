@@ -7,7 +7,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { Navbar } from "../../components/navbar";
+import { MainLayout } from "../../components/layout/MainLayout";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
 
@@ -46,8 +46,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   ];
 
   return (
-    <Box as="section" h="1px" minH="100vh">
-      <Navbar />
+    <MainLayout>
       <Container py={{ base: "4", md: "8" }} minH="100vh" h="1px">
         <Stack
           w="full"
@@ -84,7 +83,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
           </Box>
         </Stack>
       </Container>
-    </Box>
+    </MainLayout>
   );
 };
 

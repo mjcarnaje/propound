@@ -3,7 +3,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { Navbar } from "./components/navbar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { userCollection } from "./firebase/collections";
 import { auth } from "./firebase/config";
@@ -19,6 +18,7 @@ import DashboardPreGame from "./screen/Game/DashboardPreGame";
 import DashboardSettings from "./screen/Game/DashboardSettings";
 import DashboardStudents from "./screen/Game/DashboardStudents";
 import { LandingPage } from "./screen/LandingPage";
+import NotFoundPage from "./screen/NotFoundPage";
 import RootPage from "./screen/RootPage";
 import { StudentLoginPage } from "./screen/StudentLoginPage";
 import Take from "./screen/Take/Take";
@@ -55,7 +55,6 @@ function App() {
   if (loading && !location.pathname.includes("login")) {
     return (
       <Center flexDir="column" minH="100vh">
-        <Navbar />
         <Center flexGrow={1}>
           <Spinner />
         </Center>
@@ -100,6 +99,8 @@ function App() {
           <Route path="/t/login" element={<TeacherLoginPage />} />
           <Route path="/s/login" element={<StudentLoginPage />} />
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </QueryClientProvider>
   );

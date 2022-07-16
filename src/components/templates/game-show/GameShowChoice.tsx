@@ -20,7 +20,7 @@ import { BsImage } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import useStorage from "../../../hooks/useStorage";
 import { GameShowChoiceType, GameShowTemplate } from "../../../types/game-show";
-import { getLetter } from "../../../utils/stringl";
+import { getLetter } from "../../../utils/string";
 
 interface GameShowChoiceProps {
   error: FieldErrors<GameShowChoiceType>;

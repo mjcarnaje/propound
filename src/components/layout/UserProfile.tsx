@@ -1,5 +1,5 @@
 import { Avatar, Box, HStack, Text } from "@chakra-ui/react";
-import * as React from "react";
+import { truncate } from "../../utils/string";
 
 interface UserProfileProps {
   name: string;
@@ -17,7 +17,7 @@ export const UserProfile = (props: UserProfileProps) => {
           {name}
         </Text>
         <Text color="muted" fontSize="sm">
-          {email}
+          {truncate(email, 20)}
         </Text>
       </Box>
     </HStack>

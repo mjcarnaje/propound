@@ -9,3 +9,7 @@ export function toProperCase(str: string): string {
 export function getLetter(n: number): string {
   return String.fromCharCode(97 + n);
 }
+
+export function truncate(str: string, maxLength: number): string {
+  return str.length > maxLength ? str.substr(0, maxLength - 3) + "..." : str;
+}

@@ -10,17 +10,13 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import CEDLogo from "../assets/images/CED logo.png";
 import MSUIITLogo from "../assets/images/MSU-IIT logo.png";
-import { Navbar } from "../components/navbar";
+import { MainLayout } from "../components/layout/MainLayout";
 
 export const AboutPage = () => {
-  const navigate = useNavigate();
-
   return (
-    <>
-      <Navbar isLanding />
+    <MainLayout>
       <Box as="section" py={24}>
         <Container maxW="container.xl">
           <Stack spacing={12}>
@@ -197,6 +193,6 @@ export const AboutPage = () => {
           <Image src={MSUIITLogo} />
         </AspectRatio>
       </HStack>
-    </>
+    </MainLayout>
   );
 };
