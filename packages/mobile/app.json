@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "propound",
+    "originalFullName": "@mjcarnaje/propound",
+    "slug": "propound",
+    "version": "1.0.0",
+    "scheme": "mjcarnaje.propound",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/b3a22199-7733-48d9-b6fd-38663b64db7e"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "bundleIdentifier": "com.mjcarnaje.propound",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.mjcarnaje.propound",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "830929734929",
+    "project_id": "propound-9e155",
+    "storage_bucket": "propound-9e155.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830929734929:android:39dc3edd949959ba1b50b0",
+        "android_client_info": {
+          "package_name": "com.mjcarnaje.propound"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830929734929-c1jv2kagdc72q7i71dnldegon4fo08d8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mjcarnaje.propound",
+            "certificate_hash": "341d270e3d4716f9b262f978282e0ffe2af46022"
+          }
+        },
+        {
+          "client_id": "830929734929-ido1ce6flb2sev5ab6m1ll9rtg4jm0tm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mjcarnaje.propound",
+            "certificate_hash": "81c6ce27b26b8ac66bf4916ddc40321a0609a8eb"
+          }
+        },
+        {
+          "client_id": "830929734929-1nf1vqbu2du4fssuc6pkctu0ut9k0d5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhjBQzsmjGZOIqdujs-YZO5p94BojOabU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830929734929-1nf1vqbu2du4fssuc6pkctu0ut9k0d5u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
