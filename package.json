@@ -2,26 +2,25 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@types/node": "^18.11.17",
-    "expo": "^47.0.9",
+    "concurrently": "^7.6.0",
     "lerna": "^6.1.0",
     "typescript": "^4.9.4"
   },
-  "dependencies": {
-    "metro-config": "^0.73.6"
-  },
+  "dependencies": {},
   "scripts": {
     "web": "lerna --scope=@propound/web run start --stream --",
     "expo": "lerna --scope=@propound/mobile run start --stream --",
-    "types": "lerna --scope=@propound/types run build --stream --"
+    "types": "lerna --scope=@propound/types run build --stream --",
+    "utils": "lerna --scope=@propound/utils run build --stream --",
+    "build:packages": "concurrently \"yarn types\" \"yarn utils\""
   },
   "workspaces": {
     "packages": [
       "packages/*"
     ],
     "nohoist": [
-      "**/expo",
-      "**/expo/**"
+      "**/mobile",
+      "**/mobile/**"
     ]
   }
 }

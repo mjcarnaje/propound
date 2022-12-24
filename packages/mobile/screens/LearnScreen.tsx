@@ -1,6 +1,8 @@
 import { AntDesign } from "@expo/vector-icons";
 import {
-  AcitivityStudentDocType,
+  ActivityCollectionNames,
+  ActivityStudentResultDocType,
+  CollectionNames,
   LearningMaterial,
   LearningMaterialType,
 } from "@propound/types";
@@ -8,6 +10,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import * as WebBrowser from "expo-web-browser";
 import {
   collection,
+  CollectionReference,
   doc,
   DocumentReference,
   getDocs,
@@ -46,14 +49,17 @@ const LearnScreen: React.FC<StackScreenProps<RootStackParamList, "Learn">> = ({
   async function getActivity() {
     try {
       const q = query(
-        collection(firestore, "activity", activityId, "materials")
+        collection(
+          firestore,
+          CollectionNames.ACTIVITIES,
+          activityId,
+          ActivityCollectionNames.MATERIALS
+        ) as CollectionReference<LearningMaterial>
       );
 
       const querySnapshot = await getDocs(q);
 
-      setMaterials(
-        querySnapshot.docs.map((doc) => doc.data() as LearningMaterial)
-      );
+      setMaterials(querySnapshot.docs.map((doc) => doc.data()));
     } catch (err) {
       toast.show({
         title: "Error",
@@ -69,11 +75,11 @@ const LearnScreen: React.FC<StackScreenProps<RootStackParamList, "Learn">> = ({
 
     const studentRef = doc(
       firestore,
-      "activity",
+      CollectionNames.ACTIVITIES,
       activityId,
-      "students",
+      ActivityCollectionNames.STUDENTS,
       user.uid
-    ) as DocumentReference<AcitivityStudentDocType>;
+    ) as DocumentReference<ActivityStudentResultDocType>;
 
     await updateDoc(studentRef, {
       "status.learningDone": true,

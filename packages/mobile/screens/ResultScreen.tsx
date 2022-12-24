@@ -1,5 +1,16 @@
-import { AcitivityDocType, UserActivityResultDocType } from "@propound/types";
-import { collection, getDocs, Query, query, where } from "firebase/firestore";
+import {
+  ActivityDocType,
+  CollectionNames,
+  StudentCollectionNames,
+  StudentResultDocType,
+} from "@propound/types";
+import {
+  collection,
+  CollectionReference,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import {
   AspectRatio,
   Box,
@@ -13,12 +24,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import BaseScreen from "../components/BaseScreen";
-import { firestore } from "../configs/firebase";
+import { collections, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 
 type ResultAndActivity = {
-  activity: AcitivityDocType;
-  result: UserActivityResultDocType;
+  activity: ActivityDocType;
+  result: StudentResultDocType;
 };
 
 const ResultScreen = () => {
@@ -31,8 +42,13 @@ const ResultScreen = () => {
       setIsLoading(true);
 
       const resultsRef = query(
-        collection(firestore, "user", user.uid, "scores")
-      ) as Query<UserActivityResultDocType>;
+        collection(
+          firestore,
+          CollectionNames.STUDENTS,
+          user.uid,
+          StudentCollectionNames.RESULTS
+        ) as CollectionReference<StudentResultDocType>
+      );
 
       const resultsSnapshot = await getDocs(resultsRef);
 
@@ -41,9 +57,9 @@ const ResultScreen = () => {
       const activityIds = results.map((result) => result.activityId);
 
       const activitiesRef = query(
-        collection(firestore, "activity"),
+        collections.activities,
         where("id", "in", activityIds)
-      ) as Query<AcitivityDocType>;
+      );
 
       const activitiesSnapshot = await getDocs(activitiesRef);
 

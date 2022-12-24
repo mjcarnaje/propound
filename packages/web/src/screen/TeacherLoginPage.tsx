@@ -41,9 +41,7 @@ export const TeacherLoginPage = () => {
           </Stack>
           <Stack spacing="6">
             <Button
-              onClick={() => {
-                dispatch(signInWithGoogle("TEACHER"));
-              }}
+              onClick={() => dispatch(signInWithGoogle())}
               variant="secondary"
               leftIcon={<GoogleIcon boxSize="5" />}
               iconSpacing="3"

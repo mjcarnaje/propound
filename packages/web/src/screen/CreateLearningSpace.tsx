@@ -8,7 +8,6 @@ import {
   Input,
   Stack,
   Textarea,
-  useDisclosure,
   useToast,
   VStack,
 } from "@chakra-ui/react";
@@ -16,12 +15,12 @@ import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "../components/layout/MainLayout";
-import { activityCollection, userCollection } from "../firebase/collections";
 import { useAppSelector } from "../hooks/redux";
 import { selectAuth } from "../store/reducer/auth";
 import { generateCode, generateId } from "../utils/id";
 // @ts-ignore
 import CreateActivitySvg from "../assets/svgs/create_activity.svg?component";
+import { collections } from "../firebase/config";
 
 const defaultInput = {
   title: "",
@@ -33,7 +32,6 @@ interface CreateLearningSpaceProps {}
 const CreateLearningSpace: React.FC<CreateLearningSpaceProps> = () => {
   const { user } = useAppSelector(selectAuth);
   const navigate = useNavigate();
-  const disclosure = useDisclosure();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +62,7 @@ const CreateLearningSpace: React.FC<CreateLearningSpaceProps> = () => {
 
     try {
       setLoading(true);
-      await setDoc(doc(activityCollection, id), {
+      await setDoc(doc(collections.activities, id), {
         id,
         title: input.title,
         description: input.description,
@@ -72,16 +70,17 @@ const CreateLearningSpace: React.FC<CreateLearningSpaceProps> = () => {
         coverPhoto: "",
         teacher: {
           uid: user.uid,
-          displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
+          firstName: user.firstName,
+          lastName: user.lastName,
         },
         studentIds: [],
         status: "DRAFT",
         createdAt: serverTimestamp(),
       });
 
-      const userRef = doc(userCollection, user.uid);
+      const userRef = doc(collections.teachers, user.uid);
 
       await updateDoc(userRef, {
         createdGames: [...user.createdGames, id],

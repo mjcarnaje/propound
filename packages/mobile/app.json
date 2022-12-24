@@ -27,7 +27,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "plugins": [
       [
@@ -42,6 +43,11 @@
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b3a22199-7733-48d9-b6fd-38663b64db7e"
+      }
     }
   }
 }

@@ -17,7 +17,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { AcitivityDocType, GameStatus } from "@propound/types";
+import { ActivityDocType, GameStatus } from "@propound/types";
 import React from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import NoCoverPhotoSvg from "../../assets/svgs/no_cover_photo.svg?component";
 
 interface ActivityCardProps {
-  data: AcitivityDocType;
+  data: ActivityDocType;
   isJoined?: boolean;
   isMine?: boolean;
 }

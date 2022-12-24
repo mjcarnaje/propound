@@ -11,7 +11,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { MissingWordQuestionType, MissingWordTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameType,
+  MissingWordQuestionType,
+  MissingWordTemplate,
+} from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, doc } from "firebase/firestore";
 import React from "react";
@@ -34,7 +40,7 @@ const defaultQuestion: () => MissingWordQuestionType = () => ({
 
 interface MissingWordProps {
   activityId: string;
-  type: "PRE_TEST" | "POST_TEST";
+  type: GameType;
   gameData?: MissingWordTemplate | null;
 }
 
@@ -45,7 +51,12 @@ const MissingWord: React.FC<MissingWordProps> = ({
 }) => {
   const toast = useToast();
 
-  const gameCollection = collection(firestore, "activity", activityId, "games");
+  const gameCollection = collection(
+    firestore,
+    CollectionNames.ACTIVITIES,
+    activityId,
+    ActivityCollectionNames.GAMES
+  );
 
   const ref = doc(gameCollection, type);
   const { mutate, isLoading } = useFirestoreDocumentMutation(ref);

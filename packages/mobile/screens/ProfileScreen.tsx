@@ -1,28 +1,18 @@
-import { UserDocType } from "@propound/types";
+import { getFullName } from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import { signOut } from "firebase/auth";
-import {
-  collection,
-  CollectionReference,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import moment from "moment";
 import { Button, Center, Spinner, Text, VStack } from "native-base";
 import React, { useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { Alert, Image, TouchableOpacity } from "react-native";
 import BaseScreen from "../components/BaseScreen";
-import { auth, firestore } from "../configs/firebase";
+import { auth, collections } from "../configs/firebase";
 import { MainScreensParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
 import useStorage from "../utils/useStorage";
 import LoadingScreen from "./LoadingScreen";
-
-const getInitials = (name: string) => {
-  const [firstName, lastName] = name.split(" ");
-  return `${firstName?.[0] || ""}${lastName?.[0] || ""}`;
-};
 
 const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
   navigation,
@@ -32,32 +22,31 @@ const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
   const { _uploadFile } = useStorage();
 
   const pickImage = async (): Promise<void> => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      const timestamp = moment().format("YYYYMMDDHHmmss");
-      setUploading(true);
-      const newPhotoURL = await _uploadFile(result, `images/${timestamp}`);
-      const currUser = auth?.currentUser;
-      if (currUser && newPhotoURL) {
-        const userRef = doc(
-          collection(firestore, "user") as CollectionReference<UserDocType>,
-          user.uid
-        );
+      if (!result.canceled) {
+        const timestamp = moment().format("YYYYMMDDHHmmss");
+        setUploading(true);
+        const newPhotoURL = await _uploadFile(result, `images/${timestamp}`);
 
-        await updateDoc(userRef, {
-          photoURL: newPhotoURL,
-        });
+        if (newPhotoURL) {
+          const studentRef = doc(collections.students, user.uid);
 
-        setUser({ ...user, photoURL: newPhotoURL });
+          await updateDoc(studentRef, { photoURL: newPhotoURL });
 
-        setUploading(false);
+          setUser({ ...user, photoURL: newPhotoURL });
+
+          setUploading(false);
+        }
       }
+    } catch (err) {
+      Alert.alert("Error", "Something went wrong. Please try again.");
     }
   };
 
@@ -102,7 +91,7 @@ const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
 
           <VStack alignItems="center">
             <Text fontFamily="Inter-Bold" fontSize={22}>
-              {user.displayName}
+              {getFullName(user)}
             </Text>
             <Text fontFamily="Inter-Medium" fontSize={15} color="muted.600">
               Student

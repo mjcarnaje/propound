@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   isAllowed,
-  redirectPath = "/t/login",
+  redirectPath = "/login",
   children,
 }) => {
   if (!isAllowed) {

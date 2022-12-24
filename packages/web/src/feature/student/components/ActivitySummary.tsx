@@ -9,12 +9,13 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { AcitivityDocType } from "@propound/types";
+import { ActivityDocType } from "@propound/types";
+import { getFullName } from "@propound/utils";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
 interface ActivitySummaryProps {
-  data: AcitivityDocType;
+  data: ActivityDocType;
 }
 
 const ActivitySummary: React.FC<ActivitySummaryProps> = ({ data }) => {
@@ -28,7 +29,7 @@ const ActivitySummary: React.FC<ActivitySummaryProps> = ({ data }) => {
             <Avatar src={data.teacher.photoURL} />
             <VStack align="self-start" spacing={0}>
               <Text lineHeight={1} fontWeight="bold">
-                {data.teacher.displayName}
+                {getFullName(data.teacher)}
               </Text>
               <Text fontStyle="italic" fontSize="sm">
                 {data.teacher.email}

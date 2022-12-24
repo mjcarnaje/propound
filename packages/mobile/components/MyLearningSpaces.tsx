@@ -1,6 +1,6 @@
 import { FontAwesome5 } from "@expo/vector-icons";
-import { AcitivityDocType } from "@propound/types";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { ActivityDocType } from "@propound/types";
+import { getDocs, query, where } from "firebase/firestore";
 import {
   AspectRatio,
   Button,
@@ -12,7 +12,7 @@ import {
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import { firestore } from "../configs/firebase";
+import { collections } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 import JoinLearningSpaceModal from "./JoinLearningSpaceModal";
 import LearningSpaceCard from "./LearningSpaceCard";
@@ -20,7 +20,7 @@ import SvgEmptyLearningSpace from "./svgs/EmptyLearningSpace";
 
 const MyLearningSpaces: React.FC = () => {
   const disclose = useDisclose();
-  const [learningSpaces, setLearingSpaces] = useState<AcitivityDocType[]>([]);
+  const [learningSpaces, setLearingSpaces] = useState<ActivityDocType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuthStore();
 
@@ -29,15 +29,13 @@ const MyLearningSpaces: React.FC = () => {
       setIsLoading(true);
 
       const q = query(
-        collection(firestore, "activity"),
+        collections.activities,
         where("id", "in", user.enrolledGames)
       );
 
       const querySnapshot = await getDocs(q);
 
-      setLearingSpaces(
-        querySnapshot.docs.map((doc) => doc.data() as AcitivityDocType)
-      );
+      setLearingSpaces(querySnapshot.docs.map((doc) => doc.data()));
       setIsLoading(false);
     } catch (err) {
       console.log(err);

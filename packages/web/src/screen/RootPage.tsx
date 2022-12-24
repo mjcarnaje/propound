@@ -10,11 +10,7 @@ const RootPage = () => {
     return <Spinner />;
   }
 
-  if (user?.role === "STUDENT") {
-    return <Navigate to="/explore" />;
-  }
-
-  if (user?.role === "TEACHER") {
+  if (user) {
     return <Navigate to="/dashboard" />;
   }
 
@@ -22,7 +18,7 @@ const RootPage = () => {
     return <Navigate to="/landing" />;
   }
 
-  return <div>RootPage</div>;
+  return <div>Something went wrong</div>;
 };
 
 export default RootPage;

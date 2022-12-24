@@ -25,10 +25,18 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { LearningMaterial, LearningMaterialType } from "@propound/types";
 import {
+  ActivityCollectionNames,
+  CollectionNames,
+  LearningMaterial,
+  LearningMaterialType,
+} from "@propound/types";
+import {
+  collection,
+  CollectionReference,
   deleteDoc,
   doc,
+  DocumentReference,
   getDoc,
   getDocs,
   query,
@@ -39,11 +47,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { MdAddChart } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { LearnMaterialIcon } from "../../components/LearnMaterialIcon";
-import {
-  activityCollection,
-  gameSubCollection,
-} from "../../firebase/collections";
-import { firestore } from "../../firebase/config";
+import { collections, firestore } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import useStorage from "../../hooks/useStorage";
 import { selectAuth } from "../../store/reducer/auth";
@@ -93,7 +97,7 @@ const DashboardLearn: React.FC = () => {
   async function save() {
     try {
       setSaving(true);
-      const gameRef = doc(activityCollection, id);
+      const gameRef = doc(collections.activities, id);
       const gameDoc = await getDoc(gameRef);
 
       if (gameDoc.exists()) {
@@ -130,7 +134,12 @@ const DashboardLearn: React.FC = () => {
 
         await setDoc(
           doc(
-            gameSubCollection<LearningMaterial>(id!, "materials"),
+            collection(
+              firestore,
+              CollectionNames.ACTIVITIES,
+              id!,
+              ActivityCollectionNames.MATERIALS
+            ) as CollectionReference<LearningMaterial>,
             newMaterial.id
           ),
           newMaterial
@@ -161,7 +170,14 @@ const DashboardLearn: React.FC = () => {
   async function getLearningMaterials() {
     try {
       setFetching(true);
-      const q = query(gameSubCollection<LearningMaterial>(id!, "materials"));
+      const q = query(
+        collection(
+          firestore,
+          CollectionNames.ACTIVITIES,
+          id!,
+          ActivityCollectionNames.MATERIALS
+        ) as CollectionReference<LearningMaterial>
+      );
       const querySnapshot = await getDocs(q);
 
       const res: LearningMaterial[] = [];
@@ -365,10 +381,16 @@ const DashboardLearn: React.FC = () => {
                     try {
                       setDeletingId(material.id);
 
-                      await deleteDoc(
-                        // @ts-ignore
-                        doc(firestore, "activity", id, "materials", material.id)
-                      );
+                      // @ts-ignore
+                      const docRef = doc(
+                        firestore,
+                        CollectionNames.ACTIVITIES,
+                        id,
+                        ActivityCollectionNames.MATERIALS,
+                        material.id
+                      ) as DocumentReference<LearningMaterial>;
+
+                      await deleteDoc(docRef);
 
                       setLearningMaterials((learningMaterials) =>
                         learningMaterials.filter(({ id }) => id !== material.id)

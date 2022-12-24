@@ -11,7 +11,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { GameShowQuestionType, GameShowTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameShowQuestionType,
+  GameShowTemplate,
+  GameType,
+} from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, CollectionReference, doc } from "firebase/firestore";
 import React from "react";
@@ -39,7 +45,7 @@ const defaultQuestion: () => GameShowQuestionType = () => ({
 
 interface GameShowProps {
   activityId: string;
-  type: "PRE_TEST" | "POST_TEST";
+  type: GameType;
   gameData?: GameShowTemplate | null;
 }
 
@@ -48,9 +54,9 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, type, gameData }) => {
 
   const gameCollection = collection(
     firestore,
-    "activity",
+    CollectionNames.ACTIVITIES,
     activityId,
-    "games"
+    ActivityCollectionNames.GAMES
   ) as CollectionReference<GameShowTemplate>;
 
   const ref = doc(gameCollection, type);

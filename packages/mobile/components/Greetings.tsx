@@ -1,3 +1,4 @@
+import { getFullName } from "@propound/utils";
 import { Box, Text } from "native-base";
 import React from "react";
 import { useAuthStore } from "../store/auth";
@@ -30,7 +31,7 @@ const Greetings: React.FC = () => {
         color="muted.800"
         lineHeight={28}
       >
-        {user?.displayName}
+        {getFullName(user)}
       </Text>
     </Box>
   );

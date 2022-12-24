@@ -1,8 +1,15 @@
 import { Box, Center, Spinner, Text, VStack } from "@chakra-ui/react";
-import { GameDocTemplate, GameTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameDocTemplate,
+  GameTemplate,
+  GameType,
+} from "@propound/types";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import React, { useState } from "react";
+import { QueryKey } from "react-query";
 import { useParams } from "react-router-dom";
 import SetGameType from "../../components/SetGameType";
 import GameShow from "../../components/templates/game-show/GameShow";
@@ -19,18 +26,22 @@ const DashboardPreGame: React.FC = () => {
   const { id } = useParams();
   const [gameTemplate, setGameTemplate] = useState<GameTemplate | null>(null);
 
-  // @ts-ignore
-  const ref: any = doc(firestore, "activity", id, "games", "PRE_TEST");
+  const queryKey: QueryKey = [
+    CollectionNames.ACTIVITIES,
+    id,
+    ActivityCollectionNames.GAMES,
+    GameType.PRE_TEST,
+  ];
 
-  const gamePreTest = useFirestoreDocument<GameDocTemplate>(
-    ["activity", id, "games", "PRE_TEST"],
-    ref
-  );
+  // @ts-ignore
+  const ref: any = doc(firestore, ...queryKey);
+
+  const gamePreTest = useFirestoreDocument<GameDocTemplate>(queryKey, ref);
 
   const GameTemplates: Record<GameTemplate, JSX.Element> = {
-    GAME_SHOW: <GameShow activityId={id!} type="PRE_TEST" />,
-    MATCH_UP: <MatchUp activityId={id!} type="PRE_TEST" />,
-    MISSING_WORD: <MissingWord activityId={id!} type="PRE_TEST" />,
+    GAME_SHOW: <GameShow activityId={id!} type={GameType.PRE_TEST} />,
+    MATCH_UP: <MatchUp activityId={id!} type={GameType.PRE_TEST} />,
+    MISSING_WORD: <MissingWord activityId={id!} type={GameType.PRE_TEST} />,
   };
 
   if (gamePreTest.isLoading) {
@@ -61,13 +72,25 @@ const DashboardPreGame: React.FC = () => {
         </Box>
       )}
       {gameData && isGameShowTemplate(gameData) && (
-        <GameShow activityId={id!} gameData={gameData} type="PRE_TEST" />
+        <GameShow
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.PRE_TEST}
+        />
       )}
       {gameData && isMissingWordTemplate(gameData) && (
-        <MissingWord activityId={id!} gameData={gameData} type="PRE_TEST" />
+        <MissingWord
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.PRE_TEST}
+        />
       )}
       {gameData && isMatchUpTemplate(gameData) && (
-        <MatchUp activityId={id!} gameData={gameData} type="PRE_TEST" />
+        <MatchUp
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.PRE_TEST}
+        />
       )}
       {!gameData && gameTemplate && GameTemplates[gameTemplate]}
     </VStack>

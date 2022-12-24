@@ -1,7 +1,12 @@
-import { AcitivityDocType, AcitivityStudentDocType } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  ActivityDocType,
+  ActivityStudentResultDocType,
+  CollectionNames,
+} from "@propound/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import {
   AspectRatio,
   Box,
@@ -27,32 +32,36 @@ const ActivityScreen: React.FC<
 > = ({ route, navigation }) => {
   const { user } = useAuthStore();
   const toast = useToast();
-  const [activity, setActivity] = useState<AcitivityDocType | null>(null);
+  const [activity, setActivity] = useState<ActivityDocType | null>(null);
   const [studentRecord, setStudentRecord] =
-    useState<AcitivityStudentDocType | null>(null);
+    useState<ActivityStudentResultDocType | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function getActivity() {
     try {
-      const docRef = doc(firestore, "activity", route.params.id);
-      const docSnap = await getDoc(docRef);
+      const activityRef = doc(
+        firestore,
+        CollectionNames.ACTIVITIES,
+        route.params.id
+      ) as DocumentReference<ActivityDocType>;
+      const activityDoc = await getDoc(activityRef);
 
-      if (docSnap.exists()) {
+      if (activityDoc.exists()) {
         const studentRef = doc(
           firestore,
-          "activity",
+          CollectionNames.ACTIVITIES,
           route.params.id,
-          "students",
+          ActivityCollectionNames.STUDENTS,
           user?.uid
-        );
+        ) as DocumentReference<ActivityStudentResultDocType>;
         const studentSnap = await getDoc(studentRef);
 
         if (studentSnap.exists()) {
-          const studentData = studentSnap.data() as AcitivityStudentDocType;
+          const studentData = studentSnap.data();
           setStudentRecord(studentData);
         }
 
-        const data = docSnap.data() as AcitivityDocType;
+        const data = activityDoc.data();
         navigation.setOptions({ title: data.title });
         setActivity(data);
       } else {

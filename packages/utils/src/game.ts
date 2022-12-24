@@ -3,7 +3,32 @@ import {
   GameShowTemplate,
   MatchUpTemplate,
   MissingWordTemplate,
+  StatusAndScore,
 } from "@propound/types";
+
+export const defaultStatusAndScore: StatusAndScore = {
+  status: {
+    preGameDone: false,
+    learningDone: false,
+    postGameDone: false,
+  },
+  scores: {
+    PRE_TEST: {
+      scores: [],
+      average: { score: null, time: null },
+      latestScore: 0,
+      latestDate: null,
+      baseDate: null,
+    },
+    POST_TEST: {
+      scores: [],
+      average: { score: null, time: null },
+      latestScore: 0,
+      latestDate: null,
+      baseDate: null,
+    },
+  },
+};
 
 export function isGameShowTemplate(
   template: GameDocTemplate

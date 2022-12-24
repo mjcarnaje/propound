@@ -1,22 +1,16 @@
-import { UserDocType } from "@propound/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {
-  collection,
-  CollectionReference,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { Button, HStack, Input, Text, useToast, VStack } from "native-base";
 import React, { useState } from "react";
 import BaseScreen from "../components/BaseScreen";
-import { auth, firestore } from "../configs/firebase";
+import { auth, collections } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 
 const SignInScreen = () => {
   const { setUser } = useAuthStore();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const toast = useToast();
-  const [form, setForm] = useState({
+  const [inputForms, setInputForms] = useState({
     email: "",
     password: "",
   });
@@ -27,29 +21,21 @@ const SignInScreen = () => {
 
       const { user } = await signInWithEmailAndPassword(
         auth,
-        form.email.trim(),
-        form.password.trim()
+        inputForms.email.trim(),
+        inputForms.password.trim()
       );
 
       if (user) {
-        const userRef = doc(
-          collection(firestore, "user") as CollectionReference<UserDocType>,
-          user.uid
-        );
+        const studentRef = doc(collections.students, user.uid);
+        const student = await getDoc(studentRef);
 
-        const _user = await getDoc(userRef);
-
-        if (_user.exists()) {
-          setUser(_user.data());
+        if (student.exists()) {
+          setUser(student.data());
         } else {
-          toast.show({
-            title: "User not found",
-          });
+          toast.show({ title: "User not found" });
         }
       } else {
-        toast.show({
-          title: "User not found",
-        });
+        toast.show({ title: "User not found" });
       }
 
       setIsSigningIn(false);
@@ -66,8 +52,10 @@ const SignInScreen = () => {
           <Text fontFamily="Inter-Medium">Email Address</Text>
           <Input
             placeholder="Email"
-            value={form.email}
-            onChangeText={(text) => setForm({ ...form, email: text })}
+            value={inputForms.email}
+            onChangeText={(text) =>
+              setInputForms({ ...inputForms, email: text })
+            }
             borderRadius="xl"
             fontFamily="Inter-Regular"
             size="lg"
@@ -81,8 +69,10 @@ const SignInScreen = () => {
           <Text fontFamily="Inter-Medium">Password</Text>
           <Input
             placeholder="Password"
-            value={form.password}
-            onChangeText={(text) => setForm({ ...form, password: text })}
+            value={inputForms.password}
+            onChangeText={(text) =>
+              setInputForms({ ...inputForms, password: text })
+            }
             borderRadius="xl"
             fontFamily="Inter-Regular"
             size="lg"

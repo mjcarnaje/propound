@@ -14,7 +14,7 @@ export type LearningMaterial = {
   title: string;
 };
 
-export interface AcitivityDocType {
+export interface ActivityDocType {
   id: string;
   title: string;
   description: string;
@@ -26,25 +26,10 @@ export interface AcitivityDocType {
   createdAt: Date;
 }
 
-export interface AcitivityStudentDocType {
-  status: {
-    preGameDone: boolean;
-    learningDone: boolean;
-    postGameDone: boolean;
-  };
-  student: BaseUserDocType;
-  scores: {
-    [key: string]: {
-      scores: { score: number; time: number }[];
-      average: { score: number | null; time: number | null };
-      latestScore: number;
-      latestDate: Date | null;
-      baseDate: Date | null;
-    };
-  };
+export enum GameType {
+  PRE_TEST = "PRE_TEST",
+  POST_TEST = "POST_TEST",
 }
-
-export type GameType = "PRE_TEST" | "POST_TEST";
 
 export type GameTemplate = "GAME_SHOW" | "MATCH_UP" | "MISSING_WORD";
 
@@ -61,20 +46,28 @@ export interface BaseDocTemplate {
   total: number;
 }
 
-export interface UserActivityResultDocType {
-  activityId: string;
+export interface StatusAndScore {
   status: {
     preGameDone: boolean;
     learningDone: boolean;
     postGameDone: boolean;
   };
-  scores: {
-    [key: string]: {
+  scores: Record<
+    GameType,
+    {
       scores: { score: number; time: number }[];
       average: { score: number | null; time: number | null };
       latestScore: number;
       latestDate: Date | null;
       baseDate: Date | null;
-    };
-  };
+    }
+  >;
+}
+
+export interface StudentResultDocType extends StatusAndScore {
+  activityId: string;
+}
+
+export interface ActivityStudentResultDocType extends StatusAndScore {
+  student: BaseUserDocType;
 }

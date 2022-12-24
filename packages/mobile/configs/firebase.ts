@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import { PropoundFirebase } from "@propound/utils";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -27,4 +28,7 @@ const authProviders = {
   google: new GoogleAuthProvider(),
 };
 
-export { firestore, auth, storage, authProviders };
+const propoundFirestore = new PropoundFirebase(firestore);
+const collections = propoundFirestore.getCollections();
+
+export { firestore, auth, storage, authProviders, collections };

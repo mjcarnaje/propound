@@ -6,8 +6,7 @@ import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ActivitySummaryPage } from "./feature/student/ActivitySummaryPage";
 import { TeacherDashboardPage } from "./feature/teacher/TeacherDashboardPage";
-import { userCollection } from "./firebase/collections";
-import { auth } from "./firebase/config";
+import { auth, collections } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { AboutPage } from "./screen/AboutPage";
 import Dashboard from "./screen/CreateActivity/Dashboard";
@@ -37,7 +36,7 @@ function App() {
       try {
         dispatch(setLoading(true));
         if (user) {
-          const userRef = doc(userCollection, user.uid);
+          const userRef = doc(collections.teachers, user.uid);
           const userDoc = await getDoc(userRef);
           const userData = userDoc.data();
           if (userData) {

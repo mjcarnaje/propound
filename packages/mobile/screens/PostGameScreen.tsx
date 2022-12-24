@@ -1,6 +1,12 @@
-import { GameDocTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameDocTemplate,
+  GameType,
+} from "@propound/types";
+import { isGameShowTemplate, isMatchUpTemplate } from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import { Center, Text, useToast } from "native-base";
 import React, { useEffect, useState } from "react";
 import BaseScreen from "../components/BaseScreen";
@@ -8,7 +14,6 @@ import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
 import { firestore } from "../configs/firebase";
 import { RootStackParamList } from "../navigation";
-import { isGameShowTemplate, isMatchUpTemplate } from "../utils/template";
 import LoadingScreen from "./LoadingScreen";
 
 const PostGameScreen: React.FC<
@@ -20,17 +25,18 @@ const PostGameScreen: React.FC<
 
   async function getActivity() {
     try {
-      const docRef = doc(
+      const postTestRef = doc(
         firestore,
-        "activity",
+        CollectionNames.ACTIVITIES,
         route.params.id,
-        "games",
-        "POST_TEST"
-      );
-      const docSnap = await getDoc(docRef);
+        ActivityCollectionNames.GAMES,
+        GameType.POST_TEST
+      ) as DocumentReference<GameDocTemplate>;
 
-      if (docSnap.exists()) {
-        const data = docSnap.data() as GameDocTemplate;
+      const postTestDoc = await getDoc(postTestRef);
+
+      if (postTestDoc.exists()) {
+        const data = postTestDoc.data();
         navigation.setOptions({ title: data.title });
         setActivity(data);
       } else {

@@ -8,13 +8,19 @@ import {
   SimpleGrid,
   Spinner,
   Text,
-  VStack
+  VStack,
 } from "@chakra-ui/react";
-import { AcitivityStudentDocType } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  ActivityStudentResultDocType,
+  CollectionNames,
+} from "@propound/types";
+import { getFullName } from "@propound/utils";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
-import { collection, Query, query } from "firebase/firestore";
+import { collection, query } from "firebase/firestore";
 import moment from "moment";
 import React, { useState } from "react";
+import { QueryKey } from "react-query";
 import { useParams } from "react-router-dom";
 import Empty from "../../components/svg/EmptySvg";
 import { firestore } from "../../firebase/config";
@@ -25,12 +31,17 @@ import EmptyStudentsSvg from "../../assets/svgs/empty_student.svg?component";
 const DashboardStudents: React.FC = () => {
   const { id } = useParams();
 
-  const ref = query(
-    collection(firestore, "activity", id!, "students")
-  ) as Query<AcitivityStudentDocType>;
+  const queryKey: QueryKey = [
+    CollectionNames.ACTIVITIES,
+    id,
+    ActivityCollectionNames.STUDENTS,
+  ];
 
-  const studentsQuery = useFirestoreQuery<AcitivityStudentDocType>(
-    ["activity", id, "students"],
+  // @ts-ignore
+  const ref: any = query(collection(firestore, ...queryKey));
+
+  const studentsQuery = useFirestoreQuery<ActivityStudentResultDocType>(
+    queryKey,
     ref
   );
 
@@ -68,7 +79,7 @@ const DashboardStudents: React.FC = () => {
 export default DashboardStudents;
 
 interface StudentCardProps {
-  student: AcitivityStudentDocType;
+  student: ActivityStudentResultDocType;
 }
 
 const StudentCard: React.FC<StudentCardProps> = ({ student }) => {
@@ -88,10 +99,10 @@ const StudentCard: React.FC<StudentCardProps> = ({ student }) => {
         <HStack w="full" flexGrow={1} spacing={4}>
           <Avatar
             src={student.student.photoURL}
-            name={student.student.displayName}
+            name={getFullName(student.student)}
           />
           <VStack spacing={0} align="flex-start">
-            <Text fontWeight="medium">{student.student.displayName}</Text>
+            <Text fontWeight="medium">{getFullName(student.student)}</Text>
             <Text fontStyle="initial">{student.student.email}</Text>
           </VStack>
         </HStack>

@@ -1,4 +1,3 @@
-import { UserDocType } from "@propound/types";
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
@@ -9,12 +8,7 @@ import "expo-dev-client";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { onAuthStateChanged } from "firebase/auth";
-import {
-  collection,
-  CollectionReference,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { Box, NativeBaseProvider, Text, useToken } from "native-base";
 import React, { useCallback, useEffect } from "react";
 import {
@@ -25,12 +19,13 @@ import {
   View,
 } from "react-native";
 import "react-native-gesture-handler";
+import "react-native-get-random-values";
 import {
   Home as HomeIcon,
   Profile as ProfileIcon,
 } from "./components/svgs/bottom-tab";
 import "./configs/firebase";
-import { auth, firestore } from "./configs/firebase";
+import { auth, studentsCol } from "./configs/firebase";
 import { MainScreensParamList, RootStackParamList } from "./navigation";
 import AboutScreen from "./screens/AboutScreen";
 import ActivityScreen from "./screens/ActivityScreen";
@@ -100,10 +95,7 @@ const PropoundNavigation: React.FC = () => {
     onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
-        const userRef = doc(
-          collection(firestore, "user") as CollectionReference<UserDocType>,
-          user.uid
-        );
+        const userRef = doc(studentsCol, user.uid);
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
           setUser(userDoc.data());

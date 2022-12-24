@@ -1,6 +1,12 @@
-import { GameDocTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameDocTemplate,
+  GameType,
+} from "@propound/types";
+import { isGameShowTemplate, isMatchUpTemplate } from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import { Center, Spinner, Text, useToast } from "native-base";
 import React, { useEffect, useState } from "react";
 import BaseScreen from "../components/BaseScreen";
@@ -8,7 +14,6 @@ import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
 import { firestore } from "../configs/firebase";
 import { RootStackParamList } from "../navigation";
-import { isGameShowTemplate, isMatchUpTemplate } from "../utils/template";
 
 const PreGameScreen: React.FC<
   StackScreenProps<RootStackParamList, "PreGame">
@@ -21,15 +26,15 @@ const PreGameScreen: React.FC<
     try {
       const docRef = doc(
         firestore,
-        "activity",
+        CollectionNames.ACTIVITIES,
         route.params.id,
-        "games",
-        "PRE_TEST"
-      );
+        ActivityCollectionNames.GAMES,
+        GameType.PRE_TEST
+      ) as DocumentReference<GameDocTemplate>;
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        const data = docSnap.data() as GameDocTemplate;
+        const data = docSnap.data();
         navigation.setOptions({ title: data.title });
         setActivity(data);
       } else {

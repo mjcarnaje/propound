@@ -1,14 +1,14 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
 import { Button, Center, Container, Spinner, VStack } from "@chakra-ui/react";
-import { AcitivityDocType } from "@propound/types";
+import { ActivityDocType } from "@propound/types";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
-import { collection, limit, Query, query, where } from "firebase/firestore";
+import { limit, Query, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import ActivityCard from "../../components/activity/ActivityCard";
 import { CreateActivity } from "../../components/CreateActivity";
 import { MainLayout } from "../../components/layout/MainLayout";
 import Empty from "../../components/svg/EmptySvg";
-import { firestore } from "../../firebase/config";
+import { collections } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
 
@@ -17,12 +17,12 @@ export const TeacherDashboardPage = () => {
   const { user } = useAppSelector(selectAuth);
 
   const ref = query(
-    collection(firestore, "activity"),
+    collections.activities,
     limit(16),
     where("teacher.uid", "==", user!.uid)
-  ) as Query<AcitivityDocType>;
+  ) as Query<ActivityDocType>;
 
-  const games = useFirestoreQuery<AcitivityDocType>(["games"], ref, {
+  const games = useFirestoreQuery<ActivityDocType>(["games"], ref, {
     subscribe: true,
   });
 

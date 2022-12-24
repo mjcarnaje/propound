@@ -1,8 +1,15 @@
 import { Box, Center, Spinner, Text, VStack } from "@chakra-ui/react";
-import { GameDocTemplate, GameTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameDocTemplate,
+  GameTemplate,
+  GameType,
+} from "@propound/types";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import React, { useState } from "react";
+import { QueryKey } from "react-query";
 import { useParams } from "react-router-dom";
 import SetGameType from "../../components/SetGameType";
 import GameShow from "../../components/templates/game-show/GameShow";
@@ -19,18 +26,22 @@ const DashboardPostGame: React.FC = () => {
   const { id } = useParams();
   const [gameTemplate, setGameTemplate] = useState<GameTemplate | null>(null);
 
-  // @ts-ignore
-  const ref: any = doc(firestore, "activity", id, "games", "POST_TEST");
+  const queryKey: QueryKey = [
+    CollectionNames.ACTIVITIES,
+    id,
+    ActivityCollectionNames.GAMES,
+    GameType.POST_TEST,
+  ];
 
-  const preTest = useFirestoreDocument<GameDocTemplate>(
-    ["activity", id, "games", "POST_TEST"],
-    ref
-  );
+  // @ts-ignore
+  const ref: any = doc(firestore, ...queryKey);
+
+  const preTest = useFirestoreDocument<GameDocTemplate>(queryKey, ref);
 
   const GameTemplates: Record<GameTemplate, JSX.Element> = {
-    GAME_SHOW: <GameShow activityId={id!} type="POST_TEST" />,
-    MATCH_UP: <MatchUp activityId={id!} type="POST_TEST" />,
-    MISSING_WORD: <MissingWord activityId={id!} type="POST_TEST" />,
+    GAME_SHOW: <GameShow activityId={id!} type={GameType.POST_TEST} />,
+    MATCH_UP: <MatchUp activityId={id!} type={GameType.POST_TEST} />,
+    MISSING_WORD: <MissingWord activityId={id!} type={GameType.POST_TEST} />,
   };
 
   if (preTest.isLoading) {
@@ -60,13 +71,25 @@ const DashboardPostGame: React.FC = () => {
         </Box>
       )}
       {gameData && isGameShowTemplate(gameData) && (
-        <GameShow activityId={id!} gameData={gameData} type="POST_TEST" />
+        <GameShow
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.POST_TEST}
+        />
       )}
       {gameData && isMatchUpTemplate(gameData) && (
-        <MatchUp activityId={id!} gameData={gameData} type="POST_TEST" />
+        <MatchUp
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.POST_TEST}
+        />
       )}
       {gameData && isMissingWordTemplate(gameData) && (
-        <MissingWord activityId={id!} gameData={gameData} type="POST_TEST" />
+        <MissingWord
+          activityId={id!}
+          gameData={gameData}
+          type={GameType.POST_TEST}
+        />
       )}
       {!gameData && gameTemplate && GameTemplates[gameTemplate]}
     </VStack>

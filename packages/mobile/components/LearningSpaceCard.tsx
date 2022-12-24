@@ -1,4 +1,5 @@
-import { AcitivityDocType } from "@propound/types";
+import { ActivityDocType } from "@propound/types";
+import { getFullName } from "@propound/utils";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import {
@@ -14,7 +15,7 @@ import { Image, TouchableOpacity } from "react-native";
 import { MainScreensParamList } from "../navigation";
 
 interface LearningSpaceCardProps {
-  space: AcitivityDocType;
+  space: ActivityDocType;
 }
 
 const LearningSpaceCard: React.FC<LearningSpaceCardProps> = ({ space }) => {
@@ -51,7 +52,7 @@ const LearningSpaceCard: React.FC<LearningSpaceCardProps> = ({ space }) => {
             <Avatar size="sm" source={{ uri: space.teacher.photoURL }} />
             <VStack>
               <Text fontFamily="Inter-Medium" fontSize={13} lineHeight={14}>
-                {space.teacher.displayName}
+                {getFullName(space.teacher)}
               </Text>
               <Text
                 fontFamily="Inter-Regular"

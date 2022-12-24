@@ -11,7 +11,13 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { MatchUpItemType, MatchUpTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameType,
+  MatchUpItemType,
+  MatchUpTemplate,
+} from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, CollectionReference, doc } from "firebase/firestore";
 import React from "react";
@@ -43,7 +49,7 @@ const defaultItem: () => MatchUpItemType = () => {
 
 interface MatchUpProps {
   activityId: string;
-  type: "PRE_TEST" | "POST_TEST";
+  type: GameType;
   gameData?: MatchUpTemplate | null;
 }
 
@@ -52,9 +58,9 @@ const MatchUp: React.FC<MatchUpProps> = ({ activityId, type, gameData }) => {
 
   const gameCollection = collection(
     firestore,
-    "activity",
+    CollectionNames.ACTIVITIES,
     activityId,
-    "games"
+    ActivityCollectionNames.GAMES
   ) as CollectionReference<MatchUpTemplate>;
   const ref = doc(gameCollection, type);
   const { mutate, isLoading } = useFirestoreDocumentMutation(ref);

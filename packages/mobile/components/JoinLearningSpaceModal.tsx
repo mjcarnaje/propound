@@ -1,18 +1,17 @@
 import {
-  AcitivityDocType,
-  AcitivityStudentDocType,
-  UserActivityResultDocType,
-  UserDocType,
+  ActivityCollectionNames,
+  ActivityStudentResultDocType,
+  CollectionNames,
+  StudentCollectionNames,
+  StudentResultDocType,
 } from "@propound/types";
+import { defaultStatusAndScore } from "@propound/utils";
 import {
-  collection,
-  CollectionReference,
   doc,
   DocumentReference,
   getDoc,
   getDocs,
   query,
-  QuerySnapshot,
   setDoc,
   updateDoc,
   where,
@@ -27,7 +26,7 @@ import {
   VStack,
 } from "native-base";
 import React from "react";
-import { firestore } from "../configs/firebase";
+import { collections, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 
 interface JoinLearningSpaceModalProps {
@@ -50,13 +49,13 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
       const [activityId] = code.split("-");
 
       const q = query(
-        collection(firestore, "activity"),
+        collections.activities,
         where("id", "==", activityId),
         where("code", "==", code),
         where("status", "==", "PUBLISHED")
       );
 
-      const docSnap = (await getDocs(q)) as QuerySnapshot<AcitivityDocType>;
+      const docSnap = await getDocs(q);
 
       if (docSnap.empty) {
         toast.show({
@@ -70,10 +69,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
       const space = docSnap.docs[0].data();
 
       if (space) {
-        const userRef = doc(
-          collection(firestore, "user") as CollectionReference<UserDocType>,
-          user?.uid
-        );
+        const userRef = doc(collections.students, user?.uid);
 
         const userDoc = await getDoc(userRef);
 
@@ -101,85 +97,34 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
 
             const studentRef = doc(
               firestore,
-              "activity",
+              CollectionNames.ACTIVITIES,
               activityId,
-              "students",
+              ActivityCollectionNames.STUDENTS,
               user.uid
-            ) as DocumentReference<AcitivityStudentDocType>;
+            ) as DocumentReference<ActivityStudentResultDocType>;
 
             const studentUserRef = doc(
               firestore,
-              "user",
+              CollectionNames.STUDENTS,
               user.uid,
-              "scores",
+              StudentCollectionNames.RESULTS,
               activityId
-            ) as DocumentReference<UserActivityResultDocType>;
+            ) as DocumentReference<StudentResultDocType>;
 
             await setDoc(studentRef, {
-              status: {
-                preGameDone: false,
-                postGameDone: false,
-                learningDone: false,
-              },
               student: {
                 uid: user.uid,
                 email: user.email,
-                displayName: user.displayName,
                 photoURL: user.photoURL,
+                firstName: user.firstName,
+                lastName: user.lastName,
               },
-              scores: {
-                PRE_TEST: {
-                  scores: [],
-                  average: {
-                    score: null,
-                    time: null,
-                  },
-                  baseDate: null,
-                  latestDate: null,
-                  latestScore: null,
-                },
-                POST_TEST: {
-                  scores: [],
-                  average: {
-                    score: null,
-                    time: null,
-                  },
-                  baseDate: null,
-                  latestDate: null,
-                  latestScore: null,
-                },
-              },
+              ...defaultStatusAndScore,
             });
 
             await setDoc(studentUserRef, {
               activityId,
-              status: {
-                preGameDone: false,
-                postGameDone: false,
-                learningDone: false,
-              },
-              scores: {
-                PRE_TEST: {
-                  scores: [],
-                  average: {
-                    score: null,
-                    time: null,
-                  },
-                  baseDate: null,
-                  latestDate: null,
-                  latestScore: null,
-                },
-                POST_TEST: {
-                  scores: [],
-                  average: {
-                    score: null,
-                    time: null,
-                  },
-                  baseDate: null,
-                  latestDate: null,
-                  latestScore: null,
-                },
-              },
+              ...defaultStatusAndScore,
             });
 
             setEnrolledGames([...enrolledGames, activityId]);
@@ -216,7 +161,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
             textAlign="center"
             color="muted.700"
           >
-            Learing Space Code
+            Learning Space Code
           </Text>
           <Input
             fontFamily="Inter-Regular"

@@ -1,8 +1,11 @@
 import { FontAwesome } from "@expo/vector-icons";
 import {
-  AcitivityStudentDocType,
+  ActivityCollectionNames,
+  ActivityStudentResultDocType,
+  CollectionNames,
   GameShowTemplate,
-  UserActivityResultDocType,
+  StudentCollectionNames,
+  StudentResultDocType
 } from "@propound/types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { doc, DocumentReference, runTransaction } from "firebase/firestore";
@@ -21,14 +24,14 @@ import {
   useDisclose,
   useToast,
   useToken,
-  VStack,
+  VStack
 } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Image,
   TouchableOpacity,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback
 } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
@@ -99,22 +102,22 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
       const studentRef = doc(
         firestore,
-        "activity",
+        CollectionNames.ACTIVITIES,
         activityId,
-        "students",
+        ActivityCollectionNames.STUDENTS,
         user.uid
-      ) as DocumentReference<AcitivityStudentDocType>;
+      ) as DocumentReference<ActivityStudentResultDocType>;
 
       const studentUserRef = doc(
         firestore,
-        "user",
+        CollectionNames.STUDENTS,
         user.uid,
-        "scores",
+        StudentCollectionNames.RESULTS,
         activityId
-      ) as DocumentReference<UserActivityResultDocType>;
+      ) as DocumentReference<StudentResultDocType>;
 
       await runTransaction(firestore, async (transaction) => {
-        const studentDoc = await transaction.get<AcitivityStudentDocType>(
+        const studentDoc = await transaction.get<ActivityStudentResultDocType>(
           studentRef
         );
 

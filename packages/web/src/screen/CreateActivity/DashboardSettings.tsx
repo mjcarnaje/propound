@@ -16,7 +16,12 @@ import {
   Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { AcitivityDocType } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  ActivityDocType,
+  CollectionNames,
+  GameType,
+} from "@propound/types";
 import {
   useFirestoreDocument,
   useFirestoreDocumentMutation,
@@ -36,13 +41,13 @@ const DashboardSettings = () => {
   const { url, uploading, uploadFile } = useStorage();
 
   // @ts-ignore
-  const ref: any = doc(firestore, "activity", id);
-  const activity = useFirestoreDocument(["activity", id], ref);
+  const ref: any = doc(firestore, CollectionNames.ACTIVITIES, id);
+  const activity = useFirestoreDocument([CollectionNames.ACTIVITIES, id], ref);
 
   const { mutate, isLoading } = useFirestoreDocumentMutation(ref);
 
   const { setValue, watch, reset, control, register, handleSubmit } =
-    useForm<AcitivityDocType>({
+    useForm<ActivityDocType>({
       defaultValues: {
         title: "",
         description: "",
@@ -69,7 +74,13 @@ const DashboardSettings = () => {
 
   async function canPublish() {
     // @ts-ignore
-    const preGameRef = doc(firestore, "activity", id, "games", "PRE_TEST");
+    const preGameRef = doc(
+      firestore,
+      CollectionNames.ACTIVITIES,
+      id,
+      ActivityCollectionNames.GAMES,
+      GameType.PRE_TEST
+    );
     const preGameDoc = await getDoc(preGameRef);
 
     if (!preGameDoc.exists()) {
@@ -84,7 +95,12 @@ const DashboardSettings = () => {
     }
 
     // @ts-ignore
-    const materialsRef = collection(firestore, "activity", id, "materials");
+    const materialsRef = collection(
+      firestore,
+      CollectionNames.ACTIVITIES,
+      id,
+      ActivityCollectionNames.MATERIALS
+    );
     const materialsDocs = await getDocs(materialsRef);
 
     if (materialsDocs.docs.length === 0) {
@@ -99,7 +115,13 @@ const DashboardSettings = () => {
     }
 
     // @ts-ignore
-    const postGameRef = doc(firestore, "activity", id, "games", "POST_TEST");
+    const postGameRef = doc(
+      firestore,
+      CollectionNames.ACTIVITIES,
+      id,
+      ActivityCollectionNames.GAMES,
+      GameType.POST_TEST
+    );
     const postGameDoc = await getDoc(postGameRef);
 
     if (!postGameDoc.exists()) {
@@ -146,7 +168,7 @@ const DashboardSettings = () => {
     );
   }
 
-  const onSubmit: SubmitHandler<AcitivityDocType> = async (data) => {
+  const onSubmit: SubmitHandler<ActivityDocType> = async (data) => {
     await mutate(data, {
       onError: async (error) => {
         toast({

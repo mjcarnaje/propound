@@ -1,12 +1,9 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import {
-  FirestoreDataConverter,
-  getFirestore,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { PropoundFirebase } from "@propound/utils";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBXbjHQw_ail_zMIy1GXY2ObEPu-0_vWLw",
@@ -24,14 +21,4 @@ export const analytics = getAnalytics(app);
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
-
-export const converter: FirestoreDataConverter<any> = {
-  toFirestore: (item) => item,
-  fromFirestore: (snapshot: QueryDocumentSnapshot<any>, options) => {
-    const data = snapshot.data(options);
-    return {
-      ...data,
-      id: snapshot.id,
-    };
-  },
-};
+export const collections = new PropoundFirebase(firestore).getCollections();

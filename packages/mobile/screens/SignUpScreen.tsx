@@ -1,15 +1,7 @@
-import { UserDocType } from "@propound/types";
+import { Role, StudentDocType, StudentYear } from "@propound/types";
 import * as ImagePicker from "expo-image-picker";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import {
-  collection,
-  CollectionReference,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where
-} from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import moment from "moment";
 import {
   Button,
@@ -19,15 +11,14 @@ import {
   Spinner,
   Text,
   useToast,
-  VStack
+  VStack,
 } from "native-base";
 import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import BaseScreen from "../components/BaseScreen";
-import { auth, firestore } from "../configs/firebase";
+import { auth, collections } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 import useStorage from "../utils/useStorage";
-
 
 const SignUpScreen = () => {
   const { setUser } = useAuthStore();
@@ -37,12 +28,16 @@ const SignUpScreen = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [uploading, setUploading] = useState(false);
   const toast = useToast();
-  const [form, setForm] = useState({
+  const [inputForms, setInputForms] = useState<
+    Partial<StudentDocType & { password: string }>
+  >({
     email: "",
     password: "",
     photoURL: "",
     firstName: "",
     lastName: "",
+    course: "",
+    year: StudentYear.Freshman,
   });
 
   const pickImage = async (): Promise<void> => {
@@ -57,16 +52,16 @@ const SignUpScreen = () => {
       const timestamp = moment().format("YYYYMMDDHHmmss");
       setUploading(true);
       const photoURL = await _uploadFile(result, `images/${timestamp}`);
-      setForm((prev) => ({ ...prev, photoURL }));
+      setInputForms((prev) => ({ ...prev, photoURL }));
       setUploading(false);
     }
   };
 
   const onNext = async () => {
-    const { email } = form;
+    const { email } = inputForms;
     setIsCheckingEmail(true);
     const q = query(
-      collection(firestore, "user"),
+      collections.students,
       where("email", "==", email.trim().toLowerCase())
     );
     const querySnapshot = await getDocs(q);
@@ -91,31 +86,23 @@ const SignUpScreen = () => {
 
       const { user } = await createUserWithEmailAndPassword(
         auth,
-        form.email.trim(),
-        form.password.trim()
+        inputForms.email.trim(),
+        inputForms.password.trim()
       );
 
       if (user) {
-        const displayName = `${form.firstName} ${form.lastName}`;
+        const userRef = doc(collections.students, user.uid);
 
-        await updateProfile(user, {
-          displayName: displayName,
-          photoURL: form.photoURL,
-        });
-
-        const userRef = doc(
-          collection(firestore, "user") as CollectionReference<UserDocType>,
-          user.uid
-        );
-
-        const newUser: UserDocType = {
+        const newUser: StudentDocType = {
           uid: user.uid,
-          displayName: displayName,
-          email: form.email,
+          email: inputForms.email,
           enrolledGames: [],
-          photoURL: form.photoURL,
-          createdGames: [],
-          role: "STUDENT",
+          photoURL: inputForms.photoURL,
+          course: inputForms.course,
+          firstName: inputForms.firstName,
+          lastName: inputForms.lastName,
+          role: Role.Student,
+          year: inputForms.year,
         };
 
         await setDoc(userRef, newUser);
@@ -138,8 +125,10 @@ const SignUpScreen = () => {
               <Text fontFamily="Inter-Medium">Email Address</Text>
               <Input
                 placeholder="Email"
-                value={form.email}
-                onChangeText={(text) => setForm({ ...form, email: text })}
+                value={inputForms.email}
+                onChangeText={(text) =>
+                  setInputForms({ ...inputForms, email: text })
+                }
                 borderRadius="xl"
                 fontFamily="Inter-Regular"
                 size="lg"
@@ -153,8 +142,10 @@ const SignUpScreen = () => {
               <Text fontFamily="Inter-Medium">Password</Text>
               <Input
                 placeholder="Password"
-                value={form.password}
-                onChangeText={(text) => setForm({ ...form, password: text })}
+                value={inputForms.password}
+                onChangeText={(text) =>
+                  setInputForms({ ...inputForms, password: text })
+                }
                 borderRadius="xl"
                 fontFamily="Inter-Regular"
                 size="lg"
@@ -193,14 +184,14 @@ const SignUpScreen = () => {
               >
                 {uploading ? (
                   <Spinner size="sm" color="orange.600" />
-                ) : form.photoURL ? (
+                ) : inputForms.photoURL ? (
                   <Image
                     style={{
                       width: "100%",
                       height: "100%",
                       resizeMode: "contain",
                     }}
-                    source={{ uri: form.photoURL }}
+                    source={{ uri: inputForms.photoURL }}
                   />
                 ) : (
                   <Text fontFamily="Inter-Medium">Add Photo</Text>
@@ -210,8 +201,10 @@ const SignUpScreen = () => {
 
             <Input
               placeholder="First Name"
-              value={form.firstName}
-              onChangeText={(text) => setForm({ ...form, firstName: text })}
+              value={inputForms.firstName}
+              onChangeText={(text) =>
+                setInputForms({ ...inputForms, firstName: text })
+              }
               borderRadius="xl"
               fontFamily="Inter-Regular"
               size="lg"
@@ -221,8 +214,10 @@ const SignUpScreen = () => {
             />
             <Input
               placeholder="Last Name"
-              value={form.lastName}
-              onChangeText={(text) => setForm({ ...form, lastName: text })}
+              value={inputForms.lastName}
+              onChangeText={(text) =>
+                setInputForms({ ...inputForms, lastName: text })
+              }
               borderRadius="xl"
               fontFamily="Inter-Regular"
               size="lg"

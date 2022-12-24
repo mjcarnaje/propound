@@ -17,8 +17,8 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const { user } = useAppSelector(selectAuth);
   const { id } = useParams();
 
-  if (!user || user.role !== "TEACHER") {
-    return <Navigate to="/s/login" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   return (

@@ -15,9 +15,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useFirestoreDocumentDeletion } from "@react-query-firebase/firestore";
-import { collection, doc } from "firebase/firestore";
+import { doc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { firestore } from "../../firebase/config";
+import { collections } from "../../firebase/config";
 
 interface DeleteActivityProps {
   id: string;
@@ -26,8 +26,7 @@ interface DeleteActivityProps {
 const DeleteActivity: React.FC<DeleteActivityProps> = ({ id }) => {
   const toast = useToast();
   const navigate = useNavigate();
-  const activites = collection(firestore, "activity");
-  const ref = doc(activites, id);
+  const ref = doc(collections.activities, id);
   const deleteMutation = useFirestoreDocumentDeletion(ref, {
     onError: (error) => {
       toast({

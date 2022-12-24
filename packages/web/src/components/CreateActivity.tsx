@@ -18,16 +18,16 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { UserDocType } from "@propound/types";
+import { TeacherDocType } from "@propound/types";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { activityCollection, userCollection } from "../firebase/collections";
+import { collections } from "../firebase/config";
 import { generateCode, generateId } from "../utils/id";
 
 interface CreateActivityProps {
-  user: UserDocType;
+  user: TeacherDocType;
   button?: (props: ReturnType<typeof useDisclosure>) => JSX.Element;
 }
 
@@ -65,7 +65,7 @@ export const CreateActivity: React.FC<CreateActivityProps> = ({
 
     try {
       setLoading(true);
-      await setDoc(doc(activityCollection, id), {
+      await setDoc(doc(collections.activities, id), {
         id,
         title: input.title,
         description: input.description,
@@ -73,16 +73,17 @@ export const CreateActivity: React.FC<CreateActivityProps> = ({
         coverPhoto: "",
         teacher: {
           uid: user.uid,
-          displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
+          firstName: user.firstName,
+          lastName: user.lastName,
         },
         studentIds: [],
         status: "DRAFT",
         createdAt: serverTimestamp(),
       });
 
-      const userRef = doc(userCollection, user.uid);
+      const userRef = doc(collections.teachers, user.uid);
 
       await updateDoc(userRef, {
         createdGames: [...user.createdGames, id],
