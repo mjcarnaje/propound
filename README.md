@@ -7,6 +7,7 @@ This is the monorepo for the ProPound project. It contains the following package
   /mobile - React Native mobile application
   /web - React web application
   /types - Typescript types
+  /utils - Utility functions
 ```
 
 ## Tech Stack
