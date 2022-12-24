@@ -1,4 +1,4 @@
-type RootStackParamList = {
+export type RootStackParamList = {
   GetStarted: undefined;
   SignIn: undefined;
   SignUp: undefined;
@@ -11,7 +11,7 @@ type RootStackParamList = {
   Result: undefined;
 };
 
-type MainScreensParamList = {
+export type MainScreensParamList = {
   Home: undefined;
   Profile: undefined;
 };

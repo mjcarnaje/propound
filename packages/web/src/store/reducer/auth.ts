@@ -1,12 +1,11 @@
 import { createStandaloneToast } from "@chakra-ui/react";
+import { ROLE, UserDocType } from "@propound/types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { googleProvider } from "../../firebase/auth-provider";
 import { userCollection } from "../../firebase/collections";
 import { auth } from "../../firebase/config";
-import { ROLE } from "../../types/role";
-import { UserDocType } from "../../types/user";
 import { RootState } from "../store";
 
 const { toast } = createStandaloneToast();

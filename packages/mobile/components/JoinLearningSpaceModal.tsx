@@ -1,4 +1,10 @@
 import {
+  AcitivityDocType,
+  AcitivityStudentDocType,
+  UserActivityResultDocType,
+  UserDocType,
+} from "@propound/types";
+import {
   collection,
   CollectionReference,
   doc,
@@ -23,12 +29,6 @@ import {
 import React from "react";
 import { firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
-import {
-  AcitivityDocType,
-  AcitivityStudentDocType,
-  UserActivityResultDocType,
-} from "../types/game";
-import { UserDocType } from "../types/user";
 
 interface JoinLearningSpaceModalProps {
   disclose: ReturnType<typeof useDisclose>;

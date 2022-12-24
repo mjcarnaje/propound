@@ -8,8 +8,9 @@ import {
   SimpleGrid,
   Spinner,
   Text,
-  VStack,
+  VStack
 } from "@chakra-ui/react";
+import { AcitivityStudentDocType } from "@propound/types";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, Query, query } from "firebase/firestore";
 import moment from "moment";
@@ -17,7 +18,6 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Empty from "../../components/svg/EmptySvg";
 import { firestore } from "../../firebase/config";
-import { AcitivityStudentDocType } from "../../types/game";
 import { firebaseDateToDate } from "../../utils/date";
 //@ts-ignore
 import EmptyStudentsSvg from "../../assets/svgs/empty_student.svg?component";

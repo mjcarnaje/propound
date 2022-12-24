@@ -1,12 +1,13 @@
+import { GameDocTemplate } from "@propound/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import { doc, getDoc } from "firebase/firestore";
-import { Center, Spinner, Text, useToast } from "native-base";
+import { Center, Text, useToast } from "native-base";
 import React, { useEffect, useState } from "react";
 import BaseScreen from "../components/BaseScreen";
-import GameShowQuiz from "../components/games/match-up/GameShowGame";
+import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
 import { firestore } from "../configs/firebase";
-import { GameDocTemplate } from "../types/game";
+import { RootStackParamList } from "../navigation";
 import { isGameShowTemplate, isMatchUpTemplate } from "../utils/template";
 import LoadingScreen from "./LoadingScreen";
 

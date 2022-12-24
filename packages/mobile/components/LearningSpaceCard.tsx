@@ -1,4 +1,6 @@
+import { AcitivityDocType } from "@propound/types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 import {
   AspectRatio,
   Avatar,
@@ -9,8 +11,7 @@ import {
 } from "native-base";
 import React from "react";
 import { Image, TouchableOpacity } from "react-native";
-import { AcitivityDocType } from "../types/game";
-import dayjs from "dayjs";
+import { MainScreensParamList } from "../navigation";
 
 interface LearningSpaceCardProps {
   space: AcitivityDocType;
@@ -63,9 +64,7 @@ const LearningSpaceCard: React.FC<LearningSpaceCardProps> = ({ space }) => {
             </VStack>
           </HStack>
           <Text fontFamily="Inter-Regular" color="muted.500" fontSize={12}>
-            {`Created on ${dayjs(space.createdAt.toDate()).format(
-              "DD MMM YYYY"
-            )}`}
+            {`Created on ${dayjs(space.createdAt).format("DD MMM YYYY")}`}
           </Text>
         </VStack>
       </VStack>

@@ -13,6 +13,7 @@ import {
   SimpleGrid,
   VStack,
 } from "@chakra-ui/react";
+import { GameShowQuestionType, GameShowTemplate } from "@propound/types";
 import React, { ChangeEvent, useEffect } from "react";
 import {
   FieldErrors,
@@ -23,10 +24,6 @@ import {
 import { BsImage } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import useStorage from "../../../hooks/useStorage";
-import {
-  GameShowQuestionType,
-  GameShowTemplate,
-} from "../../../types/game-show";
 import { generateId } from "../../../utils/id";
 import { checkImage } from "../../../utils/misc";
 import GameShowChoice from "./GameShowChoice";

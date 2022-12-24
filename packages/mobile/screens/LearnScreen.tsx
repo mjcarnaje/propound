@@ -1,4 +1,9 @@
 import { AntDesign } from "@expo/vector-icons";
+import {
+  AcitivityStudentDocType,
+  LearningMaterial,
+  LearningMaterialType,
+} from "@propound/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import * as WebBrowser from "expo-web-browser";
 import {
@@ -24,12 +29,8 @@ import React, { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import BaseScreen from "../components/BaseScreen";
 import { firestore } from "../configs/firebase";
+import { RootStackParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
-import {
-  AcitivityStudentDocType,
-  LearningMaterial,
-  LearningMaterialType,
-} from "../types/game";
 
 const LearnScreen: React.FC<StackScreenProps<RootStackParamList, "Learn">> = ({
   route,

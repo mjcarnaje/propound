@@ -12,12 +12,12 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
+import { GameShowChoiceType, GameShowTemplate } from "@propound/types";
 import React, { ChangeEvent, useEffect } from "react";
 import { FieldErrors, useFormContext, useWatch } from "react-hook-form";
 import { BsImage } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import useStorage from "../../../hooks/useStorage";
-import { GameShowChoiceType, GameShowTemplate } from "../../../types/game-show";
 import { checkImage } from "../../../utils/misc";
 import { getLetter } from "../../../utils/string";
 

@@ -4,6 +4,7 @@ import { Box, Button, Text, VStack } from "native-base";
 import React from "react";
 import BaseScreen from "../components/BaseScreen";
 import { GetStarted } from "../components/svgs";
+import { RootStackParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
 import LoadingScreen from "./LoadingScreen";
 

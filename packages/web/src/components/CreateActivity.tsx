@@ -18,12 +18,12 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { UserDocType } from "@propound/types";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { activityCollection, userCollection } from "../firebase/collections";
-import { UserDocType } from "../types/user";
 import { generateCode, generateId } from "../utils/id";
 
 interface CreateActivityProps {

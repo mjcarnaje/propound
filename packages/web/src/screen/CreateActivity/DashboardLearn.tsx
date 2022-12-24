@@ -25,6 +25,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { LearningMaterial, LearningMaterialType } from "@propound/types";
 import {
   deleteDoc,
   doc,
@@ -46,7 +47,6 @@ import { firestore } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import useStorage from "../../hooks/useStorage";
 import { selectAuth } from "../../store/reducer/auth";
-import { LearningMaterial, LearningMaterialType } from "../../types/game";
 import { generateId } from "../../utils/id";
 import { round } from "../../utils/number";
 

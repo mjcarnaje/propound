@@ -1,10 +1,9 @@
+import { AcitivityDocType, UserDocType } from "@propound/types";
 import {
   collection,
   CollectionReference,
   DocumentData,
 } from "firebase/firestore";
-import { AcitivityDocType } from "../types/game";
-import { UserDocType } from "../types/user";
 import { firestore } from "./config";
 
 const createCollection = <T = DocumentData>(

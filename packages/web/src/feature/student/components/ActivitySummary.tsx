@@ -9,9 +9,9 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { AcitivityDocType } from "@propound/types";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { AcitivityDocType } from "../../../types/game";
 
 interface ActivitySummaryProps {
   data: AcitivityDocType;

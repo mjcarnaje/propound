@@ -1,6 +1,5 @@
+import { GameDocTemplate, MatchUpItem, MatchUpItemType } from "@propound/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GameDocTemplate } from "../../types/game";
-import { MatchUpItem, MatchUpItemType } from "../../types/match-up";
 import { RootState } from "../store";
 
 export type GameShowAnswerType = Record<string, string | null>;

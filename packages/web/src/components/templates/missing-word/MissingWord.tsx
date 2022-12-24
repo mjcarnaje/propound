@@ -11,6 +11,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { MissingWordQuestionType, MissingWordTemplate } from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, doc } from "firebase/firestore";
 import React from "react";
@@ -21,10 +22,6 @@ import {
   useForm,
 } from "react-hook-form";
 import { firestore } from "../../../firebase/config";
-import {
-  MissingWordQuestionType,
-  MissingWordTemplate,
-} from "../../../types/missing-word";
 import { generateId } from "../../../utils/id";
 import MissingWordQuestion from "./MissingWordQuestion";
 

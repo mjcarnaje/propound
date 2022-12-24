@@ -10,11 +10,11 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { MatchUpItemType, MatchUpTemplate } from "@propound/types";
 import React, { ChangeEvent, useEffect } from "react";
 import { FieldErrors, useFormContext, useWatch } from "react-hook-form";
 import { BsImage, BsTrash } from "react-icons/bs";
 import useStorage from "../../../hooks/useStorage";
-import { MatchUpItemType, MatchUpTemplate } from "../../../types/match-up";
 import { checkImage } from "../../../utils/misc";
 
 interface MatchUpItemProps {
@@ -64,8 +64,7 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
                 {...register(`items.${itemIdx}.keyword.text`, {
                   required: `Item ${itemIdx + 1} is required.`,
                 })}
-                  autoComplete="off"
-
+                autoComplete="off"
               />
               <FormErrorMessage>
                 {error?.keyword?.text && error.keyword.text?.message}
@@ -87,8 +86,7 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
                 {...register(`items.${itemIdx}.definition.text`, {
                   required: `Item ${itemIdx + 1} is required.`,
                 })}
-                  autoComplete="off"
-
+                autoComplete="off"
               />
               <FormErrorMessage>
                 {error?.definition?.text && error.definition.text?.message}

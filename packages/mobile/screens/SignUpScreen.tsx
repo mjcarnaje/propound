@@ -1,3 +1,4 @@
+import { UserDocType } from "@propound/types";
 import * as ImagePicker from "expo-image-picker";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
@@ -7,7 +8,7 @@ import {
   getDocs,
   query,
   setDoc,
-  where,
+  where
 } from "firebase/firestore";
 import moment from "moment";
 import {
@@ -18,15 +19,15 @@ import {
   Spinner,
   Text,
   useToast,
-  VStack,
+  VStack
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import BaseScreen from "../components/BaseScreen";
 import { auth, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
-import { UserDocType } from "../types/user";
 import useStorage from "../utils/useStorage";
+
 
 const SignUpScreen = () => {
   const { setUser } = useAuthStore();

@@ -1,3 +1,5 @@
+import { AcitivityDocType, AcitivityStudentDocType } from "@propound/types";
+import { useFocusEffect } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { doc, getDoc } from "firebase/firestore";
 import {
@@ -17,9 +19,8 @@ import SvgLearningMaterials from "../components/svgs/LearningMaterials";
 import SvgPostGame from "../components/svgs/PostGame";
 import SvgPreGame from "../components/svgs/PreGame";
 import { firestore } from "../configs/firebase";
+import { RootStackParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
-import { AcitivityDocType, AcitivityStudentDocType } from "../types/game";
-import { useFocusEffect } from "@react-navigation/native";
 
 const ActivityScreen: React.FC<
   StackScreenProps<RootStackParamList, "Activity">

@@ -1,4 +1,5 @@
 import { FontAwesome5 } from "@expo/vector-icons";
+import { AcitivityDocType } from "@propound/types";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import {
   AspectRatio,
@@ -13,7 +14,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
-import { AcitivityDocType } from "../types/game";
 import JoinLearningSpaceModal from "./JoinLearningSpaceModal";
 import LearningSpaceCard from "./LearningSpaceCard";
 import SvgEmptyLearningSpace from "./svgs/EmptyLearningSpace";

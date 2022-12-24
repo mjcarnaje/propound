@@ -1,3 +1,4 @@
+import { AcitivityDocType, UserActivityResultDocType } from "@propound/types";
 import { collection, getDocs, Query, query, where } from "firebase/firestore";
 import {
   AspectRatio,
@@ -14,7 +15,6 @@ import { FlatList } from "react-native";
 import BaseScreen from "../components/BaseScreen";
 import { firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
-import { AcitivityDocType, UserActivityResultDocType } from "../types/game";
 
 type ResultAndActivity = {
   activity: AcitivityDocType;

@@ -1,0 +1,17 @@
+{
+  "name": "@propound/types",
+  "version": "1.0.0",
+  "description": "A library for type of propound",
+  "author": "mjcarnaje",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.17"
+  }
+}

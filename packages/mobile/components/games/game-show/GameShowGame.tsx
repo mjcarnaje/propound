@@ -1,4 +1,9 @@
 import { FontAwesome } from "@expo/vector-icons";
+import {
+  AcitivityStudentDocType,
+  GameShowTemplate,
+  UserActivityResultDocType,
+} from "@propound/types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { doc, DocumentReference, runTransaction } from "firebase/firestore";
 import AnimatedLottieView from "lottie-react-native";
@@ -26,12 +31,8 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { firestore } from "../../../configs/firebase";
+import { MainScreensParamList } from "../../../navigation";
 import { useAuthStore } from "../../../store/auth";
-import {
-  AcitivityStudentDocType,
-  UserActivityResultDocType,
-} from "../../../types/game";
-import { GameShowTemplate } from "../../../types/game-show";
 
 interface GameShowQuizProps {
   activityId: string;

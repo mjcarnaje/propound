@@ -23,7 +23,7 @@ export interface AcitivityDocType {
   teacher: BaseUserDocType;
   studentIds: string[];
   status: GameStatus;
-  createdAt: FieldValue;
+  createdAt: Date;
 }
 
 export interface AcitivityStudentDocType {
@@ -33,23 +33,6 @@ export interface AcitivityStudentDocType {
     postGameDone: boolean;
   };
   student: BaseUserDocType;
-  scores: {
-    [key: string]: {
-      scores: { score: number; time: number }[];
-      average: { score: number | null; time: number | null };
-      latestScore: number;
-      latestDate: Date | null;
-      baseDate: Date | null;
-    };
-  };
-}
-export interface UserActivityResultDocType {
-  activityId: string;
-  status: {
-    preGameDone: boolean;
-    learningDone: boolean;
-    postGameDone: boolean;
-  };
   scores: {
     [key: string]: {
       scores: { score: number; time: number }[];
@@ -76,4 +59,22 @@ export interface BaseDocTemplate {
   title: string;
   instruction: string;
   total: number;
+}
+
+export interface UserActivityResultDocType {
+  activityId: string;
+  status: {
+    preGameDone: boolean;
+    learningDone: boolean;
+    postGameDone: boolean;
+  };
+  scores: {
+    [key: string]: {
+      scores: { score: number; time: number }[];
+      average: { score: number | null; time: number | null };
+      latestScore: number;
+      latestDate: Date | null;
+      baseDate: Date | null;
+    };
+  };
 }

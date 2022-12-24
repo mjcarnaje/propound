@@ -1,3 +1,4 @@
+import { UserDocType } from "@propound/types";
 import { StackScreenProps } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import { signOut } from "firebase/auth";
@@ -13,8 +14,8 @@ import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import BaseScreen from "../components/BaseScreen";
 import { auth, firestore } from "../configs/firebase";
+import { MainScreensParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
-import { UserDocType } from "../types/user";
 import useStorage from "../utils/useStorage";
 import LoadingScreen from "./LoadingScreen";
 

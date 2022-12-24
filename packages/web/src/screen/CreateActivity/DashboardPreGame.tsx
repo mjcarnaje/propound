@@ -1,4 +1,5 @@
 import { Box, Center, Spinner, Text, VStack } from "@chakra-ui/react";
+import { GameDocTemplate, GameTemplate } from "@propound/types";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
 import { doc } from "firebase/firestore";
 import React, { useState } from "react";
@@ -8,7 +9,6 @@ import GameShow from "../../components/templates/game-show/GameShow";
 import MatchUp from "../../components/templates/match-up/MatchUp";
 import MissingWord from "../../components/templates/missing-word/MissingWord";
 import { firestore } from "../../firebase/config";
-import { GameDocTemplate, GameTemplate } from "../../types/game";
 import {
   isGameShowTemplate,
   isMatchUpTemplate,

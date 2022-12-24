@@ -11,6 +11,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { GameShowQuestionType, GameShowTemplate } from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, CollectionReference, doc } from "firebase/firestore";
 import React from "react";
@@ -21,10 +22,6 @@ import {
   useForm,
 } from "react-hook-form";
 import { firestore } from "../../../firebase/config";
-import {
-  GameShowQuestionType,
-  GameShowTemplate,
-} from "../../../types/game-show";
 import { generateId } from "../../../utils/id";
 import GameShowQuestion from "./GameShowQuestion";
 

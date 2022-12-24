@@ -1,6 +1,7 @@
 import { Center, Container, Spinner } from "@chakra-ui/react";
+import { AcitivityDocType } from "@propound/types";
 import { useFirestoreDocument } from "@react-query-firebase/firestore";
-import React, { useMemo } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { JoinActivity } from "../../components/activity/JoinActivity";
 import { MainLayout } from "../../components/layout/MainLayout";
@@ -8,7 +9,6 @@ import { firestore } from "../../firebase/config";
 import { getRef } from "../../firebase/util";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
-import { AcitivityDocType } from "../../types/game";
 import ActivitySummary from "./components/ActivitySummary";
 
 export const ActivitySummaryPage: React.FC = () => {

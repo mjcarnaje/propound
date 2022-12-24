@@ -1,7 +1,9 @@
-import { GameDocTemplate } from "../types/game";
-import { GameShowTemplate } from "../types/game-show";
-import { MatchUpTemplate } from "../types/match-up";
-import { MissingWordTemplate } from "../types/missing-word";
+import {
+  GameDocTemplate,
+  GameShowTemplate,
+  MatchUpTemplate,
+  MissingWordTemplate,
+} from "@propound/types";
 
 export function isGameShowTemplate(
   template: GameDocTemplate

@@ -1,5 +1,6 @@
 import { PlusSquareIcon } from "@chakra-ui/icons";
 import { Button, Center, Container, Spinner, VStack } from "@chakra-ui/react";
+import { AcitivityDocType } from "@propound/types";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, limit, Query, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,6 @@ import Empty from "../../components/svg/EmptySvg";
 import { firestore } from "../../firebase/config";
 import { useAppSelector } from "../../hooks/redux";
 import { selectAuth } from "../../store/reducer/auth";
-import { AcitivityDocType } from "../../types/game";
 
 export const TeacherDashboardPage = () => {
   const navigate = useNavigate();

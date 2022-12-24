@@ -1,11 +1,11 @@
 import { Divider, Flex, Stack } from "@chakra-ui/react";
+import { ROLE } from "@propound/types";
 import { IconType } from "react-icons";
 import { BiLogOut } from "react-icons/bi";
 import { FiBarChart2, FiPlus } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
-import { ROLE } from "../../types/role";
 import { LogoWithText } from "../LogoWithText";
 import { NavButton } from "./NavButton";
 import { UserProfile } from "./UserProfile";

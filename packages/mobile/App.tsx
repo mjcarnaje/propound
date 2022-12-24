@@ -1,3 +1,4 @@
+import { UserDocType } from "@propound/types";
 import {
   BottomTabBarProps,
   createBottomTabNavigator,
@@ -30,6 +31,7 @@ import {
 } from "./components/svgs/bottom-tab";
 import "./configs/firebase";
 import { auth, firestore } from "./configs/firebase";
+import { MainScreensParamList, RootStackParamList } from "./navigation";
 import AboutScreen from "./screens/AboutScreen";
 import ActivityScreen from "./screens/ActivityScreen";
 import GetStartedScreen from "./screens/GetStartedScreen";
@@ -42,7 +44,6 @@ import ResultScreen from "./screens/ResultScreen";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import { useAuthStore } from "./store/auth";
-import { UserDocType } from "./types/user";
 
 SplashScreen.preventAutoHideAsync();
 

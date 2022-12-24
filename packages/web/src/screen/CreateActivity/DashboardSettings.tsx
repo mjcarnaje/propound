@@ -14,11 +14,12 @@ import {
   Switch,
   Text,
   Textarea,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
+import { AcitivityDocType } from "@propound/types";
 import {
   useFirestoreDocument,
-  useFirestoreDocumentMutation
+  useFirestoreDocumentMutation,
 } from "@react-query-firebase/firestore";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { ChangeEvent, useEffect } from "react";
@@ -27,7 +28,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import DeleteActivity from "../../components/activity/DeleteActivity";
 import { firestore } from "../../firebase/config";
 import useStorage from "../../hooks/useStorage";
-import { AcitivityDocType } from "../../types/game";
 
 const DashboardSettings = () => {
   const navigate = useNavigate();

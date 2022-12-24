@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import create from "zustand";
 import { auth, firestore } from "../configs/firebase";
-import { UserDocType } from "../types/user";
+import { UserDocType } from "@propound/types";
 
 interface AuthState {
   user: UserDocType | null;

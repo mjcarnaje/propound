@@ -1,6 +1,6 @@
+import { MatchUpTemplate } from "@propound/types";
 import { Center, Text, VStack } from "native-base";
 import React from "react";
-import { MatchUpTemplate } from "../../../types/match-up";
 
 interface MatchUpGameProps {
   data: MatchUpTemplate;

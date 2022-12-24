@@ -1,3 +1,4 @@
+import { UserDocType } from "@propound/types";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   collection,
@@ -10,7 +11,6 @@ import React, { useState } from "react";
 import BaseScreen from "../components/BaseScreen";
 import { auth, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
-import { UserDocType } from "../types/user";
 
 const SignInScreen = () => {
   const { setUser } = useAuthStore();

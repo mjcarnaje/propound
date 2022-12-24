@@ -17,10 +17,10 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { AcitivityDocType, GameStatus } from "@propound/types";
 import React from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { AcitivityDocType, GameStatus } from "../../types/game";
 // @ts-ignore
 import NoCoverPhotoSvg from "../../assets/svgs/no_cover_photo.svg?component";
 

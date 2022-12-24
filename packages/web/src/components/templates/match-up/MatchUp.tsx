@@ -11,6 +11,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
+import { MatchUpItemType, MatchUpTemplate } from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, CollectionReference, doc } from "firebase/firestore";
 import React from "react";
@@ -21,7 +22,6 @@ import {
   useForm,
 } from "react-hook-form";
 import { firestore } from "../../../firebase/config";
-import { MatchUpItemType, MatchUpTemplate } from "../../../types/match-up";
 import { generateId } from "../../../utils/id";
 import MatchUpItem from "./MatchUpItem";
 

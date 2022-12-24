@@ -1,9 +1,9 @@
 import { ColorProps, Icon } from "@chakra-ui/react";
+import { LearningMaterialType } from "@propound/types";
 import { IconType } from "react-icons";
 import { BsLink45Deg, BsYoutube } from "react-icons/bs";
 import { FaFilePowerpoint, FaFileWord } from "react-icons/fa";
 import { VscFilePdf } from "react-icons/vsc";
-import { LearningMaterialType } from "../types/game";
 
 interface LearnMaterialIconProps {
   type: LearningMaterialType;
