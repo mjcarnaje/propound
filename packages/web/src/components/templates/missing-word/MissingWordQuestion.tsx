@@ -23,15 +23,15 @@ import {
   Textarea,
   useDisclosure,
   VStack,
-  Wrap
+  Wrap,
 } from "@chakra-ui/react";
-import {
-  MissingWordQuestionType,
-  MissingWordTemplate
-} from "@propound/types";
+import { MissingWordQuestionType, MissingWordTemplate } from "@propound/types";
 import React, { useEffect, useState } from "react";
 import { FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
 import { generateId } from "../../../utils/id";
+
+interface MissingWordQuestionProps {
+  error?: FieldErrors<MissingWordQuestionType>;
   questionIdx: number;
   onRemoveQuestion: () => void;
   onRemoveQuestionDisabled: boolean;

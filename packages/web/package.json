@@ -11,13 +11,14 @@
     "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/pro-theme": "^0.0.47",
     "@chakra-ui/react": "^2.0.0",
-    "@propound/types": "*",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/inter": "^4.5.14",
+    "@propound/types": "^1.0.0",
+    "@propound/utils": "^1.0.0",
     "@react-query-firebase/firestore": "^1.0.0-dev.7",
     "@reduxjs/toolkit": "^1.8.6",
-    "firebase": "^9.13.0",
+    "firebase": "^9.15.0",
     "framer-motion": "^7.6.2",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -35,6 +36,6 @@
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",
     "typescript": "^4.8.4",
-    "vite": "^3.2.1"
+    "vite": "3.2.5"
   }
 }

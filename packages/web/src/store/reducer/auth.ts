@@ -37,6 +37,24 @@ export const signInWithGoogle = createAsyncThunk<Omit<IAuthState, "loading">>(
       const user = result.user;
       const userData = user.providerData[0];
 
+      if (!userData.email) {
+        toast({
+          title: "Error signing in with Google",
+          description: "No user found",
+          status: "error",
+        });
+        return;
+      }
+
+      if (!userData.email.includes("@g.msuiit.edu.ph")) {
+        toast({
+          title: "Error signing in with Google",
+          description: "You must use your MSU-IIT email",
+          status: "error",
+        });
+        return;
+      }
+
       const userRef = doc(collections.teachers, user.uid);
       const userDoc = await getDoc(userRef);
 

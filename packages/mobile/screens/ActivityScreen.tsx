@@ -111,7 +111,6 @@ const ActivityScreen: React.FC<
       <VStack space={4} mx="auto" alignItems="center" w="90%">
         <NavCard
           title="Pre - Game"
-          description="Tap here to visualize the computed scores of the exam"
           svg={<SvgPreGame />}
           bg="#4B5563"
           onPress={() => {
@@ -121,7 +120,6 @@ const ActivityScreen: React.FC<
 
         <NavCard
           title="Learning Materials"
-          description="Tap here to visualize the computed scores of the exam"
           svg={<SvgLearningMaterials />}
           bg="#525252"
           onPress={() => {
@@ -132,7 +130,6 @@ const ActivityScreen: React.FC<
 
         <NavCard
           title="Post - Game"
-          description="Tap here to visualize the computed scores of the exam"
           svg={<SvgPostGame />}
           bg="#FB923C"
           onPress={() => {
@@ -150,7 +147,6 @@ export default ActivityScreen;
 interface NavCardProps {
   bg: string;
   title: string;
-  description: string;
   svg: JSX.Element;
   onPress: () => void;
   disabled?: boolean;
@@ -159,7 +155,6 @@ interface NavCardProps {
 const NavCard: React.FC<NavCardProps> = ({
   bg,
   title,
-  description,
   svg: SVG,
   onPress,
   disabled,
@@ -176,9 +171,6 @@ const NavCard: React.FC<NavCardProps> = ({
         <VStack space={2} flex={1}>
           <Text color="white" fontFamily="Inter-Bold" fontSize={22}>
             {title}
-          </Text>
-          <Text fontSize={13} color="white" fontFamily="Inter-Regular">
-            {description}
           </Text>
         </VStack>
         <Box px={4} flex={1}>

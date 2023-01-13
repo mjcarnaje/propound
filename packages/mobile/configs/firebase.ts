@@ -1,8 +1,16 @@
 // Import the functions you need from the SDKs you need
-import { PropoundFirebase } from "@propound/utils";
+import {
+  ActivityDocType,
+  StudentDocType,
+  TeacherDocType,
+} from "@propound/types";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import {
+  collection,
+  CollectionReference,
+  getFirestore,
+} from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -27,8 +35,19 @@ const storage = getStorage(app);
 const authProviders = {
   google: new GoogleAuthProvider(),
 };
-
-const propoundFirestore = new PropoundFirebase(firestore);
-const collections = propoundFirestore.getCollections();
+const collections = {
+  activities: collection(
+    firestore,
+    "activities"
+  ) as CollectionReference<ActivityDocType>,
+  students: collection(
+    firestore,
+    "students"
+  ) as CollectionReference<StudentDocType>,
+  teachers: collection(
+    firestore,
+    "teachers"
+  ) as CollectionReference<TeacherDocType>,
+};
 
 export { firestore, auth, storage, authProviders, collections };

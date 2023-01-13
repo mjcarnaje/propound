@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "@propound/root",
   "private": true,
   "devDependencies": {
     "concurrently": "^7.6.0",
@@ -8,7 +8,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "web": "lerna --scope=@propound/web run start --stream --",
+    "web": "lerna --scope=@propound/web run dev --stream --",
     "expo": "lerna --scope=@propound/mobile run start --stream --",
     "types": "lerna --scope=@propound/types run build --stream --",
     "utils": "lerna --scope=@propound/utils run build --stream --",
