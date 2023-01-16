@@ -18,6 +18,7 @@
     "@propound/utils": "^1.0.0",
     "@react-native-google-signin/google-signin": "^9.0.0",
     "@react-native-masked-view/masked-view": "0.2.8",
+    "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/bottom-tabs": "^6.4.1",
     "@react-navigation/native": "^6.0.14",
     "@react-navigation/native-stack": "^6.9.2",

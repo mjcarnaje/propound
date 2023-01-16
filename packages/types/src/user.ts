@@ -18,10 +18,23 @@ export enum StudentYear {
   Senior = "Senior",
 }
 
+export enum StudentCourse {
+  BEEdLanguageEducation = "BEEd Language Education",
+  BEEdScienceAndMathematics = "BEEd Science and Mathematics",
+  BSEdBiology = "BSEd Biology",
+  BSEdChemistry = "BSEd Chemistry",
+  BSEdPhysics = "BSEd Physics",
+  BSEdMathematics = "BSEd Mathematics",
+  BachelorOfPhysicalEducation = "Bachelor of Physical Education",
+  BTLEdHomeEconomics = "BTLEd Home Economics",
+  BTVTEdDraftingTechnology = "BTVTEd Drafting Technology",
+  BTLEdIndustrialArts = "BTLEd Industrial Arts",
+}
+
 export interface StudentDocType extends BaseUserDocType {
   role: Role.Student;
   year: StudentYear;
-  course: string;
+  course: StudentCourse;
   enrolledGames: string[];
 }
 

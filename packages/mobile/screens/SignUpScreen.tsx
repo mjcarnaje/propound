@@ -1,4 +1,10 @@
-import { Role, StudentDocType, StudentYear } from "@propound/types";
+import {
+  Role,
+  StudentCourse,
+  StudentDocType,
+  StudentYear,
+} from "@propound/types";
+import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, getDocs, query, setDoc, where } from "firebase/firestore";
@@ -36,7 +42,7 @@ const SignUpScreen = () => {
     photoURL: "",
     firstName: "",
     lastName: "",
-    course: "",
+    course: StudentCourse.BTLEdIndustrialArts,
     year: StudentYear.Freshman,
   });
 
@@ -134,7 +140,10 @@ const SignUpScreen = () => {
                 size="lg"
                 py={3}
                 px={3}
-                colorScheme="orange"
+                _focus={{
+                  borderColor: "orange.500",
+                  backgroundColor: "orange.50",
+                }}
               />
             </VStack>
 
@@ -151,7 +160,10 @@ const SignUpScreen = () => {
                 size="lg"
                 py={3}
                 px={3}
-                colorScheme="orange"
+                _focus={{
+                  borderColor: "orange.500",
+                  backgroundColor: "orange.50",
+                }}
                 secureTextEntry
               />
             </VStack>
@@ -198,7 +210,6 @@ const SignUpScreen = () => {
                 )}
               </Center>
             </TouchableOpacity>
-
             <Input
               placeholder="First Name"
               value={inputForms.firstName}
@@ -210,7 +221,10 @@ const SignUpScreen = () => {
               size="lg"
               py={3}
               px={3}
-              colorScheme="orange"
+              _focus={{
+                borderColor: "orange.500",
+                backgroundColor: "orange.50",
+              }}
             />
             <Input
               placeholder="Last Name"
@@ -223,8 +237,43 @@ const SignUpScreen = () => {
               size="lg"
               py={3}
               px={3}
-              colorScheme="orange"
+              _focus={{
+                borderColor: "orange.500",
+                backgroundColor: "orange.50",
+              }}
             />
+
+            <VStack w="full" space={1}>
+              <Text fontSize={16} fontWeight="semibold">
+                Course
+              </Text>
+              <Picker
+                style={{ backgroundColor: "#f2f2f2" }}
+                selectedValue={inputForms.course}
+                onValueChange={(course) =>
+                  setInputForms({ ...inputForms, course })
+                }
+              >
+                {Object.values(StudentCourse).map((course) => (
+                  <Picker.Item label={course} value={course} />
+                ))}
+              </Picker>
+            </VStack>
+
+            <VStack w="full" space={1}>
+              <Text fontSize={16} fontWeight="semibold">
+                Year
+              </Text>
+              <Picker
+                style={{ backgroundColor: "#f2f2f2" }}
+                selectedValue={inputForms.year}
+                onValueChange={(year) => setInputForms({ ...inputForms, year })}
+              >
+                {Object.values(StudentYear).map((year) => (
+                  <Picker.Item label={year} value={year} />
+                ))}
+              </Picker>
+            </VStack>
 
             <HStack mt={4} space={2}>
               <Button
