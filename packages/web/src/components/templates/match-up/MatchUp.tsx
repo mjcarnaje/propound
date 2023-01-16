@@ -51,9 +51,15 @@ interface MatchUpProps {
   activityId: string;
   type: GameType;
   gameData?: MatchUpTemplate | null;
+  refetch?: () => void;
 }
 
-const MatchUp: React.FC<MatchUpProps> = ({ activityId, type, gameData }) => {
+const MatchUp: React.FC<MatchUpProps> = ({
+  activityId,
+  type,
+  gameData,
+  refetch,
+}) => {
   const toast = useToast();
 
   const gameCollection = collection(
@@ -112,6 +118,7 @@ const MatchUp: React.FC<MatchUpProps> = ({ activityId, type, gameData }) => {
             description: "Game Show saved successfully",
             status: "success",
           });
+          refetch && refetch();
         },
       }
     );

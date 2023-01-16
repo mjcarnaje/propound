@@ -42,12 +42,14 @@ interface MissingWordProps {
   activityId: string;
   type: GameType;
   gameData?: MissingWordTemplate | null;
+  refetch?: () => void;
 }
 
 const MissingWord: React.FC<MissingWordProps> = ({
   activityId,
   type,
   gameData,
+  refetch,
 }) => {
   const toast = useToast();
 
@@ -110,6 +112,7 @@ const MissingWord: React.FC<MissingWordProps> = ({
             description: "Game Show saved successfully",
             status: "success",
           });
+          refetch && refetch();
         },
       }
     );

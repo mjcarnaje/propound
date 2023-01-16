@@ -85,7 +85,15 @@ function App() {
         <Route path="/g/:id" element={<Dashboard />}>
           <Route path="/g/:id" element={<DashboardIndex />} />
           <Route path="settings" element={<DashboardSettings />} />
-          <Route path="pre-game" element={<DashboardPreGame />} />
+          <Route
+            path="pre-game"
+            element={<DashboardPreGame />}
+            loader={async ({ request, params }) => {
+              return fetch(`/fake/api/teams/${params.teamId}.json`, {
+                signal: request.signal,
+              });
+            }}
+          />
           <Route path="post-game" element={<DashboardPostGame />} />
           <Route path="learn" element={<DashboardLearn />} />
           <Route path="results" element={<DashboardStudents />} />

@@ -47,9 +47,15 @@ interface GameShowProps {
   activityId: string;
   type: GameType;
   gameData?: GameShowTemplate | null;
+  refetch?: () => void;
 }
 
-const GameShow: React.FC<GameShowProps> = ({ activityId, type, gameData }) => {
+const GameShow: React.FC<GameShowProps> = ({
+  activityId,
+  type,
+  gameData,
+  refetch,
+}) => {
   const toast = useToast();
 
   const gameCollection = collection(
@@ -103,12 +109,14 @@ const GameShow: React.FC<GameShowProps> = ({ activityId, type, gameData }) => {
             status: "error",
           });
         },
-        onSuccess: async () => {
+        onSuccess: async (DATA) => {
           toast({
             title: "Success",
             description: "Game Show saved successfully",
             status: "success",
           });
+
+          refetch && refetch();
         },
       }
     );
