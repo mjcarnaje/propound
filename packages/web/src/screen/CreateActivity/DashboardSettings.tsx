@@ -7,19 +7,30 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  HStack,
   Image,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   Stack,
   Switch,
   Text,
   Textarea,
+  useDisclosure,
+  UseDisclosureReturn,
   useToast,
 } from "@chakra-ui/react";
 import {
   ActivityCollectionNames,
   ActivityDocType,
   CollectionNames,
+  GameStatus,
   GameType,
 } from "@propound/types";
 import {
@@ -27,7 +38,7 @@ import {
   useFirestoreDocumentMutation,
 } from "@react-query-firebase/firestore";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteActivity from "../../components/activity/DeleteActivity";
@@ -39,6 +50,7 @@ const DashboardSettings = () => {
   const { id } = useParams();
   const toast = useToast();
   const { url, uploading, uploadFile } = useStorage();
+  const publishDisclosure = useDisclosure();
 
   // @ts-ignore
   const ref: any = doc(firestore, CollectionNames.ACTIVITIES, id);
@@ -72,7 +84,7 @@ const DashboardSettings = () => {
     await uploadFile(file, `${id}/${file.name}`);
   }
 
-  async function canPublish() {
+  async function checkCanPublish() {
     // @ts-ignore
     const preGameRef = doc(
       firestore,
@@ -251,30 +263,20 @@ const DashboardSettings = () => {
           />
         </FormControl>
 
-        <FormControl display="flex" alignItems="center">
-          <FormLabel htmlFor="publish" mb="0">
-            Publish
-          </FormLabel>
-          <Controller
-            name="status"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <Switch
-                {...field}
-                isChecked={watch("status") === "PUBLISHED"}
-                onChange={async () => {
-                  const toPublish = watch("status") === "DRAFT";
-                  if (toPublish) {
-                    const can = await canPublish();
-                    if (!can) return;
-                  }
-                  setValue("status", toPublish ? "PUBLISHED" : "DRAFT");
-                }}
-              />
-            )}
+        <HStack>
+          <Text>Status:</Text>
+          <PublishLearningSpace
+            status={watch("status")}
+            disclosure={publishDisclosure}
+            onPublish={async () => {
+              const canPublish = await checkCanPublish();
+              if (canPublish) {
+                setValue("status", "PUBLISHED");
+              }
+            }}
           />
-        </FormControl>
+        </HStack>
+
         <DeleteActivity id={id!} />
       </Stack>
       <Flex justify="center" py="4" px={{ base: "4", md: "6" }}>
@@ -287,3 +289,64 @@ const DashboardSettings = () => {
 };
 
 export default DashboardSettings;
+
+interface PublishLearningSpaceProps {
+  status: GameStatus;
+  disclosure: UseDisclosureReturn;
+  onPublish: () => Promise<void>;
+}
+
+function PublishLearningSpace(props: PublishLearningSpaceProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { status, disclosure, onPublish } = props;
+  const { isOpen, onOpen, onClose } = disclosure;
+
+  return (
+    <>
+      {status == "DRAFT" ? (
+        <Button colorScheme="orange" size="sm" onClick={onOpen}>
+          Publish
+        </Button>
+      ) : (
+        <Text color="green.600" fontWeight="bold">
+          Published
+        </Text>
+      )}
+      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Are you sure you want to publish this learning space?
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Once you publish this learning space, you will not be able to edit{" "}
+              <strong>Pre-game</strong> and <strong>Post-game</strong> , but you
+              can still edit settings like title, description and cover photo
+              and you can still add new learning materials.
+            </Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              isLoading={isLoading}
+              colorScheme="orange"
+              onClick={async () => {
+                setIsLoading(true);
+                await onPublish();
+                onClose();
+                setIsLoading(false);
+              }}
+            >
+              Publish
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}

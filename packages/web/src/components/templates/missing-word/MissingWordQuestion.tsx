@@ -35,6 +35,7 @@ interface MissingWordQuestionProps {
   questionIdx: number;
   onRemoveQuestion: () => void;
   onRemoveQuestionDisabled: boolean;
+  isPublished?: boolean;
 }
 
 const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
@@ -42,6 +43,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
   questionIdx,
   onRemoveQuestion,
   onRemoveQuestionDisabled,
+  isPublished,
 }) => {
   const missingModal = useDisclosure();
   const incorrectModal = useDisclosure();
@@ -79,7 +81,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
               <HStack align="flex-start">
                 <VStack align="flex-start" w="full">
                   <Box
-                    contentEditable={true}
+                    contentEditable={!isPublished}
                     minH="100px"
                     maxH="300px"
                     overflowY="scroll"
@@ -93,6 +95,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                     borderColor="gray.300"
                     w="full"
                     onClick={() => {
+                      if (isPublished) return;
                       inputModal.onOpen();
                     }}
                   >
@@ -106,7 +109,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                             borderRadius="md"
                             px={1}
                             color="orange.500"
-                            cursor="pointer"
+                            cursor={!isPublished ? "pointer" : "default"}
                             fontWeight="bold"
                           >
                             {word.text}
@@ -158,15 +161,17 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                         </Box>
                       );
                     })}
-                  <Box>
-                    <Button
-                      onClick={() => missingModal.onOpen()}
-                      size="xs"
-                      leftIcon={<Icon as={AddIcon} />}
-                    >
-                      Select a word above
-                    </Button>
-                  </Box>
+                  {!isPublished && (
+                    <Box>
+                      <Button
+                        onClick={() => missingModal.onOpen()}
+                        size="xs"
+                        leftIcon={<Icon as={AddIcon} />}
+                      >
+                        Select a word above
+                      </Button>
+                    </Box>
+                  )}
                 </HStack>
               </Box>
             </HStack>
@@ -192,38 +197,44 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                       <Text key={field.keyId} mr={2} fontSize="sm" color="gray">
                         {field.text}
                       </Text>
-                      <IconButton
-                        size="xs"
-                        aria-label="remove word"
-                        icon={<CloseButton size="sm" />}
-                      />
+                      {!isPublished && (
+                        <IconButton
+                          size="xs"
+                          aria-label="remove word"
+                          icon={<CloseButton size="sm" />}
+                        />
+                      )}
                     </Wrap>
                   );
                 })}
-                <Wrap>
-                  <Button
-                    alignSelf="center"
-                    onClick={() => incorrectModal.onOpen()}
-                    size="xs"
-                    leftIcon={<Icon as={AddIcon} />}
-                  >
-                    Add a new word
-                  </Button>
-                </Wrap>
+                {!isPublished && (
+                  <Wrap>
+                    <Button
+                      alignSelf="center"
+                      onClick={() => incorrectModal.onOpen()}
+                      size="xs"
+                      leftIcon={<Icon as={AddIcon} />}
+                    >
+                      Add a new word
+                    </Button>
+                  </Wrap>
+                )}
               </Wrap>
             </HStack>
           </Box>
         </VStack>
-        <VStack>
-          <IconButton
-            disabled={onRemoveQuestionDisabled}
-            cursor="pointer"
-            variant="ghost"
-            aria-label="Delete question"
-            icon={<Icon as={DeleteIcon} />}
-            onClick={onRemoveQuestion}
-          />
-        </VStack>
+        {!isPublished && (
+          <VStack>
+            <IconButton
+              disabled={onRemoveQuestionDisabled}
+              cursor="pointer"
+              variant="ghost"
+              aria-label="Delete question"
+              icon={<Icon as={DeleteIcon} />}
+              onClick={onRemoveQuestion}
+            />
+          </VStack>
+        )}
       </HStack>
 
       <Modal

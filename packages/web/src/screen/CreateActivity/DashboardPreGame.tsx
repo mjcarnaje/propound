@@ -3,8 +3,9 @@ import {
   ActivityCollectionNames,
   CollectionNames,
   GameDocTemplate,
+  GameStatus,
   GameTemplate,
-  GameType
+  GameType,
 } from "@propound/types";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -17,7 +18,7 @@ import { firestore } from "../../firebase/config";
 import {
   isGameShowTemplate,
   isMatchUpTemplate,
-  isMissingWordTemplate
+  isMissingWordTemplate,
 } from "../../utils/template";
 
 const DashboardPreGame: React.FC = () => {
@@ -27,9 +28,16 @@ const DashboardPreGame: React.FC = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<GameStatus>("DRAFT");
 
   const getActivityData = async () => {
-    const docRef = doc(
+    const activityRef = doc(firestore, CollectionNames.ACTIVITIES, id);
+    const activitySnap = await getDoc(activityRef);
+    if (activitySnap.exists()) {
+      setStatus(activitySnap.data()?.status as GameStatus);
+    }
+
+    const preGameRef = doc(
       firestore,
       CollectionNames.ACTIVITIES,
       id,
@@ -37,7 +45,8 @@ const DashboardPreGame: React.FC = () => {
       GameType.PRE_TEST
     );
     setIsLoading(true);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await getDoc(preGameRef);
+
     if (docSnap.exists()) {
       setActivityData(docSnap.data() as GameDocTemplate);
     }
@@ -93,6 +102,7 @@ const DashboardPreGame: React.FC = () => {
           gameData={activityData}
           type={GameType.PRE_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {activityData && isMissingWordTemplate(activityData) && (
@@ -101,6 +111,7 @@ const DashboardPreGame: React.FC = () => {
           gameData={activityData}
           type={GameType.PRE_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {activityData && isMatchUpTemplate(activityData) && (
@@ -109,6 +120,7 @@ const DashboardPreGame: React.FC = () => {
           gameData={activityData}
           type={GameType.PRE_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {!activityData && gameTemplate && GameTemplates[gameTemplate]}

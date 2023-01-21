@@ -1,5 +1,12 @@
 import { createStandaloneToast } from "@chakra-ui/react";
-import { Role, TeacherDocType } from "@propound/types";
+import {
+  AdminDocType,
+  AuthoredDocType,
+  Role,
+  TeacherDocType,
+  UserDocType,
+} from "@propound/types";
+import { isStudentDocType } from "@propound/utils";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -12,7 +19,7 @@ const { toast } = createStandaloneToast();
 type IAuthState = {
   loading: boolean;
   token: string | null;
-  user: TeacherDocType | null;
+  user: AuthoredDocType | null;
 };
 
 const initialState: IAuthState = {
@@ -28,6 +35,11 @@ export const signOut = createAsyncThunk("auth/signOut", async () => {
     console.error(err);
   }
 });
+
+const ADMIN_EMAILS = [
+  "propound2022@gmail.com",
+  "michaeljamescarnaje1@gmail.com",
+];
 
 export const signInWithGoogle = createAsyncThunk<Omit<IAuthState, "loading">>(
   "auth/signInWithGoogle",
@@ -46,7 +58,9 @@ export const signInWithGoogle = createAsyncThunk<Omit<IAuthState, "loading">>(
         return;
       }
 
-      if (!userData.email.includes("@g.msuiit.edu.ph")) {
+      const isAdminEmail = ADMIN_EMAILS.indexOf(userData.email) !== -1;
+
+      if (!userData.email.includes("@g.msuiit.edu.ph") && !isAdminEmail) {
         toast({
           title: "Error signing in with Google",
           description: "You must use your MSU-IIT email",
@@ -55,13 +69,13 @@ export const signInWithGoogle = createAsyncThunk<Omit<IAuthState, "loading">>(
         return;
       }
 
-      const userRef = doc(collections.teachers, user.uid);
+      const userRef = doc(collections.users, user.uid);
       const userDoc = await getDoc(userRef);
 
-      let userDataDoc: TeacherDocType | undefined = userDoc.data();
+      let userDataDoc: UserDocType | undefined = userDoc.data();
 
-      if (!userDoc.exists()) {
-        userDataDoc = {
+      function createTeacherDoc(): TeacherDocType {
+        return {
           uid: user.uid,
           createdGames: [],
           email: userData.email || "",
@@ -70,7 +84,36 @@ export const signInWithGoogle = createAsyncThunk<Omit<IAuthState, "loading">>(
           photoURL: userData.photoURL || "",
           role: Role.Teacher,
         };
+      }
+
+      function createAdminDoc(): AdminDocType {
+        return {
+          uid: user.uid,
+          createdGames: [],
+          email: userData.email || "",
+          firstName: "Admin",
+          lastName: "",
+          photoURL: userData.photoURL || "",
+          role: Role.Admin,
+        };
+      }
+
+      if (!userDoc.exists()) {
+        if (isAdminEmail) {
+          userDataDoc = createAdminDoc();
+        } else {
+          userDataDoc = createTeacherDoc();
+        }
         await setDoc(userRef, userDataDoc);
+      }
+
+      if (userDataDoc && isStudentDocType(userDataDoc)) {
+        toast({
+          title: "Error signing in with Google",
+          description: "You are not authorized to login",
+          status: "error",
+        });
+        return;
       }
 
       const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -93,7 +136,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, { payload }: PayloadAction<TeacherDocType>) => {
+    setUser: (state, { payload }: PayloadAction<AuthoredDocType>) => {
       state.user = payload;
     },
     setLoading: (state, { payload }: PayloadAction<boolean>) => {

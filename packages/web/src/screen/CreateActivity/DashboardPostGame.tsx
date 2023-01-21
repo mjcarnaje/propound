@@ -3,6 +3,7 @@ import {
   ActivityCollectionNames,
   CollectionNames,
   GameDocTemplate,
+  GameStatus,
   GameTemplate,
   GameType,
 } from "@propound/types";
@@ -27,9 +28,16 @@ const DashboardPostGame: React.FC = () => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<GameStatus>("DRAFT");
 
   const getActivityData = async () => {
-    const docRef = doc(
+    const activityRef = doc(firestore, CollectionNames.ACTIVITIES, id);
+    const activitySnap = await getDoc(activityRef);
+    if (activitySnap.exists()) {
+      setStatus(activitySnap.data()?.status as GameStatus);
+    }
+
+    const postGameRef = doc(
       firestore,
       CollectionNames.ACTIVITIES,
       id,
@@ -37,7 +45,8 @@ const DashboardPostGame: React.FC = () => {
       GameType.POST_TEST
     );
     setIsLoading(true);
-    const docSnap = await getDoc(docRef);
+    const docSnap = await getDoc(postGameRef);
+
     if (docSnap.exists()) {
       setActivityData(docSnap.data() as GameDocTemplate);
     }
@@ -47,7 +56,6 @@ const DashboardPostGame: React.FC = () => {
   useEffect(() => {
     getActivityData();
   }, []);
-
   const GameTemplates: Record<GameTemplate, JSX.Element> = {
     GAME_SHOW: (
       <GameShow
@@ -93,6 +101,7 @@ const DashboardPostGame: React.FC = () => {
           gameData={activityData}
           type={GameType.POST_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {activityData && isMissingWordTemplate(activityData) && (
@@ -101,6 +110,7 @@ const DashboardPostGame: React.FC = () => {
           gameData={activityData}
           type={GameType.POST_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {activityData && isMatchUpTemplate(activityData) && (
@@ -109,6 +119,7 @@ const DashboardPostGame: React.FC = () => {
           gameData={activityData}
           type={GameType.POST_TEST}
           refetch={getActivityData}
+          isPublished={status === "PUBLISHED"}
         />
       )}
       {!activityData && gameTemplate && GameTemplates[gameTemplate]}

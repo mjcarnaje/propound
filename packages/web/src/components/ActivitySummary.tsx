@@ -26,13 +26,13 @@ const ActivitySummary: React.FC<ActivitySummaryProps> = ({ data }) => {
       <VStack spacing={6}>
         <Box w="full">
           <HStack alignItems="center" spacing={4}>
-            <Avatar src={data.teacher.photoURL} />
+            <Avatar src={data.author.photoURL} />
             <VStack align="self-start" spacing={0}>
               <Text lineHeight={1} fontWeight="bold">
-                {getFullName(data.teacher)}
+                {getFullName(data.author)}
               </Text>
               <Text fontStyle="italic" fontSize="sm">
-                {data.teacher.email}
+                {data.author.email}
               </Text>
             </VStack>
           </HStack>

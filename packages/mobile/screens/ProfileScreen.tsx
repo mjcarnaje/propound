@@ -36,7 +36,7 @@ const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
         const newPhotoURL = await _uploadFile(result, `images/${timestamp}`);
 
         if (newPhotoURL) {
-          const studentRef = doc(collections.students, user.uid);
+          const studentRef = doc(collections.users, user.uid);
 
           await updateDoc(studentRef, { photoURL: newPhotoURL });
 

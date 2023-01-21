@@ -5,14 +5,27 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
+  HStack,
   Input,
+  SimpleGrid,
   Stack,
+  Text,
   Textarea,
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import { ActivityDocType, AuthoredDocType, Role } from "@propound/types";
+import {
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "../components/layout/MainLayout";
 import { useAppSelector } from "../hooks/redux";
@@ -20,6 +33,7 @@ import { selectAuth } from "../store/reducer/auth";
 import { generateCode, generateId } from "../utils/id";
 // @ts-ignore
 import CreateActivitySvg from "../assets/svgs/create_activity.svg?component";
+import ActivityCardCoverPhoto from "../components/activity/ActivityCardCoverPhoto";
 import { collections } from "../firebase/config";
 
 const defaultInput = {
@@ -68,19 +82,20 @@ const CreateLearningSpace: React.FC<CreateLearningSpaceProps> = () => {
         description: input.description,
         code: `${id}-${generateCode()}`,
         coverPhoto: "",
-        teacher: {
+        author: {
           uid: user.uid,
           email: user.email,
           photoURL: user.photoURL,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: user.role,
         },
         studentIds: [],
         status: "DRAFT",
         createdAt: serverTimestamp(),
       });
 
-      const userRef = doc(collections.teachers, user.uid);
+      const userRef = doc(collections.users, user.uid);
 
       await updateDoc(userRef, {
         createdGames: [...user.createdGames, id],
@@ -155,9 +170,163 @@ const CreateLearningSpace: React.FC<CreateLearningSpaceProps> = () => {
             </Button>
           </VStack>
         </Stack>
+        {user && <LearningSpaceTemplates user={user} />}
       </Container>
     </MainLayout>
   );
 };
 
 export default CreateLearningSpace;
+
+interface LearningSpaceTemplatesProps {
+  user: AuthoredDocType;
+}
+
+const LearningSpaceTemplates: React.FC<LearningSpaceTemplatesProps> = ({
+  user,
+}) => {
+  const [activities, setActivities] = useState<ActivityDocType[]>([]);
+
+  async function getData() {
+    try {
+      const q = query<ActivityDocType>(
+        collections.activities,
+        where("author.role", "==", "Admin")
+      );
+      const docs = await getDocs(q);
+      setActivities(docs.docs.map((d) => d.data()));
+    } catch (err) {
+      console.error("Something went wrong!");
+    }
+  }
+
+  async function onDelete(id: string) {
+    try {
+      await deleteDoc(doc(collections.activities, id));
+      setActivities((prev) => prev.filter((x) => x.id !== id));
+    } catch (err) {
+      console.error("Something went wrong!");
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <SimpleGrid columns={2} gap={4} py={8}>
+      {activities.map((data) => (
+        <LearningSpaceTemplate
+          key={data.id}
+          data={data}
+          user={user}
+          onDelete={onDelete}
+        />
+      ))}
+    </SimpleGrid>
+  );
+};
+
+interface LearningSpaceTemplateProps {
+  data: ActivityDocType;
+  user: AuthoredDocType;
+  onDelete: (id: string) => Promise<void>;
+}
+
+const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
+  data,
+  user,
+  onDelete,
+}) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  async function onUseTemplate() {
+    setLoading(true);
+    const id = generateId();
+    await setDoc(doc(collections.activities, id), {
+      id,
+      title: data.title,
+      description: data.description,
+      code: `${id}-${generateCode()}`,
+      coverPhoto: "",
+      author: {
+        uid: user.uid,
+        email: user.email,
+        photoURL: user.photoURL,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+      },
+      studentIds: [],
+      status: "DRAFT",
+      createdAt: serverTimestamp(),
+    });
+    const userRef = doc(collections.users, user.uid);
+    await updateDoc(userRef, {
+      createdGames: [...user.createdGames, id],
+    });
+    navigate(`/g/${id}`);
+  }
+
+  return (
+    <VStack
+      w="full"
+      transition="all 0.2s"
+      bg="white"
+      rounded="2xl"
+      shadow="sm"
+      overflow="hidden"
+      p={4}
+      spacing={8}
+      alignItems="start"
+    >
+      <ActivityCardCoverPhoto data={data} maxW="none" />
+
+      <VStack align="flex-start" w="full" spacing={2}>
+        <Heading
+          fontFamily="Inter"
+          color="gray.800"
+          as="h4"
+          fontWeight="bold"
+          size="md"
+        >
+          {data.title}
+        </Heading>
+        <Text
+          fontStyle="italic"
+          fontSize="17px"
+          whiteSpace="pre-line"
+          wordBreak="break-word"
+          noOfLines={8}
+        >
+          {data.description}
+        </Text>
+      </VStack>
+
+      <HStack justify="center" w="full">
+        {user.role === Role.Admin && (
+          <Button
+            color="red.500"
+            isLoading={deleting}
+            onClick={async () => {
+              setDeleting(true);
+              await onDelete(data.id);
+              setDeleting(false);
+            }}
+          >
+            Delete
+          </Button>
+        )}
+        <Button
+          colorScheme="orange"
+          isLoading={loading}
+          onClick={onUseTemplate}
+        >
+          Use this template
+        </Button>
+      </HStack>
+    </VStack>
+  );
+};

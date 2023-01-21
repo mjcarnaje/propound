@@ -1,18 +1,15 @@
-import {
-  ActivityDocType,
-  StudentDocType,
-  TeacherDocType,
-} from "@propound/types";
+import { ActivityDocType, UserDocType } from "@propound/types";
 import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
+import { FirebaseApp, FirebaseOptions, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
   collection,
   CollectionReference,
   getFirestore,
 } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: "AIzaSyBXbjHQw_ail_zMIy1GXY2ObEPu-0_vWLw",
   authDomain: "propound-9e155.firebaseapp.com",
   projectId: "propound-9e155",
@@ -33,12 +30,5 @@ export const collections = {
     firestore,
     "activities"
   ) as CollectionReference<ActivityDocType>,
-  students: collection(
-    firestore,
-    "students"
-  ) as CollectionReference<StudentDocType>,
-  teachers: collection(
-    firestore,
-    "teachers"
-  ) as CollectionReference<TeacherDocType>,
+  users: collection(firestore, "users") as CollectionReference<UserDocType>,
 };

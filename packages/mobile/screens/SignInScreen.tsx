@@ -26,7 +26,7 @@ const SignInScreen = () => {
       );
 
       if (user) {
-        const studentRef = doc(collections.students, user.uid);
+        const studentRef = doc(collections.users, user.uid);
         const student = await getDoc(studentRef);
 
         if (student.exists()) {

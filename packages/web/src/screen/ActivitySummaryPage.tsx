@@ -5,9 +5,9 @@ import { doc } from "firebase/firestore";
 import React from "react";
 import { QueryKey } from "react-query";
 import { useParams } from "react-router-dom";
-import { MainLayout } from "../../components/layout/MainLayout";
-import { firestore } from "../../firebase/config";
-import ActivitySummary from "./components/ActivitySummary";
+import { MainLayout } from "../components/layout/MainLayout";
+import { firestore } from "../firebase/config";
+import ActivitySummary from "../components/ActivitySummary";
 
 export const ActivitySummaryPage: React.FC = () => {
   const { id } = useParams();

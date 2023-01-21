@@ -18,7 +18,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { TeacherDocType } from "@propound/types";
+import { AuthoredDocType, Role, TeacherDocType } from "@propound/types";
 import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
@@ -27,7 +27,7 @@ import { collections } from "../firebase/config";
 import { generateCode, generateId } from "../utils/id";
 
 interface CreateActivityProps {
-  user: TeacherDocType;
+  user: AuthoredDocType;
   button?: (props: ReturnType<typeof useDisclosure>) => JSX.Element;
 }
 
@@ -71,19 +71,13 @@ export const CreateActivity: React.FC<CreateActivityProps> = ({
         description: input.description,
         code: `${id}-${generateCode()}`,
         coverPhoto: "",
-        teacher: {
-          uid: user.uid,
-          email: user.email,
-          photoURL: user.photoURL,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
+        author: user,
         studentIds: [],
         status: "DRAFT",
         createdAt: serverTimestamp(),
       });
 
-      const userRef = doc(collections.teachers, user.uid);
+      const userRef = doc(collections.users, user.uid);
 
       await updateDoc(userRef, {
         createdGames: [...user.createdGames, id],

@@ -124,6 +124,12 @@ const DashboardLearn: React.FC = () => {
           }
         }
 
+        const fileMap = {
+          PDF: ["pdf"],
+          WORD: ["doc", "docx"],
+          PPT: ["ppt", "pptx"],
+        };
+
         const newMaterial = {
           id: generateId(),
           title: inputs.title,

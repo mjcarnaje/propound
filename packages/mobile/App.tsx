@@ -97,7 +97,7 @@ const PropoundNavigation: React.FC = () => {
       setLoading(true);
       if (user) {
         const userRef = doc(
-          collections.students,
+          collections.users,
           user.uid
         ) as DocumentReference<StudentDocType>;
         const userDoc = await getDoc(userRef);

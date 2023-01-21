@@ -1,7 +1,7 @@
 import { GameShowTemplate } from "./game-show";
 import { MatchUpTemplate } from "./match-up";
 import { MissingWordTemplate } from "./missing-word";
-import { BaseUserDocType } from "./user";
+import { BaseUserDocType, Role } from "./user";
 
 export type GameStatus = "PUBLISHED" | "DRAFT";
 
@@ -20,7 +20,7 @@ export interface ActivityDocType {
   description: string;
   coverPhoto: string;
   code: string;
-  teacher: BaseUserDocType;
+  author: BaseUserDocType & { role: Role };
   studentIds: string[];
   status: GameStatus;
   createdAt: Date;

@@ -20,13 +20,14 @@ import {
 } from "@propound/types";
 import { useFirestoreDocumentMutation } from "@react-query-firebase/firestore";
 import { collection, CollectionReference, doc } from "firebase/firestore";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   FormProvider,
   SubmitHandler,
   useFieldArray,
   useForm,
 } from "react-hook-form";
+import { useBeforeUnload } from "react-router-dom";
 import { firestore } from "../../../firebase/config";
 import { generateId } from "../../../utils/id";
 import GameShowQuestion from "./GameShowQuestion";
@@ -48,6 +49,7 @@ interface GameShowProps {
   type: GameType;
   gameData?: GameShowTemplate | null;
   refetch?: () => void;
+  isPublished?: boolean;
 }
 
 const GameShow: React.FC<GameShowProps> = ({
@@ -55,6 +57,7 @@ const GameShow: React.FC<GameShowProps> = ({
   type,
   gameData,
   refetch,
+  isPublished,
 }) => {
   const toast = useToast();
 
@@ -86,6 +89,7 @@ const GameShow: React.FC<GameShowProps> = ({
     control,
     handleSubmit,
     register,
+    watch,
     formState: { errors },
   } = methods;
 
@@ -109,7 +113,7 @@ const GameShow: React.FC<GameShowProps> = ({
             status: "error",
           });
         },
-        onSuccess: async (DATA) => {
+        onSuccess: async () => {
           toast({
             title: "Success",
             description: "Game Show saved successfully",
@@ -121,6 +125,20 @@ const GameShow: React.FC<GameShowProps> = ({
       }
     );
   };
+
+  useBeforeUnload(
+    React.useCallback(() => {
+      localStorage.setItem("pre-game-show", JSON.stringify(watch()));
+    }, [watch])
+  );
+
+  useEffect(() => {
+    const preGameShow = localStorage.getItem("pre-game-show");
+    if (preGameShow) {
+      methods.reset(JSON.parse(preGameShow));
+      localStorage.removeItem("pre-game-show");
+    }
+  }, [gameData]);
 
   return (
     <FormProvider {...methods}>
@@ -136,6 +154,8 @@ const GameShow: React.FC<GameShowProps> = ({
                 minLength: { value: 4, message: "Minimum length should be 4" },
               })}
               autoComplete="off"
+              disabled={isPublished}
+              _disabled={{ opacity: 1 }}
             />
             <FormErrorMessage>
               {errors.title && errors.title.message}
@@ -149,6 +169,8 @@ const GameShow: React.FC<GameShowProps> = ({
               {...register("instruction", {
                 minLength: { value: 4, message: "Minimum length should be 4" },
               })}
+              disabled={isPublished}
+              _disabled={{ opacity: 1 }}
             />
             <FormErrorMessage>
               {errors.instruction && errors.instruction.message}
@@ -162,29 +184,34 @@ const GameShow: React.FC<GameShowProps> = ({
                 questionIdx={questionIdx}
                 onRemoveQuestion={() => remove(questionIdx)}
                 onRemoveQuestionDisabled={arr.length === 1}
+                isPublished={isPublished}
               />
             ))}
-            <Box>
-              <Button size="sm" onClick={() => append(defaultQuestion())}>
-                Add Question
-              </Button>
-            </Box>
+            {!isPublished && (
+              <Box>
+                <Button size="sm" onClick={() => append(defaultQuestion())}>
+                  Add Question
+                </Button>
+              </Box>
+            )}
           </VStack>
         </VStack>
 
-        <Center py={8}>
-          <Button
-            mx="auto"
-            size="lg"
-            px="16"
-            colorScheme="orange"
-            isLoading={isLoading}
-            loadingText="Saving..."
-            type="submit"
-          >
-            Save
-          </Button>
-        </Center>
+        {!isPublished && (
+          <Center py={8}>
+            <Button
+              mx="auto"
+              size="lg"
+              px="16"
+              colorScheme="orange"
+              isLoading={isLoading}
+              loadingText="Saving..."
+              type="submit"
+            >
+              Save
+            </Button>
+          </Center>
+        )}
       </chakra.form>
     </FormProvider>
   );

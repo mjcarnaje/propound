@@ -33,6 +33,7 @@ interface GameShowQuestionProps {
   questionIdx: number;
   onRemoveQuestion: () => void;
   onRemoveQuestionDisabled: boolean;
+  isPublished?: boolean;
 }
 
 const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
@@ -40,6 +41,7 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
   questionIdx,
   onRemoveQuestion,
   onRemoveQuestionDisabled,
+  isPublished,
 }) => {
   const { id } = useParams();
   const { uploading, url: questionPhotoURL, uploadFile } = useStorage();
@@ -103,9 +105,10 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
                     type="file"
                     name="file"
                     onChange={fileChangeHandler}
+                    disabled={isPublished}
                   />
                   <IconButton
-                    cursor="pointer"
+                    cursor={isPublished ? "auto" : "pointer"}
                     as="label"
                     htmlFor={`questions.${questionIdx}.photoURL`}
                     isLoading={uploading}
@@ -114,6 +117,8 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
                     aria-label="Upload choice image"
                     fontSize="20px"
                     icon={<Icon as={BsImage} />}
+                    disabled={isPublished}
+                    _disabled={{ opacity: 1 }}
                   />
                 </>
               )}
@@ -126,6 +131,8 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
                   required: `Question ${questionIdx + 1} is required.`,
                 })}
                 autoComplete="off"
+                disabled={isPublished}
+                _disabled={{ opacity: 1 }}
               />
               <FormErrorMessage>
                 {error?.question && error.question.message}
@@ -143,33 +150,36 @@ const GameShowQuestion: React.FC<GameShowQuestionProps> = ({
               choiceIdx={choiceIdx}
               onRemoveChoice={() => remove(choiceIdx)}
               onRemoveChoiceDisabled={arr.length === 1}
+              isPublished={isPublished}
             />
           ))}
         </SimpleGrid>
       </VStack>
-      <VStack>
-        <IconButton
-          disabled={onRemoveQuestionDisabled}
-          cursor="pointer"
-          variant="ghost"
-          aria-label="Delete question"
-          icon={<Icon as={DeleteIcon} />}
-          onClick={onRemoveQuestion}
-        />
-        <IconButton
-          cursor="pointer"
-          variant="ghost"
-          aria-label="Add choice"
-          icon={<Icon as={AddIcon} />}
-          onClick={() => {
-            append({
-              id: generateId(),
-              choice: "",
-              photoURL: null,
-            });
-          }}
-        />
-      </VStack>
+      {!isPublished && (
+        <VStack>
+          <IconButton
+            disabled={onRemoveQuestionDisabled}
+            cursor="pointer"
+            variant="ghost"
+            aria-label="Delete question"
+            icon={<Icon as={DeleteIcon} />}
+            onClick={onRemoveQuestion}
+          />
+          <IconButton
+            cursor="pointer"
+            variant="ghost"
+            aria-label="Add choice"
+            icon={<Icon as={AddIcon} />}
+            onClick={() => {
+              append({
+                id: generateId(),
+                choice: "",
+                photoURL: null,
+              });
+            }}
+          />
+        </VStack>
+      )}
     </HStack>
   );
 };

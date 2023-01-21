@@ -1,9 +1,4 @@
-import {
-  Role,
-  StudentCourse,
-  StudentDocType,
-  StudentYear,
-} from "@propound/types";
+import { Role, StudentDocType, StudentYear } from "@propound/types";
 import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -42,7 +37,7 @@ const SignUpScreen = () => {
     photoURL: "",
     firstName: "",
     lastName: "",
-    course: StudentCourse.BTLEdIndustrialArts,
+    courseSection: "",
     year: StudentYear.Freshman,
   });
 
@@ -67,7 +62,7 @@ const SignUpScreen = () => {
     const { email } = inputForms;
     setIsCheckingEmail(true);
     const q = query(
-      collections.students,
+      collections.users,
       where("email", "==", email.trim().toLowerCase())
     );
     const querySnapshot = await getDocs(q);
@@ -97,14 +92,14 @@ const SignUpScreen = () => {
       );
 
       if (user) {
-        const userRef = doc(collections.students, user.uid);
+        const userRef = doc(collections.users, user.uid);
 
         const newUser: StudentDocType = {
           uid: user.uid,
           email: inputForms.email,
           enrolledGames: [],
           photoURL: inputForms.photoURL,
-          course: inputForms.course,
+          courseSection: inputForms.courseSection,
           firstName: inputForms.firstName,
           lastName: inputForms.lastName,
           role: Role.Student,
@@ -245,23 +240,6 @@ const SignUpScreen = () => {
 
             <VStack w="full" space={1}>
               <Text fontSize={16} fontWeight="semibold">
-                Course
-              </Text>
-              <Picker
-                style={{ backgroundColor: "#f2f2f2" }}
-                selectedValue={inputForms.course}
-                onValueChange={(course) =>
-                  setInputForms({ ...inputForms, course })
-                }
-              >
-                {Object.values(StudentCourse).map((course) => (
-                  <Picker.Item label={course} value={course} />
-                ))}
-              </Picker>
-            </VStack>
-
-            <VStack w="full" space={1}>
-              <Text fontSize={16} fontWeight="semibold">
                 Year
               </Text>
               <Picker
@@ -274,6 +252,23 @@ const SignUpScreen = () => {
                 ))}
               </Picker>
             </VStack>
+
+            <Input
+              placeholder="Course Section"
+              value={inputForms.courseSection}
+              onChangeText={(text) =>
+                setInputForms({ ...inputForms, courseSection: text })
+              }
+              borderRadius="xl"
+              fontFamily="Inter-Regular"
+              size="lg"
+              py={3}
+              px={3}
+              _focus={{
+                borderColor: "orange.500",
+                backgroundColor: "orange.50",
+              }}
+            />
 
             <HStack mt={4} space={2}>
               <Button

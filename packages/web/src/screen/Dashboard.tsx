@@ -2,24 +2,23 @@ import { PlusSquareIcon } from "@chakra-ui/icons";
 import { Button, Center, Container, Spinner, VStack } from "@chakra-ui/react";
 import { ActivityDocType } from "@propound/types";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
-import { limit, Query, query, where } from "firebase/firestore";
+import { Query, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import ActivityCard from "../../components/activity/ActivityCard";
-import { CreateActivity } from "../../components/CreateActivity";
-import { MainLayout } from "../../components/layout/MainLayout";
-import Empty from "../../components/svg/EmptySvg";
-import { collections } from "../../firebase/config";
-import { useAppSelector } from "../../hooks/redux";
-import { selectAuth } from "../../store/reducer/auth";
+import ActivityCard from "../components/activity/ActivityCard";
+import { CreateActivity } from "../components/CreateActivity";
+import { MainLayout } from "../components/layout/MainLayout";
+import Empty from "../components/svg/EmptySvg";
+import { collections } from "../firebase/config";
+import { useAppSelector } from "../hooks/redux";
+import { selectAuth } from "../store/reducer/auth";
 
-export const TeacherDashboardPage = () => {
+export const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector(selectAuth);
 
   const ref = query(
     collections.activities,
-    limit(16),
-    where("teacher.uid", "==", user!.uid)
+    where("author.uid", "==", user!.uid)
   ) as Query<ActivityDocType>;
 
   const games = useFirestoreQuery<ActivityDocType>(["games"], ref, {

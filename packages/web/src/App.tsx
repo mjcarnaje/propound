@@ -1,11 +1,12 @@
 import { Center, Spinner } from "@chakra-ui/react";
+import { isAuthoredDocType } from "@propound/utils";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { ActivitySummaryPage } from "./feature/student/ActivitySummaryPage";
-import { TeacherDashboardPage } from "./feature/teacher/TeacherDashboardPage";
+import { ActivitySummaryPage } from "./screen/ActivitySummaryPage";
+import { Dashboard as MyDashboard } from "./screen/Dashboard";
 import { auth, collections } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { AboutPage } from "./screen/AboutPage";
@@ -36,10 +37,10 @@ function App() {
       try {
         dispatch(setLoading(true));
         if (user) {
-          const userRef = doc(collections.teachers, user.uid);
+          const userRef = doc(collections.users, user.uid);
           const userDoc = await getDoc(userRef);
           const userData = userDoc.data();
-          if (userData) {
+          if (userData && isAuthoredDocType(userData)) {
             dispatch(setUser(userData));
           }
         }
@@ -70,7 +71,7 @@ function App() {
             <ProtectedRoute redirectPath="/landing" isAllowed={!!user} />
           }
         >
-          <Route path="/dashboard" element={<TeacherDashboardPage />} />
+          <Route path="/dashboard" element={<MyDashboard />} />
           <Route path="/create" element={<CreateLearningSpace />} />
         </Route>
 

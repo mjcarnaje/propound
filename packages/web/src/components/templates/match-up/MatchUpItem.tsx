@@ -23,6 +23,7 @@ interface MatchUpItemProps {
   itemIdx: number;
   onRemoveItem: () => void;
   onRemoveItemDisabled: boolean;
+  isPublished?: boolean;
 }
 
 const MatchUpItem: React.FC<MatchUpItemProps> = ({
@@ -31,6 +32,7 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
   itemIdx,
   onRemoveItem,
   onRemoveItemDisabled,
+  isPublished,
 }) => {
   const { register, control, watch, setValue } =
     useFormContext<MatchUpTemplate>();
@@ -56,6 +58,7 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
               setValue={(url) => {
                 setValue(`items.${itemIdx}.keyword.photo`, url);
               }}
+              isPublished={isPublished}
             />
             <VStack align="flex-start" w="full">
               <Input
@@ -65,6 +68,8 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
                   required: `Item ${itemIdx + 1} is required.`,
                 })}
                 autoComplete="off"
+                disabled={isPublished}
+                _disabled={{ opacity: 1 }}
               />
               <FormErrorMessage>
                 {error?.keyword?.text && error.keyword.text?.message}
@@ -78,6 +83,7 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
               setValue={(url) => {
                 setValue(`items.${itemIdx}.definition.photo`, url);
               }}
+              isPublished={isPublished}
             />
             <VStack align="flex-start" w="full">
               <Input
@@ -87,6 +93,8 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
                   required: `Item ${itemIdx + 1} is required.`,
                 })}
                 autoComplete="off"
+                disabled={isPublished}
+                _disabled={{ opacity: 1 }}
               />
               <FormErrorMessage>
                 {error?.definition?.text && error.definition.text?.message}
@@ -94,12 +102,14 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
             </VStack>
           </HStack>
         </HStack>
-        <IconButton
-          onClick={onRemoveItem}
-          disabled={onRemoveItemDisabled}
-          aria-label="Delete match up"
-          icon={<Icon as={BsTrash} color="red.400" />}
-        />
+        {!isPublished && (
+          <IconButton
+            onClick={onRemoveItem}
+            disabled={onRemoveItemDisabled}
+            aria-label="Delete match up"
+            icon={<Icon as={BsTrash} color="red.400" />}
+          />
+        )}
       </HStack>
     </>
   );
@@ -111,12 +121,14 @@ interface MatchUpPhotoProps {
   photo: string;
   activityId: string;
   setValue: (value: string) => void;
+  isPublished?: boolean;
 }
 
 const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
   photo,
   activityId,
   setValue,
+  isPublished,
 }) => {
   const { url, uploading, uploadFile } = useStorage();
 
@@ -153,9 +165,10 @@ const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
             type="file"
             name="file"
             onChange={fileChangeHandler}
+            disabled={isPublished}
           />
           <IconButton
-            cursor="pointer"
+            cursor={isPublished ? "default" : "pointer"}
             as="label"
             htmlFor="fileUpload"
             isLoading={uploading}
@@ -164,6 +177,8 @@ const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
             aria-label="Upload keyword photo"
             fontSize="20px"
             icon={<Icon as={BsImage} />}
+            disabled={isPublished}
+            _disabled={{ opacity: 1, cursor: "default" }}
           />
         </>
       )}

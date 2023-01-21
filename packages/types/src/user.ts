@@ -1,6 +1,7 @@
 export enum Role {
   Student = "Student",
   Teacher = "Teacher",
+  Admin = "Admin",
 }
 
 export interface BaseUserDocType {
@@ -18,23 +19,10 @@ export enum StudentYear {
   Senior = "Senior",
 }
 
-export enum StudentCourse {
-  BEEdLanguageEducation = "BEEd Language Education",
-  BEEdScienceAndMathematics = "BEEd Science and Mathematics",
-  BSEdBiology = "BSEd Biology",
-  BSEdChemistry = "BSEd Chemistry",
-  BSEdPhysics = "BSEd Physics",
-  BSEdMathematics = "BSEd Mathematics",
-  BachelorOfPhysicalEducation = "Bachelor of Physical Education",
-  BTLEdHomeEconomics = "BTLEd Home Economics",
-  BTVTEdDraftingTechnology = "BTVTEd Drafting Technology",
-  BTLEdIndustrialArts = "BTLEd Industrial Arts",
-}
-
 export interface StudentDocType extends BaseUserDocType {
   role: Role.Student;
   year: StudentYear;
-  course: StudentCourse;
+  courseSection: string;
   enrolledGames: string[];
 }
 
@@ -43,4 +31,11 @@ export interface TeacherDocType extends BaseUserDocType {
   createdGames: string[];
 }
 
-export type UserDocType = StudentDocType | TeacherDocType;
+export interface AdminDocType extends BaseUserDocType {
+  role: Role.Admin;
+  createdGames: string[];
+}
+
+export type AuthoredDocType = TeacherDocType | AdminDocType;
+
+export type UserDocType = StudentDocType | AuthoredDocType;

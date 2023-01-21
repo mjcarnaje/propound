@@ -1,9 +1,5 @@
 // Import the functions you need from the SDKs you need
-import {
-  ActivityDocType,
-  StudentDocType,
-  TeacherDocType,
-} from "@propound/types";
+import { ActivityDocType, StudentDocType } from "@propound/types";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import {
@@ -40,14 +36,7 @@ const collections = {
     firestore,
     "activities"
   ) as CollectionReference<ActivityDocType>,
-  students: collection(
-    firestore,
-    "students"
-  ) as CollectionReference<StudentDocType>,
-  teachers: collection(
-    firestore,
-    "teachers"
-  ) as CollectionReference<TeacherDocType>,
+  users: collection(firestore, "users") as CollectionReference<StudentDocType>,
 };
 
 export { firestore, auth, storage, authProviders, collections };

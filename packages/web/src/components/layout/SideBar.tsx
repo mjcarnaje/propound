@@ -1,8 +1,8 @@
 import { Divider, Flex, Stack } from "@chakra-ui/react";
-import { ROLE } from "@propound/types";
+import { Role } from "@propound/types";
 import { IconType } from "react-icons";
 import { BiLogOut } from "react-icons/bi";
-import { FiBarChart2, FiPlus } from "react-icons/fi";
+import { FiBarChart, FiBarChart2, FiPlus } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
@@ -14,7 +14,7 @@ interface NavButtonItem {
   icon: IconType;
   label: string;
   href: string;
-  role: ROLE | "ALL";
+  role: Role | "ALL";
 }
 
 export const Sidebar = () => {
@@ -87,7 +87,7 @@ export const Sidebar = () => {
             <Divider />
             {user && (
               <UserProfile
-                name={user.displayName}
+                name={user.firstName + user.lastName}
                 image={user.photoURL}
                 email={user.email}
               />

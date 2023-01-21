@@ -69,7 +69,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
       const space = docSnap.docs[0].data();
 
       if (space) {
-        const userRef = doc(collections.students, user?.uid);
+        const userRef = doc(collections.users, user?.uid);
 
         const userDoc = await getDoc(userRef);
 

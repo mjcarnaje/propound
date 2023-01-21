@@ -28,6 +28,7 @@ interface GameShowChoiceProps {
   choiceIdx: number;
   onRemoveChoice: () => void;
   onRemoveChoiceDisabled: boolean;
+  isPublished?: boolean;
 }
 
 const GameShowChoice: React.FC<GameShowChoiceProps> = ({
@@ -37,6 +38,7 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
   choiceIdx,
   onRemoveChoice,
   onRemoveChoiceDisabled,
+  isPublished,
 }) => {
   const { id } = useParams();
   const { register, control, setValue } = useFormContext<GameShowTemplate>();
@@ -109,6 +111,7 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
                   type="file"
                   name="file"
                   onChange={fileChangeHandler}
+                  disabled={isPublished}
                 />
               </>
             )}
@@ -122,6 +125,8 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
                 `questions.${questionIdx}.choices.${choiceIdx}.choice`
               )}
               autoComplete="off"
+              disabled={isPublished}
+              _disabled={{ opacity: 1 }}
             />
             <FormErrorMessage>
               {error?.choice && error.choice.message}
@@ -129,48 +134,52 @@ const GameShowChoice: React.FC<GameShowChoiceProps> = ({
           </VStack>
         </HStack>
       </FormControl>
-      <HStack spacing={2} justify="flex-end" py={2}>
-        <IconButton
-          cursor="pointer"
-          colorScheme="green"
-          variant={isAnswer ? "solid" : "ghost"}
-          aria-label="Set as answer"
-          icon={<Icon as={CheckIcon} />}
-          size="sm"
-          onClick={() => {
-            setValue(
-              `questions.${questionIdx}.answer`,
-              isAnswer ? null : choiceId
-            );
-          }}
-        />
-        <IconButton
-          cursor="pointer"
-          as="label"
-          htmlFor={`questions.${questionIdx}.choices.${choiceIdx}.photoURL`}
-          isLoading={uploading}
-          colorScheme="orange"
-          variant="ghost"
-          aria-label="Upload choice image"
-          icon={<Icon as={BsImage} />}
-          size="sm"
-        />
-        <IconButton
-          isDisabled={onRemoveChoiceDisabled}
-          cursor="pointer"
-          colorScheme="orange"
-          variant="ghost"
-          aria-label="Delete choice"
-          icon={<Icon as={DeleteIcon} />}
-          size="sm"
-          onClick={() => {
-            if (isAnswer) {
-              setValue(`questions.${questionIdx}.answer`, null);
-            }
-            onRemoveChoice();
-          }}
-        />
-      </HStack>
+      {!isPublished ? (
+        <HStack spacing={2} justify="flex-end" py={2}>
+          <IconButton
+            cursor="pointer"
+            colorScheme="green"
+            variant={isAnswer ? "solid" : "ghost"}
+            aria-label="Set as answer"
+            icon={<Icon as={CheckIcon} />}
+            size="sm"
+            onClick={() => {
+              setValue(
+                `questions.${questionIdx}.answer`,
+                isAnswer ? null : choiceId
+              );
+            }}
+          />
+          <IconButton
+            cursor="pointer"
+            as="label"
+            htmlFor={`questions.${questionIdx}.choices.${choiceIdx}.photoURL`}
+            isLoading={uploading}
+            colorScheme="orange"
+            variant="ghost"
+            aria-label="Upload choice image"
+            icon={<Icon as={BsImage} />}
+            size="sm"
+          />
+          <IconButton
+            cursor="pointer"
+            disabled={onRemoveChoiceDisabled}
+            colorScheme="orange"
+            variant="ghost"
+            aria-label="Delete choice"
+            icon={<Icon as={DeleteIcon} />}
+            size="sm"
+            onClick={() => {
+              if (isAnswer) {
+                setValue(`questions.${questionIdx}.answer`, null);
+              }
+              onRemoveChoice();
+            }}
+          />
+        </HStack>
+      ) : (
+        <Box py={2} />
+      )}
     </Box>
   );
 };

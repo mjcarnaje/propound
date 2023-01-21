@@ -52,6 +52,7 @@ interface MatchUpProps {
   type: GameType;
   gameData?: MatchUpTemplate | null;
   refetch?: () => void;
+  isPublished?: boolean;
 }
 
 const MatchUp: React.FC<MatchUpProps> = ({
@@ -59,6 +60,7 @@ const MatchUp: React.FC<MatchUpProps> = ({
   type,
   gameData,
   refetch,
+  isPublished,
 }) => {
   const toast = useToast();
 
@@ -138,6 +140,8 @@ const MatchUp: React.FC<MatchUpProps> = ({
                 minLength: { value: 4, message: "Minimum length should be 4" },
               })}
               autoComplete="off"
+              disabled={isPublished}
+              _disabled={{ opacity: 1 }}
             />
             <FormErrorMessage>
               {errors.title && errors.title.message}
@@ -152,6 +156,8 @@ const MatchUp: React.FC<MatchUpProps> = ({
                 required: "This is required",
                 minLength: { value: 4, message: "Minimum length should be 4" },
               })}
+              disabled={isPublished}
+              _disabled={{ opacity: 1 }}
             />
             <FormErrorMessage>
               {errors.instruction && errors.instruction.message}
@@ -166,29 +172,34 @@ const MatchUp: React.FC<MatchUpProps> = ({
                 itemIdx={itemIdx}
                 onRemoveItem={() => remove(itemIdx)}
                 onRemoveItemDisabled={arr.length === 1}
+                isPublished={isPublished}
               />
             ))}
-            <Box>
-              <Button size="sm" onClick={() => append(defaultItem())}>
-                Add Question
-              </Button>
-            </Box>
+            {!isPublished && (
+              <Box>
+                <Button size="sm" onClick={() => append(defaultItem())}>
+                  Add Question
+                </Button>
+              </Box>
+            )}
           </VStack>
         </VStack>
 
-        <Center py={8}>
-          <Button
-            mx="auto"
-            size="lg"
-            px="16"
-            colorScheme="orange"
-            isLoading={isLoading}
-            loadingText="Saving..."
-            type="submit"
-          >
-            Save
-          </Button>
-        </Center>
+        {!isPublished && (
+          <Center py={8}>
+            <Button
+              mx="auto"
+              size="lg"
+              px="16"
+              colorScheme="orange"
+              isLoading={isLoading}
+              loadingText="Saving..."
+              type="submit"
+            >
+              Save
+            </Button>
+          </Center>
+        )}
       </chakra.form>
     </FormProvider>
   );
