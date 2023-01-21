@@ -1,5 +1,6 @@
 import { Box, ScrollView } from "native-base";
 import React from "react";
+import { Dimensions } from "react-native";
 
 interface BaseScreenProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface BaseScreenProps {
 
 const BaseScreen: React.FC<BaseScreenProps> = ({ children, isScrollable }) => {
   let content = (
-    <Box bg="white" flex={1}>
+    <Box bg="white" flexGrow={1}>
       {children}
     </Box>
   );

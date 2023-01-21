@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, getDocs, query, setDoc, where } from "firebase/firestore";
 import moment from "moment";
 import {
+  Box,
   Button,
   Center,
   HStack,
@@ -16,6 +17,7 @@ import {
 } from "native-base";
 import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import BaseScreen from "../components/BaseScreen";
 import { auth, collections } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
@@ -118,177 +120,201 @@ const SignUpScreen = () => {
   };
 
   return (
-    <BaseScreen>
-      <VStack space={4} w="90%" mx="auto">
-        {currentIndexForm === 0 && (
-          <>
-            <VStack space={2}>
-              <Text fontFamily="Inter-Medium">Email Address</Text>
-              <Input
-                placeholder="Email"
-                value={inputForms.email}
-                onChangeText={(text) =>
-                  setInputForms({ ...inputForms, email: text })
-                }
-                borderRadius="xl"
-                fontFamily="Inter-Regular"
-                size="lg"
-                py={3}
-                px={3}
-                _focus={{
-                  borderColor: "orange.500",
-                  backgroundColor: "orange.50",
-                }}
-              />
-            </VStack>
+    <KeyboardAwareScrollView style={{ flexGrow: 1, backgroundColor: "white" }}>
+      <BaseScreen>
+        <VStack space={4} w="90%" mx="auto">
+          {currentIndexForm === 0 && (
+            <>
+              <VStack space={2}>
+                <Text fontFamily="Inter-Medium">First Name</Text>
+                <Input
+                  placeholder="First Name"
+                  value={inputForms.firstName}
+                  onChangeText={(text) =>
+                    setInputForms({ ...inputForms, firstName: text })
+                  }
+                  borderRadius="xl"
+                  fontFamily="Inter-Regular"
+                  size="lg"
+                  py={3}
+                  px={3}
+                  _focus={{
+                    borderColor: "orange.500",
+                    backgroundColor: "orange.50",
+                  }}
+                />
+              </VStack>
 
-            <VStack space={2}>
-              <Text fontFamily="Inter-Medium">Password</Text>
-              <Input
-                placeholder="Password"
-                value={inputForms.password}
-                onChangeText={(text) =>
-                  setInputForms({ ...inputForms, password: text })
-                }
-                borderRadius="xl"
-                fontFamily="Inter-Regular"
-                size="lg"
-                py={3}
-                px={3}
-                _focus={{
-                  borderColor: "orange.500",
-                  backgroundColor: "orange.50",
-                }}
-                secureTextEntry
-              />
-            </VStack>
+              <VStack space={2}>
+                <Text fontFamily="Inter-Medium">Last Name</Text>
+                <Input
+                  placeholder="Last Name"
+                  value={inputForms.lastName}
+                  onChangeText={(text) =>
+                    setInputForms({ ...inputForms, lastName: text })
+                  }
+                  borderRadius="xl"
+                  fontFamily="Inter-Regular"
+                  size="lg"
+                  py={3}
+                  px={3}
+                  _focus={{
+                    borderColor: "orange.500",
+                    backgroundColor: "orange.50",
+                  }}
+                />
+              </VStack>
 
-            <HStack space={2}>
-              <Button
-                isLoading={isCheckingEmail}
-                isLoadingText="Checking..."
-                onPress={onNext}
-                colorScheme="orange"
-                _text={{ fontFamily: "Inter-Bold" }}
-                borderRadius="xl"
-                px={8}
-                size="lg"
-                flex={1}
+              <VStack space={2}>
+                <Text fontFamily="Inter-Medium">Email Address</Text>
+                <Input
+                  placeholder="Email"
+                  value={inputForms.email}
+                  onChangeText={(text) =>
+                    setInputForms({ ...inputForms, email: text })
+                  }
+                  borderRadius="xl"
+                  fontFamily="Inter-Regular"
+                  size="lg"
+                  py={3}
+                  px={3}
+                  _focus={{
+                    borderColor: "orange.500",
+                    backgroundColor: "orange.50",
+                  }}
+                />
+              </VStack>
+
+              <VStack space={2}>
+                <Text fontFamily="Inter-Medium">Password</Text>
+                <Input
+                  placeholder="Password"
+                  value={inputForms.password}
+                  onChangeText={(text) =>
+                    setInputForms({ ...inputForms, password: text })
+                  }
+                  borderRadius="xl"
+                  fontFamily="Inter-Regular"
+                  size="lg"
+                  py={3}
+                  px={3}
+                  _focus={{
+                    borderColor: "orange.500",
+                    backgroundColor: "orange.50",
+                  }}
+                  secureTextEntry
+                />
+              </VStack>
+
+              <HStack space={2}>
+                <Button
+                  isLoading={isCheckingEmail}
+                  isLoadingText="Checking..."
+                  onPress={onNext}
+                  colorScheme="orange"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  borderRadius="xl"
+                  px={8}
+                  size="lg"
+                  flex={1}
+                >
+                  Continue
+                </Button>
+              </HStack>
+            </>
+          )}
+          {currentIndexForm === 1 && (
+            <VStack alignItems="center" space={4}>
+              <TouchableOpacity
+                style={{ marginBottom: 24 }}
+                onPress={pickImage}
               >
-                Continue
-              </Button>
-            </HStack>
-          </>
-        )}
-        {currentIndexForm === 1 && (
-          <VStack alignItems="center" space={4}>
-            <TouchableOpacity style={{ marginBottom: 24 }} onPress={pickImage}>
-              <Center
-                bg="gray.100"
-                borderRadius="full"
-                boxSize={176}
-                overflow="hidden"
-              >
-                {uploading ? (
-                  <Spinner size="sm" color="orange.600" />
-                ) : inputForms.photoURL ? (
-                  <Image
+                <Center
+                  bg="gray.100"
+                  borderRadius="full"
+                  boxSize={176}
+                  overflow="hidden"
+                >
+                  {uploading ? (
+                    <Spinner size="sm" color="orange.600" />
+                  ) : inputForms.photoURL ? (
+                    <Image
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        resizeMode: "contain",
+                      }}
+                      source={{ uri: inputForms.photoURL }}
+                    />
+                  ) : (
+                    <Text fontFamily="Inter-Medium">Add Photo</Text>
+                  )}
+                </Center>
+              </TouchableOpacity>
+
+              <VStack w="full" space={1}>
+                <Text fontSize={16} fontWeight="semibold">
+                  Year
+                </Text>
+                <Box
+                  borderRadius="xl"
+                  borderWidth={1}
+                  px={1}
+                  borderColor="gray.300"
+                >
+                  <Picker
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      resizeMode: "contain",
+                      fontFamily: "Inter-Regular",
                     }}
-                    source={{ uri: inputForms.photoURL }}
-                  />
-                ) : (
-                  <Text fontFamily="Inter-Medium">Add Photo</Text>
-                )}
-              </Center>
-            </TouchableOpacity>
-            <Input
-              placeholder="First Name"
-              value={inputForms.firstName}
-              onChangeText={(text) =>
-                setInputForms({ ...inputForms, firstName: text })
-              }
-              borderRadius="xl"
-              fontFamily="Inter-Regular"
-              size="lg"
-              py={3}
-              px={3}
-              _focus={{
-                borderColor: "orange.500",
-                backgroundColor: "orange.50",
-              }}
-            />
-            <Input
-              placeholder="Last Name"
-              value={inputForms.lastName}
-              onChangeText={(text) =>
-                setInputForms({ ...inputForms, lastName: text })
-              }
-              borderRadius="xl"
-              fontFamily="Inter-Regular"
-              size="lg"
-              py={3}
-              px={3}
-              _focus={{
-                borderColor: "orange.500",
-                backgroundColor: "orange.50",
-              }}
-            />
+                    selectedValue={inputForms.year}
+                    onValueChange={(year) =>
+                      setInputForms({ ...inputForms, year })
+                    }
+                  >
+                    {Object.values(StudentYear).map((year) => (
+                      <Picker.Item label={year} value={year} />
+                    ))}
+                  </Picker>
+                </Box>
+              </VStack>
 
-            <VStack w="full" space={1}>
-              <Text fontSize={16} fontWeight="semibold">
-                Year
-              </Text>
-              <Picker
-                style={{ backgroundColor: "#f2f2f2" }}
-                selectedValue={inputForms.year}
-                onValueChange={(year) => setInputForms({ ...inputForms, year })}
-              >
-                {Object.values(StudentYear).map((year) => (
-                  <Picker.Item label={year} value={year} />
-                ))}
-              </Picker>
-            </VStack>
-
-            <Input
-              placeholder="Course Section"
-              value={inputForms.courseSection}
-              onChangeText={(text) =>
-                setInputForms({ ...inputForms, courseSection: text })
-              }
-              borderRadius="xl"
-              fontFamily="Inter-Regular"
-              size="lg"
-              py={3}
-              px={3}
-              _focus={{
-                borderColor: "orange.500",
-                backgroundColor: "orange.50",
-              }}
-            />
-
-            <HStack mt={4} space={2}>
-              <Button
-                w="full"
-                onPress={signUp}
-                isLoading={isSigningUp}
-                isLoadingText="Signing Up..."
-                colorScheme="orange"
-                _text={{ fontFamily: "Inter-Bold" }}
+              <Input
+                placeholder="Course Section"
+                value={inputForms.courseSection}
+                onChangeText={(text) =>
+                  setInputForms({ ...inputForms, courseSection: text })
+                }
                 borderRadius="xl"
-                px={8}
+                fontFamily="Inter-Regular"
                 size="lg"
-              >
-                Sign Up
-              </Button>
-            </HStack>
-          </VStack>
-        )}
-      </VStack>
-    </BaseScreen>
+                py={3}
+                px={3}
+                _focus={{
+                  borderColor: "orange.500",
+                  backgroundColor: "orange.50",
+                }}
+              />
+
+              <HStack mt={4} space={2}>
+                <Button
+                  w="full"
+                  onPress={signUp}
+                  isLoading={isSigningUp}
+                  isLoadingText="Signing Up..."
+                  colorScheme="orange"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  borderRadius="xl"
+                  px={8}
+                  size="lg"
+                >
+                  Sign Up
+                </Button>
+              </HStack>
+            </VStack>
+          )}
+        </VStack>
+      </BaseScreen>
+    </KeyboardAwareScrollView>
   );
 };
 
