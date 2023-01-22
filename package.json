@@ -20,7 +20,9 @@
     ],
     "nohoist": [
       "**/mobile",
-      "**/mobile/**"
+      "**/mobile/**",
+      "**/web",
+      "**/web/**"
     ]
   }
 }

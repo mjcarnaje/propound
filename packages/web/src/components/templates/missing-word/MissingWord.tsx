@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
   Textarea,
   useToast,
@@ -33,9 +34,9 @@ import MissingWordQuestion from "./MissingWordQuestion";
 
 const defaultQuestion: () => MissingWordQuestionType = () => ({
   id: generateId(),
-  question: [],
-  answers: [],
-  incorrectWords: [],
+  question: "",
+  answerIdx: null,
+  incorrect: [],
 });
 
 interface MissingWordProps {
@@ -93,31 +94,23 @@ const MissingWord: React.FC<MissingWordProps> = ({
   });
 
   const onSubmit: SubmitHandler<MissingWordTemplate> = async (data) => {
-    await mutate(
-      {
-        ...data,
-        total: data.questions
-          .map((q) => q.question.filter((q) => q.isSelected).length)
-          .reduce((a, b) => a + b, 0),
+    await mutate(data, {
+      onError: async (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          status: "error",
+        });
       },
-      {
-        onError: async (error) => {
-          toast({
-            title: "Error",
-            description: error.message,
-            status: "error",
-          });
-        },
-        onSuccess: async () => {
-          toast({
-            title: "Success",
-            description: "Game Show saved successfully",
-            status: "success",
-          });
-          refetch && refetch();
-        },
-      }
-    );
+      onSuccess: async () => {
+        toast({
+          title: "Success",
+          description: "Missing Word game saved successfully",
+          status: "success",
+        });
+        refetch && refetch();
+      },
+    });
   };
 
   return (

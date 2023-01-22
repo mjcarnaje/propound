@@ -1,7 +1,6 @@
 export enum CollectionNames {
-  STUDENTS = "students",
-  TEACHERS = "teachers",
   ACTIVITIES = "activities",
+  USERS = "users",
 }
 
 export enum ActivityCollectionNames {

@@ -1,21 +1,70 @@
 import { Button, SimpleGrid, Text, VStack } from "@chakra-ui/react";
-import { GameTemplate } from "@propound/types";
+import {
+  ActivityCollectionNames,
+  CollectionNames,
+  GameDocTemplate,
+  GameTemplate,
+  GameType,
+} from "@propound/types";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useState } from "react";
+import { firestore } from "../firebase/config";
 import { toProperCase } from "../utils/string";
 
 interface SetGameTypeProps {
+  id: string;
   setGameTemplate: React.Dispatch<React.SetStateAction<GameTemplate | null>>;
+  refetch?: () => Promise<void>;
 }
 
-const SetGameType: React.FC<SetGameTypeProps> = ({ setGameTemplate }) => {
+const SetGameType: React.FC<SetGameTypeProps> = ({
+  id,
+  setGameTemplate,
+  refetch,
+}) => {
   async function setGameType(template: GameTemplate) {
     setGameTemplate(template);
   }
+  const [copying, setCopying] = useState(false);
 
   const gameTemplates: GameTemplate[] = [
     "GAME_SHOW",
     "MATCH_UP",
     "MISSING_WORD",
   ];
+
+  async function copyPreGame() {
+    try {
+      setCopying(true);
+      const preGameRef = doc(
+        firestore,
+        CollectionNames.ACTIVITIES,
+        id,
+        ActivityCollectionNames.GAMES,
+        GameType.PRE_TEST
+      );
+      const preGameSnap = await getDoc(preGameRef);
+      if (preGameSnap.exists()) {
+        const preGameData = preGameSnap.data() as GameDocTemplate;
+        const postGameRef = doc(
+          firestore,
+          CollectionNames.ACTIVITIES,
+          id,
+          ActivityCollectionNames.GAMES,
+          GameType.POST_TEST
+        );
+        await setDoc(postGameRef, {
+          ...preGameData,
+          id: GameType.POST_TEST,
+        });
+      }
+      refetch && refetch();
+      setCopying(false);
+    } catch (err) {
+      console.error(err);
+      setCopying(false);
+    }
+  }
 
   return (
     <VStack spacing={8} py={12}>
@@ -34,6 +83,17 @@ const SetGameType: React.FC<SetGameTypeProps> = ({ setGameTemplate }) => {
           </Button>
         ))}
       </SimpleGrid>
+      {refetch && (
+        <Button
+          colorScheme="orange"
+          onClick={copyPreGame}
+          variant="solid"
+          size="xl"
+          isLoading={copying}
+        >
+          Copy Pre-game
+        </Button>
+      )}
     </VStack>
   );
 };

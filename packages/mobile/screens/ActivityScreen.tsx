@@ -111,6 +111,7 @@ const ActivityScreen: React.FC<
       <VStack space={4} mx="auto" alignItems="center" w="90%">
         <NavCard
           title="Pre - Game"
+          description="Tap to take the pre-game quiz"
           svg={<SvgPreGame />}
           bg="#4B5563"
           onPress={() => {
@@ -120,6 +121,7 @@ const ActivityScreen: React.FC<
 
         <NavCard
           title="Learning Materials"
+          description="Tap to view the learning materials"
           svg={<SvgLearningMaterials />}
           bg="#525252"
           onPress={() => {
@@ -130,6 +132,7 @@ const ActivityScreen: React.FC<
 
         <NavCard
           title="Post - Game"
+          description="Tap to take the post-game quiz"
           svg={<SvgPostGame />}
           bg="#FB923C"
           onPress={() => {
@@ -150,6 +153,7 @@ interface NavCardProps {
   svg: JSX.Element;
   onPress: () => void;
   disabled?: boolean;
+  description?: string;
 }
 
 const NavCard: React.FC<NavCardProps> = ({
@@ -158,6 +162,7 @@ const NavCard: React.FC<NavCardProps> = ({
   svg: SVG,
   onPress,
   disabled,
+  description,
 }) => {
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress}>
@@ -172,6 +177,11 @@ const NavCard: React.FC<NavCardProps> = ({
           <Text color="white" fontFamily="Inter-Bold" fontSize={22}>
             {title}
           </Text>
+          {description && (
+            <Text color="white" fontFamily="Inter-Medium">
+              {description}
+            </Text>
+          )}
         </VStack>
         <Box px={4} flex={1}>
           <AspectRatio ratio={1}>{SVG}</AspectRatio>

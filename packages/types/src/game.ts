@@ -1,7 +1,7 @@
 import { GameShowTemplate } from "./game-show";
 import { MatchUpTemplate } from "./match-up";
 import { MissingWordTemplate } from "./missing-word";
-import { BaseUserDocType, Role } from "./user";
+import { BaseUserDocType, Role, StudentDocType } from "./user";
 
 export type GameStatus = "PUBLISHED" | "DRAFT";
 
@@ -14,6 +14,11 @@ export type LearningMaterial = {
   title: string;
 };
 
+export interface FirebaseTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
 export interface ActivityDocType {
   id: string;
   title: string;
@@ -23,7 +28,7 @@ export interface ActivityDocType {
   author: BaseUserDocType & { role: Role };
   studentIds: string[];
   status: GameStatus;
-  createdAt: Date;
+  createdAt: FirebaseTimestamp;
 }
 
 export enum GameType {
@@ -58,8 +63,8 @@ export interface StatusAndScore {
       scores: { score: number; time: number }[];
       average: { score: number | null; time: number | null };
       latestScore: number;
-      latestDate: Date | null;
-      baseDate: Date | null;
+      latestDate: FirebaseTimestamp | null;
+      baseDate: FirebaseTimestamp | null;
     }
   >;
 }
@@ -69,5 +74,5 @@ export interface StudentResultDocType extends StatusAndScore {
 }
 
 export interface ActivityStudentResultDocType extends StatusAndScore {
-  student: BaseUserDocType;
+  student: Omit<StudentDocType, "role" | "enrolledGames">;
 }

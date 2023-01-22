@@ -1,7 +1,12 @@
+import {
+  getRefinedFirebaseErrorCode,
+  getRefinedFirebaseErrorMessage,
+} from "@propound/utils";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { Button, HStack, Input, Text, useToast, VStack } from "native-base";
+import { Button, HStack, Input, Text, VStack } from "native-base";
 import React, { useState } from "react";
+import Toast from "react-native-toast-message";
 import BaseScreen from "../components/BaseScreen";
 import { auth, collections } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
@@ -9,7 +14,6 @@ import { useAuthStore } from "../store/auth";
 const SignInScreen = () => {
   const { setUser } = useAuthStore();
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const toast = useToast();
   const [inputForms, setInputForms] = useState({
     email: "",
     password: "",
@@ -32,15 +36,25 @@ const SignInScreen = () => {
         if (student.exists()) {
           setUser(student.data());
         } else {
-          toast.show({ title: "User not found" });
+          Toast.show({
+            type: "error",
+            text1: "User not found",
+          });
         }
       } else {
-        toast.show({ title: "User not found" });
+        Toast.show({
+          type: "error",
+          text1: "User not found",
+        });
       }
 
       setIsSigningIn(false);
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: getRefinedFirebaseErrorCode(error.code),
+        text2: getRefinedFirebaseErrorMessage(error.message),
+      });
       setIsSigningIn(false);
     }
   };
@@ -61,7 +75,10 @@ const SignInScreen = () => {
             size="lg"
             py={3}
             px={3}
-            colorScheme="orange"
+            _focus={{
+              borderColor: "orange.500",
+              backgroundColor: "orange.50",
+            }}
           />
         </VStack>
 
@@ -78,7 +95,10 @@ const SignInScreen = () => {
             size="lg"
             py={3}
             px={3}
-            colorScheme="orange"
+            _focus={{
+              borderColor: "orange.500",
+              backgroundColor: "orange.50",
+            }}
             secureTextEntry
           />
         </VStack>

@@ -1,46 +1,77 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Role, StudentDocType, StudentYear } from "@propound/types";
+import {
+  getRefinedFirebaseErrorCode,
+  getRefinedFirebaseErrorMessage,
+} from "@propound/utils";
 import { Picker } from "@react-native-picker/picker";
+import { StackNavigationProp } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import moment from "moment";
 import {
   Box,
   Button,
   Center,
   HStack,
+  IInputProps,
   Input,
   Spinner,
   Text,
-  useToast,
   VStack,
 } from "native-base";
 import React, { useState } from "react";
+import { Control, useController, useForm } from "react-hook-form";
 import { Image, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Toast from "react-native-toast-message";
+import * as yup from "yup";
 import BaseScreen from "../components/BaseScreen";
 import { auth, collections } from "../configs/firebase";
+import { RootStackParamList } from "../navigation";
 import { useAuthStore } from "../store/auth";
 import useStorage from "../utils/useStorage";
 
-const SignUpScreen = () => {
+interface SignUpInput {
+  email: string;
+  password: string;
+  photoURL: string;
+  firstName: string;
+  lastName: string;
+  courseSection: string;
+  year: StudentYear;
+}
+
+const SignUpScreen: React.FC<
+  StackNavigationProp<RootStackParamList, "SignUp">
+> = (navigation) => {
   const { setUser } = useAuthStore();
-  const [currentIndexForm, setCurrentIndexForm] = useState(0);
   const { _uploadFile } = useStorage();
-  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
-  const [isSigningUp, setIsSigningUp] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const toast = useToast();
-  const [inputForms, setInputForms] = useState<
-    Partial<StudentDocType & { password: string }>
-  >({
-    email: "",
-    password: "",
-    photoURL: "",
-    firstName: "",
-    lastName: "",
-    courseSection: "",
-    year: StudentYear.Freshman,
+
+  const {
+    control,
+    setValue,
+    setError,
+    watch,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<SignUpInput>({
+    resolver: yupResolver(
+      yup.object().shape({
+        email: yup.string().email().required("Email is required"),
+        password: yup.string().min(6).required("Password is required"),
+        photoURL: yup.string(),
+        firstName: yup.string().required("First name is required"),
+        lastName: yup.string().required("Last name is required"),
+        courseSection: yup.string().required("Course section is required"),
+        year: yup.string().required("Year is required"),
+      })
+    ),
+    defaultValues: {
+      photoURL: "",
+    },
   });
 
   const pickImage = async (): Promise<void> => {
@@ -55,263 +86,135 @@ const SignUpScreen = () => {
       const timestamp = moment().format("YYYYMMDDHHmmss");
       setUploading(true);
       const photoURL = await _uploadFile(result, `images/${timestamp}`);
-      setInputForms((prev) => ({ ...prev, photoURL }));
+      setValue("photoURL", photoURL);
       setUploading(false);
     }
   };
 
-  const onNext = async () => {
-    const { email } = inputForms;
-    setIsCheckingEmail(true);
-    const q = query(
-      collections.users,
-      where("email", "==", email.trim().toLowerCase())
-    );
-    const querySnapshot = await getDocs(q);
-    const isExist = querySnapshot.docs.length > 0;
+  const onSubmit = async (data: SignUpInput) => {
+    let userCredential: UserCredential;
 
-    setIsCheckingEmail(false);
-
-    if (isExist) {
-      toast.show({
-        title: "Email already exist",
-        description: "Please use another email",
-      });
-      return;
-    } else {
-      setCurrentIndexForm(currentIndexForm + 1);
-    }
-  };
-
-  const signUp = async () => {
     try {
-      setIsSigningUp(true);
-
-      const { user } = await createUserWithEmailAndPassword(
+      userCredential = await createUserWithEmailAndPassword(
         auth,
-        inputForms.email.trim(),
-        inputForms.password.trim()
+        data.email.trim(),
+        data.password.trim()
       );
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        setError("email", {
+          type: "manual",
+          message: "Email already in use",
+        });
+        return;
+      }
+      Toast.show({
+        type: "error",
+        text1: getRefinedFirebaseErrorCode(error.code),
+        text2: getRefinedFirebaseErrorMessage(error.message),
+      });
 
-      if (user) {
+      return;
+    }
+
+    try {
+      if (userCredential.user) {
+        const { user } = userCredential;
         const userRef = doc(collections.users, user.uid);
-
         const newUser: StudentDocType = {
           uid: user.uid,
-          email: inputForms.email,
+          email: data.email,
           enrolledGames: [],
-          photoURL: inputForms.photoURL,
-          courseSection: inputForms.courseSection,
-          firstName: inputForms.firstName,
-          lastName: inputForms.lastName,
+          photoURL: data.photoURL,
+          courseSection: data.courseSection,
+          firstName: data.firstName,
+          lastName: data.lastName,
           role: Role.Student,
-          year: inputForms.year,
+          year: data.year,
         };
-
+        console.log({ newUser });
         await setDoc(userRef, newUser);
-
         setUser(newUser);
       }
-      setIsSigningUp(false);
-    } catch (error) {
-      console.log(error);
-      setIsSigningUp(false);
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: err.code,
+        text2: err.message,
+      });
+      console.log(err);
     }
   };
 
   return (
     <KeyboardAwareScrollView style={{ flexGrow: 1, backgroundColor: "white" }}>
       <BaseScreen>
-        <VStack space={4} w="90%" mx="auto">
-          {currentIndexForm === 0 && (
-            <>
-              <VStack space={2}>
-                <Text fontFamily="Inter-Medium">First Name</Text>
-                <Input
-                  placeholder="First Name"
-                  value={inputForms.firstName}
-                  onChangeText={(text) =>
-                    setInputForms({ ...inputForms, firstName: text })
-                  }
-                  borderRadius="xl"
-                  fontFamily="Inter-Regular"
-                  size="lg"
-                  py={3}
-                  px={3}
-                  _focus={{
-                    borderColor: "orange.500",
-                    backgroundColor: "orange.50",
+        <VStack alignItems="center" space={4} w="90%" pb={16} mx="auto">
+          <Center
+            bg="gray.100"
+            borderRadius="full"
+            boxSize={176}
+            overflow="hidden"
+          >
+            <TouchableOpacity onPress={pickImage}>
+              {uploading ? (
+                <Spinner size="sm" color="orange.600" />
+              ) : watch("photoURL") ? (
+                <Image
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    resizeMode: "contain",
                   }}
+                  source={{ uri: watch("photoURL") }}
                 />
-              </VStack>
+              ) : (
+                <Text fontFamily="Inter-Medium">Add Photo</Text>
+              )}
+            </TouchableOpacity>
+          </Center>
 
-              <VStack space={2}>
-                <Text fontFamily="Inter-Medium">Last Name</Text>
-                <Input
-                  placeholder="Last Name"
-                  value={inputForms.lastName}
-                  onChangeText={(text) =>
-                    setInputForms({ ...inputForms, lastName: text })
-                  }
-                  borderRadius="xl"
-                  fontFamily="Inter-Regular"
-                  size="lg"
-                  py={3}
-                  px={3}
-                  _focus={{
-                    borderColor: "orange.500",
-                    backgroundColor: "orange.50",
-                  }}
-                />
-              </VStack>
+          <SignUpInput label="First Name" control={control} name="firstName" />
 
-              <VStack space={2}>
-                <Text fontFamily="Inter-Medium">Email Address</Text>
-                <Input
-                  placeholder="Email"
-                  value={inputForms.email}
-                  onChangeText={(text) =>
-                    setInputForms({ ...inputForms, email: text })
-                  }
-                  borderRadius="xl"
-                  fontFamily="Inter-Regular"
-                  size="lg"
-                  py={3}
-                  px={3}
-                  _focus={{
-                    borderColor: "orange.500",
-                    backgroundColor: "orange.50",
-                  }}
-                />
-              </VStack>
+          <SignUpInput label="Last Name" control={control} name="lastName" />
 
-              <VStack space={2}>
-                <Text fontFamily="Inter-Medium">Password</Text>
-                <Input
-                  placeholder="Password"
-                  value={inputForms.password}
-                  onChangeText={(text) =>
-                    setInputForms({ ...inputForms, password: text })
-                  }
-                  borderRadius="xl"
-                  fontFamily="Inter-Regular"
-                  size="lg"
-                  py={3}
-                  px={3}
-                  _focus={{
-                    borderColor: "orange.500",
-                    backgroundColor: "orange.50",
-                  }}
-                  secureTextEntry
-                />
-              </VStack>
+          <SignUpInput label="Email Address" control={control} name="email" />
 
-              <HStack space={2}>
-                <Button
-                  isLoading={isCheckingEmail}
-                  isLoadingText="Checking..."
-                  onPress={onNext}
-                  colorScheme="orange"
-                  _text={{ fontFamily: "Inter-Bold" }}
-                  borderRadius="xl"
-                  px={8}
-                  size="lg"
-                  flex={1}
-                >
-                  Continue
-                </Button>
-              </HStack>
-            </>
-          )}
-          {currentIndexForm === 1 && (
-            <VStack alignItems="center" space={4}>
-              <TouchableOpacity
-                style={{ marginBottom: 24 }}
-                onPress={pickImage}
-              >
-                <Center
-                  bg="gray.100"
-                  borderRadius="full"
-                  boxSize={176}
-                  overflow="hidden"
-                >
-                  {uploading ? (
-                    <Spinner size="sm" color="orange.600" />
-                  ) : inputForms.photoURL ? (
-                    <Image
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        resizeMode: "contain",
-                      }}
-                      source={{ uri: inputForms.photoURL }}
-                    />
-                  ) : (
-                    <Text fontFamily="Inter-Medium">Add Photo</Text>
-                  )}
-                </Center>
-              </TouchableOpacity>
+          <SignUpInput
+            label="Password"
+            control={control}
+            name="password"
+            secureTextEntry
+          />
 
-              <VStack w="full" space={1}>
-                <Text fontSize={16} fontWeight="semibold">
-                  Year
-                </Text>
-                <Box
-                  borderRadius="xl"
-                  borderWidth={1}
-                  px={1}
-                  borderColor="gray.300"
-                >
-                  <Picker
-                    style={{
-                      fontFamily: "Inter-Regular",
-                    }}
-                    selectedValue={inputForms.year}
-                    onValueChange={(year) =>
-                      setInputForms({ ...inputForms, year })
-                    }
-                  >
-                    {Object.values(StudentYear).map((year) => (
-                      <Picker.Item label={year} value={year} />
-                    ))}
-                  </Picker>
-                </Box>
-              </VStack>
+          <SignUpPicker
+            label="Year"
+            control={control}
+            name="year"
+            options={Object.values(StudentYear)}
+          />
 
-              <Input
-                placeholder="Course Section"
-                value={inputForms.courseSection}
-                onChangeText={(text) =>
-                  setInputForms({ ...inputForms, courseSection: text })
-                }
-                borderRadius="xl"
-                fontFamily="Inter-Regular"
-                size="lg"
-                py={3}
-                px={3}
-                _focus={{
-                  borderColor: "orange.500",
-                  backgroundColor: "orange.50",
-                }}
-              />
+          <SignUpInput
+            label="Course Section"
+            control={control}
+            name="courseSection"
+          />
 
-              <HStack mt={4} space={2}>
-                <Button
-                  w="full"
-                  onPress={signUp}
-                  isLoading={isSigningUp}
-                  isLoadingText="Signing Up..."
-                  colorScheme="orange"
-                  _text={{ fontFamily: "Inter-Bold" }}
-                  borderRadius="xl"
-                  px={8}
-                  size="lg"
-                >
-                  Sign Up
-                </Button>
-              </HStack>
-            </VStack>
-          )}
+          <HStack mt={4} space={2}>
+            <Button
+              w="full"
+              onPress={handleSubmit(onSubmit)}
+              isLoading={isSubmitting}
+              isLoadingText="Signing Up..."
+              colorScheme="orange"
+              _text={{ fontFamily: "Inter-Bold" }}
+              borderRadius="xl"
+              px={8}
+              size="lg"
+            >
+              Sign Up
+            </Button>
+          </HStack>
         </VStack>
       </BaseScreen>
     </KeyboardAwareScrollView>
@@ -319,3 +222,101 @@ const SignUpScreen = () => {
 };
 
 export default SignUpScreen;
+
+interface SignUpInputProps extends IInputProps {
+  label: string;
+  control: Control<SignUpInput>;
+  name: keyof SignUpInput;
+}
+
+const SignUpInput: React.FC<SignUpInputProps> = ({
+  label,
+  name,
+  control,
+  ...props
+}) => {
+  const { field, fieldState } = useController({
+    control,
+    defaultValue: "",
+    name,
+  });
+
+  const hasError = !!fieldState.error;
+
+  return (
+    <VStack w="full" space={2}>
+      <Text fontFamily="Inter-Medium">{label}</Text>
+      <Input
+        placeholder={label}
+        value={field.value}
+        onChangeText={field.onChange}
+        borderRadius="xl"
+        fontFamily="Inter-Regular"
+        size="lg"
+        py={3}
+        px={3}
+        _focus={{
+          borderColor: "orange.500",
+          backgroundColor: "orange.50",
+        }}
+        borderColor={hasError ? "red.500" : "gray.300"}
+        {...props}
+      />
+      {hasError && (
+        <Text color="red.500" fontSize={12}>
+          {fieldState.error.message}
+        </Text>
+      )}
+    </VStack>
+  );
+};
+
+interface SignUpPickerProps extends SignUpInputProps {
+  options: string[];
+}
+
+const SignUpPicker: React.FC<SignUpPickerProps> = ({
+  label,
+  name,
+  control,
+  options,
+}) => {
+  const { field, fieldState } = useController({
+    control,
+    defaultValue: "",
+    name,
+  });
+
+  const hasError = !!fieldState.error;
+
+  return (
+    <VStack w="full" space={1}>
+      <Text fontSize={16} fontWeight="semibold">
+        {label}
+      </Text>
+      <Box
+        borderRadius="xl"
+        borderWidth={1}
+        px={1}
+        borderColor={hasError ? "red.500" : "gray.300"}
+        mb={1}
+      >
+        <Picker
+          style={{ fontFamily: "Inter-Regular" }}
+          selectedValue={field.value}
+          onValueChange={(year) => field.onChange(year)}
+        >
+          <Picker.Item label="None" value="" />
+          {options.map((option) => (
+            <Picker.Item key={option} label={option} value={option} />
+          ))}
+        </Picker>
+      </Box>
+      {hasError && (
+        <Text color="red.500" fontSize={12}>
+          {fieldState.error.message}
+        </Text>
+      )}
+    </VStack>
+  );
+};

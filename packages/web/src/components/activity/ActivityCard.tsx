@@ -1,7 +1,6 @@
 import { CopyIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Avatar,
-  Box,
   Heading,
   HStack,
   IconButton,
@@ -15,11 +14,11 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { ActivityDocType, GameStatus } from "@propound/types";
+import { ActivityDocType, GameStatus, Role } from "@propound/types";
 import { getFullName } from "@propound/utils";
 import React from "react";
 import { FiMoreVertical } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 // @ts-ignore
 import ActivityCardCoverPhoto from "./ActivityCardCoverPhoto";
 
@@ -46,6 +45,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     }
   };
 
+  const isTemplate =
+    data.author.role === Role.Admin && data.status === "PUBLISHED";
+
   return (
     <HStack
       w="full"
@@ -58,7 +60,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       spacing={8}
       alignItems="start"
     >
-      <ActivityCardCoverPhoto data={data} />
+      <ActivityCardCoverPhoto data={data} to={`/g/${data.id}/results`} />
       <VStack align="flex-start" w="full" spacing={4}>
         <HStack justify="space-between" align="flex-start" w="full">
           <VStack align="flex-start" w="full" spacing={2}>
@@ -112,42 +114,49 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             </VStack>
           </HStack>
         </HStack>
-        <Box>
+        <HStack spacing={4}>
           {isMine && (
             <Tag colorScheme={getStatusColor(data.status)}>{data.status}</Tag>
           )}
+          {isTemplate && <Tag colorScheme="blue">TEMPLATE</Tag>}
           {isJoined && <Tag colorScheme="green">Joined</Tag>}
-        </Box>
-        <HStack spacing={3} alignItems="center">
-          <Text
-            fontSize={18}
-            fontWeight="extrabold"
-            letterSpacing="normal"
-            color="gray.700"
-          >
-            CODE:
-          </Text>
-          <Text fontWeight="semibold" letterSpacing="tight" color="orange.500">
-            {data.code}
-          </Text>
-          <Tooltip label="Copy code" aria-label="Copy code">
-            <IconButton
-              onClick={() => {
-                navigator.clipboard.writeText(data.code);
-                toast({
-                  title: "Copied",
-                  description: "Code copied to clipboard",
-                  status: "success",
-                  duration: 2000,
-                  isClosable: true,
-                });
-              }}
-              size="sm"
-              aria-label="Copy code"
-              icon={<CopyIcon />}
-            />
-          </Tooltip>
         </HStack>
+        {!isTemplate && (
+          <HStack spacing={3} alignItems="center">
+            <Text
+              fontSize={18}
+              fontWeight="extrabold"
+              letterSpacing="normal"
+              color="gray.700"
+            >
+              CODE:
+            </Text>
+            <Text
+              fontWeight="semibold"
+              letterSpacing="tight"
+              color="orange.500"
+            >
+              {data.code}
+            </Text>
+            <Tooltip label="Copy code" aria-label="Copy code">
+              <IconButton
+                onClick={() => {
+                  navigator.clipboard.writeText(data.code);
+                  toast({
+                    title: "Copied",
+                    description: "Code copied to clipboard",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                  });
+                }}
+                size="sm"
+                aria-label="Copy code"
+                icon={<CopyIcon />}
+              />
+            </Tooltip>
+          </HStack>
+        )}
       </VStack>
     </HStack>
   );

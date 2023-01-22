@@ -2,6 +2,7 @@ import {
   BaseUserDocType,
   Role,
   StudentDocType,
+  StudentYear,
   TeacherDocType,
   UserDocType,
 } from "@propound/types";
@@ -24,4 +25,14 @@ export function isAuthoredDocType(user: UserDocType): user is TeacherDocType {
 
 export function getFullName(user: BaseUserDocType) {
   return `${user.firstName} ${user.lastName}`;
+}
+
+export function getRomanYearLevel(str: StudentYear) {
+  const map = {
+    Freshman: "I",
+    Sophomore: "II",
+    Junior: "III",
+    Senior: "IV",
+  };
+  return map[str];
 }

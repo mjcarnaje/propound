@@ -7,17 +7,20 @@ import {
 } from "@chakra-ui/react";
 import { ActivityDocType } from "@propound/types";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 // @ts-ignore
 import NoCoverPhotoSvg from "../../assets/svgs/no_cover_photo.svg?component";
 
 interface ActivityCardCoverPhotoProps extends AspectRatioProps {
   data: ActivityDocType;
+  to?: string;
 }
 
 const ActivityCardCoverPhoto: React.FC<ActivityCardCoverPhotoProps> = ({
   data,
   ...props
 }) => {
+  const navigate = useNavigate();
   return (
     <AspectRatio
       cursor="pointer"
@@ -29,6 +32,11 @@ const ActivityCardCoverPhoto: React.FC<ActivityCardCoverPhotoProps> = ({
       overflow="hidden"
       rounded="2xl"
       {...props}
+      onClick={() => {
+        if (props.to) {
+          navigate(props.to);
+        }
+      }}
     >
       <>
         {data.coverPhoto && (

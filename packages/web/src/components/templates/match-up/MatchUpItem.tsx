@@ -1,6 +1,6 @@
 import {
   AspectRatio,
-  Box,
+  Center,
   FormErrorMessage,
   HStack,
   Icon,
@@ -37,67 +37,43 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
   const { register, control, watch, setValue } =
     useFormContext<MatchUpTemplate>();
 
-  const keywordPhoto = useWatch({
+  const photo = useWatch({
     control,
-    name: `items.${itemIdx}.keyword.photo`,
+    name: `items.${itemIdx}.photo.photo`,
   });
-  const definitionPhoto = useWatch({
+  const text = useWatch({
     control,
-    name: `items.${itemIdx}.definition.photo`,
+    name: `items.${itemIdx}.text.text`,
   });
 
   return (
     <>
-      <HStack w="full" align="center">
+      <HStack p={4} spacing={4} w="full" align="center">
         <Text>{`${itemIdx + 1})`}</Text>
         <HStack w="full">
           <HStack w="full">
             <MatchUpPhoto
               activityId={activityId}
-              photo={keywordPhoto}
+              photo={photo}
               setValue={(url) => {
-                setValue(`items.${itemIdx}.keyword.photo`, url);
+                setValue(`items.${itemIdx}.photo.photo`, url);
               }}
               isPublished={isPublished}
             />
             <VStack align="flex-start" w="full">
               <Input
-                id={`items.${itemIdx}.keyword.text`}
+                id={`items.${itemIdx}.text.text`}
                 placeholder="Keyword"
-                {...register(`items.${itemIdx}.keyword.text`, {
+                {...register(`items.${itemIdx}.text.text`, {
                   required: `Item ${itemIdx + 1} is required.`,
                 })}
+                size="lg"
                 autoComplete="off"
                 disabled={isPublished}
                 _disabled={{ opacity: 1 }}
               />
               <FormErrorMessage>
-                {error?.keyword?.text && error.keyword.text?.message}
-              </FormErrorMessage>
-            </VStack>
-          </HStack>
-          <HStack w="full">
-            <MatchUpPhoto
-              activityId={activityId}
-              photo={definitionPhoto}
-              setValue={(url) => {
-                setValue(`items.${itemIdx}.definition.photo`, url);
-              }}
-              isPublished={isPublished}
-            />
-            <VStack align="flex-start" w="full">
-              <Input
-                id={`items.${itemIdx}.definition.text`}
-                placeholder="Definition"
-                {...register(`items.${itemIdx}.definition.text`, {
-                  required: `Item ${itemIdx + 1} is required.`,
-                })}
-                autoComplete="off"
-                disabled={isPublished}
-                _disabled={{ opacity: 1 }}
-              />
-              <FormErrorMessage>
-                {error?.definition?.text && error.definition.text?.message}
+                {error?.text?.text && error.text.text?.message}
               </FormErrorMessage>
             </VStack>
           </HStack>
@@ -107,7 +83,8 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
             onClick={onRemoveItem}
             disabled={onRemoveItemDisabled}
             aria-label="Delete match up"
-            icon={<Icon as={BsTrash} color="red.400" />}
+            fontSize={20}
+            icon={<Icon as={BsTrash} color="red.600" />}
           />
         )}
       </HStack>
@@ -146,13 +123,13 @@ const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
   }, [url]);
 
   return (
-    <Box>
+    <Center>
       {photo ? (
         <AspectRatio
           borderRadius={4}
           overflow="hidden"
           cursor="pointer"
-          w="40px"
+          w="80px"
           ratio={1}
         >
           <Image src={photo} alt="choice photo" objectFit="cover" />
@@ -167,21 +144,30 @@ const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
             onChange={fileChangeHandler}
             disabled={isPublished}
           />
-          <IconButton
-            cursor={isPublished ? "default" : "pointer"}
-            as="label"
-            htmlFor="fileUpload"
-            isLoading={uploading}
-            colorScheme="orange"
-            variant="ghost"
-            aria-label="Upload keyword photo"
-            fontSize="20px"
-            icon={<Icon as={BsImage} />}
-            disabled={isPublished}
-            _disabled={{ opacity: 1, cursor: "default" }}
-          />
+          <AspectRatio
+            borderRadius={4}
+            overflow="hidden"
+            cursor="pointer"
+            w="80px"
+            ratio={1}
+          >
+            <IconButton
+              cursor={isPublished ? "default" : "pointer"}
+              as="label"
+              htmlFor="fileUpload"
+              isLoading={uploading}
+              colorScheme="orange"
+              variant="ghost"
+              aria-label="Upload keyword photo"
+              icon={<Icon fontSize={44} as={BsImage} />}
+              w="full"
+              h="full"
+              disabled={isPublished}
+              _disabled={{ opacity: 1, cursor: "default" }}
+            />
+          </AspectRatio>
         </>
       )}
-    </Box>
+    </Center>
   );
 };

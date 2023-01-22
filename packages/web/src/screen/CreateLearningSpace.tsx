@@ -14,8 +14,15 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { ActivityDocType, AuthoredDocType, Role } from "@propound/types";
 import {
+  ActivityCollectionNames,
+  ActivityDocType,
+  AuthoredDocType,
+  CollectionNames,
+  Role,
+} from "@propound/types";
+import {
+  collection,
   deleteDoc,
   doc,
   getDocs,
@@ -24,17 +31,18 @@ import {
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ActivityCardCoverPhoto from "../components/activity/ActivityCardCoverPhoto";
 import { MainLayout } from "../components/layout/MainLayout";
+import { collections, firestore } from "../firebase/config";
 import { useAppSelector } from "../hooks/redux";
 import { selectAuth } from "../store/reducer/auth";
 import { generateCode, generateId } from "../utils/id";
 // @ts-ignore
 import CreateActivitySvg from "../assets/svgs/create_activity.svg?component";
-import ActivityCardCoverPhoto from "../components/activity/ActivityCardCoverPhoto";
-import { collections } from "../firebase/config";
 
 const defaultInput = {
   title: "",
@@ -191,7 +199,8 @@ const LearningSpaceTemplates: React.FC<LearningSpaceTemplatesProps> = ({
     try {
       const q = query<ActivityDocType>(
         collections.activities,
-        where("author.role", "==", "Admin")
+        where("author.role", "==", "Admin"),
+        where("status", "==", "PUBLISHED")
       );
       const docs = await getDocs(q);
       setActivities(docs.docs.map((d) => d.data()));
@@ -242,12 +251,26 @@ const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
   const [deleting, setDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  async function getSubCollection(sub: ActivityCollectionNames) {
+    try {
+      const q = query(
+        collection(firestore, CollectionNames.ACTIVITIES, data.id, sub)
+      );
+      const docs = await getDocs(q);
+      return docs.docs.map((d) => d.data());
+    } catch (err) {
+      console.error("Something went wrong!");
+    }
+  }
+
   async function onUseTemplate() {
     setLoading(true);
+
     const id = generateId();
+
     await setDoc(doc(collections.activities, id), {
       id,
-      title: data.title,
+      title: data.title + " (copy)",
       description: data.description,
       code: `${id}-${generateCode()}`,
       coverPhoto: "",
@@ -263,10 +286,44 @@ const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
       status: "DRAFT",
       createdAt: serverTimestamp(),
     });
+
+    const materials = await getSubCollection(ActivityCollectionNames.MATERIALS);
+    const games = await getSubCollection(ActivityCollectionNames.GAMES);
+
+    const batch = writeBatch(firestore);
+
+    materials?.forEach((material) => {
+      batch.set(
+        doc(
+          collections.activities,
+          id,
+          ActivityCollectionNames.MATERIALS,
+          generateId()
+        ),
+        material
+      );
+    });
+
+    games?.forEach((game) => {
+      batch.set(
+        doc(
+          collections.activities,
+          id,
+          ActivityCollectionNames.GAMES,
+          game.type
+        ),
+        game
+      );
+    });
+
+    await batch.commit();
+
     const userRef = doc(collections.users, user.uid);
+
     await updateDoc(userRef, {
       createdGames: [...user.createdGames, id],
     });
+
     navigate(`/g/${id}`);
   }
 
@@ -305,7 +362,7 @@ const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
         </Text>
       </VStack>
 
-      <HStack justify="center" w="full">
+      <HStack justify="center" pb={4} w="full">
         {user.role === Role.Admin && (
           <Button
             color="red.500"

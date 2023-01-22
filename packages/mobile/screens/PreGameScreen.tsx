@@ -4,7 +4,11 @@ import {
   GameDocTemplate,
   GameType,
 } from "@propound/types";
-import { isGameShowTemplate, isMatchUpTemplate } from "@propound/utils";
+import {
+  isGameShowTemplate,
+  isMatchUpTemplate,
+  isMissingWordTemplate,
+} from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
 import { Center, Spinner, Text, useToast } from "native-base";
@@ -12,13 +16,16 @@ import React, { useEffect, useState } from "react";
 import BaseScreen from "../components/BaseScreen";
 import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
+import MissingWordGame from "../components/games/missing-word/MissingWordGame";
 import { firestore } from "../configs/firebase";
 import { RootStackParamList } from "../navigation";
+import Toast from "react-native-toast-message";
+import { useAuthStore } from "../store/auth";
 
 const PreGameScreen: React.FC<
   StackScreenProps<RootStackParamList, "PreGame">
 > = ({ route, navigation }) => {
-  const toast = useToast();
+  const { user } = useAuthStore();
   const [activity, setActivity] = useState<GameDocTemplate | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,15 +45,17 @@ const PreGameScreen: React.FC<
         navigation.setOptions({ title: data.title });
         setActivity(data);
       } else {
-        toast.show({
-          title: "Activity not found",
-          description: "The activity you are looking for does not exist",
+        Toast.show({
+          type: "error",
+          text1: "Activity not found",
+          text2: "The activity you are looking for does not exist",
         });
       }
     } catch (err) {
-      toast.show({
-        title: "Error",
-        description: "There was an error fetching the activity",
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "There was an error fetching the activity",
       });
     } finally {
       setLoading(false);
@@ -78,10 +87,23 @@ const PreGameScreen: React.FC<
   }
 
   return (
-    <BaseScreen>
-      {isMatchUpTemplate(activity) && <MatchUpGame data={activity} />}
+    <BaseScreen isScrollable>
+      {isMatchUpTemplate(activity) && (
+        <MatchUpGame
+          data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
+        />
+      )}
+      {isMissingWordTemplate(activity) && <MissingWordGame data={activity} />}
       {isGameShowTemplate(activity) && (
-        <GameShowQuiz activityId={route.params.id} type="PRE" data={activity} />
+        <GameShowQuiz
+          data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
+        />
       )}
     </BaseScreen>
   );

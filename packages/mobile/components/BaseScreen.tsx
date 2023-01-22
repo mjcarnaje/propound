@@ -9,7 +9,7 @@ interface BaseScreenProps {
 
 const BaseScreen: React.FC<BaseScreenProps> = ({ children, isScrollable }) => {
   let content = (
-    <Box bg="white" flexGrow={1}>
+    <Box bg="#f9f9fb" flexGrow={1}>
       {children}
     </Box>
   );
@@ -17,7 +17,7 @@ const BaseScreen: React.FC<BaseScreenProps> = ({ children, isScrollable }) => {
   if (isScrollable) {
     content = (
       <ScrollView
-        bg="white"
+        bg="#f9f9fb"
         flex={1}
         contentContainerStyle={{ paddingBottom: 24 }}
         nestedScrollEnabled={true}
@@ -29,7 +29,7 @@ const BaseScreen: React.FC<BaseScreenProps> = ({ children, isScrollable }) => {
 
   return (
     <>
-      <Box safeAreaTop bg="white" />
+      <Box safeAreaTop paddingTop={2} bg="#f9f9fb" />
       {content}
     </>
   );

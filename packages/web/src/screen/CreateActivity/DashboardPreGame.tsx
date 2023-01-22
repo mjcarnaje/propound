@@ -27,7 +27,7 @@ const DashboardPreGame: React.FC = () => {
   const [activityData, setActivityData] = useState<GameDocTemplate | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<GameStatus>("DRAFT");
 
   const getActivityData = async () => {
@@ -93,7 +93,7 @@ const DashboardPreGame: React.FC = () => {
     <VStack w="full" py={4}>
       {!activityData && !gameTemplate && (
         <Box textAlign="center">
-          <SetGameType setGameTemplate={setGameTemplate} />
+          <SetGameType setGameTemplate={setGameTemplate} id={id!} />
         </Box>
       )}
       {activityData && isGameShowTemplate(activityData) && (

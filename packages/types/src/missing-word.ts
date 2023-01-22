@@ -1,15 +1,10 @@
 import { BaseDocTemplate } from "./game";
 
-export type WordType = {
-  id: string;
-  text: string;
-  isSelected: boolean;
-};
-
 export type MissingWordQuestionType = {
   id: string;
-  question: WordType[];
-  incorrectWords: WordType[];
+  question: string;
+  answerIdx: number | null;
+  incorrect: string[];
 };
 
 export interface MissingWordTemplate extends BaseDocTemplate {

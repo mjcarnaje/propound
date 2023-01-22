@@ -1,14 +1,18 @@
 import { BaseDocTemplate } from "./game";
 
-export interface MatchUpItem {
+export interface PhotoMatchUp {
   id: string;
-  text: string;
   photo: string;
 }
 
+export interface TextMatchUp {
+  id: string;
+  text: string;
+}
+
 export interface MatchUpItemType {
-  keyword: MatchUpItem;
-  definition: MatchUpItem;
+  photo: PhotoMatchUp;
+  text: TextMatchUp;
 }
 
 export interface MatchUpTemplate extends BaseDocTemplate {

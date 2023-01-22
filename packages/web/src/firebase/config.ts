@@ -21,9 +21,18 @@ const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);
 
+function getStorageWrapper() {
+  try {
+    return getStorage(app);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
 export const analytics = getAnalytics(app);
 export const firestore = getFirestore(app);
-export const storage = null;
+export const storage = getStorageWrapper();
 export const auth = getAuth(app);
 export const collections = {
   activities: collection(

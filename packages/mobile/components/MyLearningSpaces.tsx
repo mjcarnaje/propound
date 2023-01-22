@@ -28,6 +28,11 @@ const MyLearningSpaces: React.FC = () => {
     try {
       setIsLoading(true);
 
+      if (user.enrolledGames.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+
       const q = query(
         collections.activities,
         where("id", "in", user.enrolledGames)
@@ -65,6 +70,7 @@ const MyLearningSpaces: React.FC = () => {
           data={learningSpaces}
           renderItem={({ item }) => <LearningSpaceCard space={item} />}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ flexGrow: 1, padding: 4 }}
           ListHeaderComponent={
             learningSpaces.length !== 0 && (
               <HStack mb={4} w="full" justifyContent="flex-end">

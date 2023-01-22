@@ -1,10 +1,8 @@
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   chakra,
-  CloseButton,
-  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -22,13 +20,12 @@ import {
   Text,
   Textarea,
   useDisclosure,
+  useToast,
   VStack,
-  Wrap,
 } from "@chakra-ui/react";
 import { MissingWordQuestionType, MissingWordTemplate } from "@propound/types";
-import React, { useEffect, useState } from "react";
-import { FieldErrors, useFieldArray, useFormContext } from "react-hook-form";
-import { generateId } from "../../../utils/id";
+import React from "react";
+import { FieldErrors, useFormContext } from "react-hook-form";
 
 interface MissingWordQuestionProps {
   error?: FieldErrors<MissingWordQuestionType>;
@@ -45,22 +42,19 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
   onRemoveQuestionDisabled,
   isPublished,
 }) => {
+  const toast = useToast();
+  const inputModal = useDisclosure();
   const missingModal = useDisclosure();
   const incorrectModal = useDisclosure();
-  const inputModal = useDisclosure();
-  const [text, setText] = useState("");
-  const [inCorrectWord, setInCorrectWord] = useState("");
-  const { control, watch, setValue } = useFormContext<MissingWordTemplate>();
-
-  const inCorrectWordsField = useFieldArray({
-    control,
-    name: `questions.${questionIdx}.incorrectWords`,
-    keyName: "keyId",
-  });
+  const [incorrectText, setIncorrectText] = React.useState("");
+  const { control, watch, setValue, register } =
+    useFormContext<MissingWordTemplate>();
 
   const question = watch(`questions.${questionIdx}.question`);
+  const answerIdx = watch(`questions.${questionIdx}.answerIdx`);
 
-  useEffect(() => {}, [question]);
+  const missingWord = answerIdx ? question?.split(" ")[answerIdx] : "NONE";
+  const incorectWords = watch(`questions.${questionIdx}.incorrect`);
 
   return (
     <>
@@ -71,8 +65,9 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
           shadow="sm"
           borderRadius={8}
           bg="white"
+          p={4}
         >
-          <Box p={4} w="full">
+          <Box w="full">
             <FormControl isInvalid={!!error?.question}>
               <FormLabel htmlFor={`questions.${questionIdx}.question`}>
                 {`Question ${questionIdx + 1}`}
@@ -81,29 +76,23 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
               <HStack align="flex-start">
                 <VStack align="flex-start" w="full">
                   <Box
-                    contentEditable={!isPublished}
                     minH="100px"
                     maxH="300px"
-                    overflowY="scroll"
-                    userSelect="text"
                     lineHeight="28px"
-                    outline="none"
                     px={4}
                     py={3}
                     borderWidth="1px"
                     borderRadius="md"
                     borderColor="gray.300"
                     w="full"
-                    onClick={() => {
-                      if (isPublished) return;
-                      inputModal.onOpen();
-                    }}
                   >
-                    {question.map((word) => {
-                      if (word.isSelected) {
+                    {question.split(" ").map((word, idx) => {
+                      const selected =
+                        watch(`questions.${questionIdx}.answerIdx`) === idx;
+                      if (selected) {
                         return (
                           <chakra.span
-                            key={word.id}
+                            key={idx}
                             borderWidth={2}
                             borderColor="orange.500"
                             borderRadius="md"
@@ -112,14 +101,12 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                             cursor={!isPublished ? "pointer" : "default"}
                             fontWeight="bold"
                           >
-                            {word.text}
+                            {word}
                           </chakra.span>
                         );
                       } else {
                         return (
-                          <chakra.span key={word.id}>
-                            {`${word.text} `}
-                          </chakra.span>
+                          <chakra.span key={idx}>{`${word} `}</chakra.span>
                         );
                       }
                     })}
@@ -132,96 +119,60 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
               </HStack>
             </FormControl>
           </Box>
-          <Box w="full">
-            <HStack bg="gray.50" p={6} w="full">
-              <Box flex={0.2}>
-                <Text>Missing Words:</Text>
-              </Box>
-              <Box flex={0.8}>
-                <HStack
-                  alignItems="center"
-                  flex={0.8}
-                  spacing={4}
-                  flexWrap="wrap"
-                >
-                  {question
-                    .filter((q) => q.isSelected)
-                    .map((q) => {
-                      return (
-                        <Box
-                          key={q.id}
-                          bg="gray.100"
-                          px={4}
-                          py={2}
-                          rounded="md"
-                        >
-                          <Text fontSize="sm" color="gray">
-                            {q.text}
-                          </Text>
-                        </Box>
-                      );
-                    })}
-                  {!isPublished && (
-                    <Box>
-                      <Button
-                        onClick={() => missingModal.onOpen()}
-                        size="xs"
-                        leftIcon={<Icon as={AddIcon} />}
-                      >
-                        Select a word above
-                      </Button>
-                    </Box>
-                  )}
-                </HStack>
-              </Box>
-            </HStack>
-            <Divider />
-            <HStack bg="gray.50" p={6} w="full">
-              <Box flex={0.2}>
-                <Text>Incorrect Words</Text>
-              </Box>
-              <Wrap flex={0.8} spacing={4}>
-                {inCorrectWordsField.fields.map((field, fieldIdx) => {
-                  return (
-                    <Wrap
-                      spacing={0}
-                      key={field.keyId}
-                      bg="gray.100"
-                      pl={4}
-                      pr={2}
-                      py={2}
-                      rounded="md"
-                      alignItems="center"
-                      onClick={() => inCorrectWordsField.remove(fieldIdx)}
-                    >
-                      <Text key={field.keyId} mr={2} fontSize="sm" color="gray">
-                        {field.text}
-                      </Text>
-                      {!isPublished && (
-                        <IconButton
-                          size="xs"
-                          aria-label="remove word"
-                          icon={<CloseButton size="sm" />}
-                        />
-                      )}
-                    </Wrap>
-                  );
-                })}
-                {!isPublished && (
-                  <Wrap>
-                    <Button
-                      alignSelf="center"
-                      onClick={() => incorrectModal.onOpen()}
-                      size="xs"
-                      leftIcon={<Icon as={AddIcon} />}
-                    >
-                      Add a new word
-                    </Button>
-                  </Wrap>
-                )}
-              </Wrap>
-            </HStack>
-          </Box>
+          <HStack>
+            <Button
+              onClick={() => {
+                if (isPublished) return;
+                inputModal.onOpen();
+              }}
+              size="sm"
+              colorScheme="orange"
+            >
+              Edit Question
+            </Button>
+          </HStack>
+          <HStack w="full">
+            <Text>
+              Missing word:{" "}
+              <chakra.span fontWeight="bold">{missingWord}</chakra.span>
+            </Text>
+            <Button
+              onClick={() => {
+                if (question?.split(" ").length === 1) {
+                  toast({
+                    title: "Cannot choose missing word",
+                    description: "Question must have at least 2 words",
+                    status: "warning",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                  return;
+                }
+                missingModal.onOpen();
+              }}
+              size="sm"
+              colorScheme="orange"
+            >
+              Choose word
+            </Button>
+          </HStack>
+          <HStack w="full">
+            <Text>
+              Incorrect words:{" "}
+              <chakra.span fontWeight="bold">
+                {incorectWords?.length ? incorectWords.join(", ") : "NONE"}
+              </chakra.span>
+            </Text>
+            <Button
+              onClick={() => {
+                incorrectModal.onOpen();
+              }}
+              size="sm"
+              colorScheme="orange"
+            >
+              Add words
+            </Button>
+          </HStack>
         </VStack>
         {!isPublished && (
           <VStack>
@@ -237,98 +188,6 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
         )}
       </HStack>
 
-      <Modal
-        isOpen={incorrectModal.isOpen}
-        onClose={incorrectModal.onClose}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add a new word</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Input
-              placeholder="Incorrect word"
-              onChange={(e) => setInCorrectWord(e.target.value)}
-              value={inCorrectWord}
-            />
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              mx="auto"
-              px={12}
-              colorScheme="orange"
-              onClick={() => {
-                if (inCorrectWord.length > 0) {
-                  inCorrectWordsField.append({
-                    id: generateId(),
-                    text: inCorrectWord,
-                    isSelected: false,
-                  });
-                  incorrectModal.onClose();
-                  setInCorrectWord("");
-                }
-              }}
-            >
-              Done
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal
-        isOpen={missingModal.isOpen}
-        onClose={missingModal.onClose}
-        isCentered
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Select a word</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4} w="full">
-              <Text>
-                {question.map((word, index) => {
-                  return (
-                    <chakra.span
-                      key={index}
-                      onClick={() => {
-                        const copy = [...question];
-
-                        if (word.isSelected) {
-                          copy[index].isSelected = false;
-                          setValue(`questions.${questionIdx}.question`, copy);
-                        } else {
-                          copy[index].isSelected = true;
-                          setValue(`questions.${questionIdx}.question`, copy);
-                        }
-                      }}
-                      cursor="pointer"
-                      _hover={{ color: "orange.600" }}
-                      color={word.isSelected ? "orange.600" : "gray.700"}
-                      fontWeight={word.isSelected ? "bold" : "normal"}
-                    >
-                      {`${word.text} `}
-                    </chakra.span>
-                  );
-                })}
-              </Text>
-            </VStack>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mx="auto"
-              px={12}
-              colorScheme="orange"
-              onClick={() => {
-                missingModal.onClose();
-              }}
-            >
-              Done
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       <Modal isOpen={inputModal.isOpen} onClose={inputModal.onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -344,8 +203,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                   <Textarea
                     id={`questions.${questionIdx}.question`}
                     placeholder="Question"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    {...register(`questions.${questionIdx}.question`)}
                   />
                   <FormErrorMessage>
                     {error?.question && error.question.message}
@@ -359,21 +217,102 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
               mx="auto"
               px={12}
               colorScheme="orange"
-              onClick={() => {
-                inputModal.onClose();
-                setValue(
-                  `questions.${questionIdx}.question`,
-                  text.split(" ").map((word) => {
-                    if (question.find((q) => q.text === word)) {
-                      return question.find((q) => q.text === word)!;
-                    }
-                    return {
-                      id: generateId(),
-                      text: word,
-                      isSelected: false,
-                    };
-                  })
+              onClick={inputModal.onClose}
+            >
+              Done
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={missingModal.isOpen}
+        onClose={missingModal.onClose}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody py={8}>
+            {question.split(" ").map((word, idx) => {
+              const selected =
+                watch(`questions.${questionIdx}.answerIdx`) === idx;
+              if (selected) {
+                return (
+                  <chakra.span
+                    cursor={!isPublished ? "pointer" : "default"}
+                    onClick={() => {
+                      if (isPublished) return;
+                      setValue(`questions.${questionIdx}.answerIdx`, idx);
+                    }}
+                    key={idx}
+                    borderWidth={2}
+                    borderColor="orange.500"
+                    borderRadius="md"
+                    px={1}
+                    color="orange.500"
+                    fontWeight="bold"
+                  >
+                    {word}
+                  </chakra.span>
                 );
+              } else {
+                return (
+                  <chakra.span
+                    key={idx}
+                    onClick={() => {
+                      if (isPublished) return;
+                      setValue(`questions.${questionIdx}.answerIdx`, idx);
+                    }}
+                    cursor={!isPublished ? "pointer" : "default"}
+                  >{`${word} `}</chakra.span>
+                );
+              }
+            })}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              mx="auto"
+              px={12}
+              colorScheme="orange"
+              onClick={missingModal.onClose}
+            >
+              Done
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={incorrectModal.isOpen}
+        onClose={incorrectModal.onClose}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add a new word</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input
+              placeholder="Incorrect word"
+              onChange={(e) => setIncorrectText(e.target.value)}
+              value={incorrectText}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              mx="auto"
+              px={12}
+              colorScheme="orange"
+              onClick={() => {
+                if (incorrectText) {
+                  setValue(`questions.${questionIdx}.incorrect`, [
+                    ...incorectWords,
+                    incorrectText,
+                  ]);
+                  setIncorrectText("");
+                }
+                incorrectModal.onClose();
               }}
             >
               Done

@@ -34,14 +34,12 @@ import MatchUpItem from "./MatchUpItem";
 const defaultItem: () => MatchUpItemType = () => {
   const id = generateId();
   return {
-    definition: {
+    photo: {
       id,
       photo: "",
-      text: "",
     },
-    keyword: {
+    text: {
       id,
-      photo: "",
       text: "",
     },
   };
@@ -163,7 +161,7 @@ const MatchUp: React.FC<MatchUpProps> = ({
               {errors.instruction && errors.instruction.message}
             </FormErrorMessage>
           </FormControl>
-          <VStack spacing={6} w="full">
+          <VStack spacing={2} w="full">
             {fields.map((field, itemIdx, arr) => (
               <MatchUpItem
                 activityId={activityId}

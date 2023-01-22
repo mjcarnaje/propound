@@ -4,53 +4,48 @@ import {
   ActivityStudentResultDocType,
   CollectionNames,
   GameShowTemplate,
+  GameType,
   StudentCollectionNames,
-  StudentResultDocType
+  StudentResultDocType,
 } from "@propound/types";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { doc, DocumentReference, runTransaction } from "firebase/firestore";
-import AnimatedLottieView from "lottie-react-native";
+import {
+  doc,
+  DocumentReference,
+  runTransaction,
+  serverTimestamp,
+} from "firebase/firestore";
 import moment from "moment";
 import {
   AspectRatio,
   Box,
   Button,
-  Center,
   HStack,
   IconButton,
-  Modal,
   ScrollView,
   Text,
-  useDisclose,
-  useToast,
   useToken,
-  VStack
+  VStack,
 } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  Image,
-  TouchableOpacity,
-  TouchableWithoutFeedback
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
-import { useAuthStore } from "../../../store/auth";
+import ResultModal, { useModalState } from "../result-modal/ResultModal";
 
 interface GameShowQuizProps {
+  userId: string;
   activityId: string;
-  type: "PRE" | "POST";
+  gameType: GameType;
   data: GameShowTemplate;
 }
 
 const GameShowQuiz: React.FC<GameShowQuizProps> = ({
+  userId,
   activityId,
-  type,
+  gameType,
   data,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclose();
-  const { user } = useAuthStore();
-  const toast = useToast();
   const navigation = useNavigation<NavigationProp<MainScreensParamList>>();
   const [orange] = useToken("colors", ["orange.400"]);
   const correctAnswers = data.questions.reduce((acc, curr) => {
@@ -64,13 +59,8 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const currentQuestion = data.questions[current];
   const trackTime = React.useRef(0);
-  const [modalData, setModalData] = useState<{
-    score: string;
-    time: string;
-    status: "PASS" | "FAIL";
-  } | null>(null);
 
-  const [show, setShow] = useState(false);
+  const modal = useModalState();
 
   const handleAnswer = (questionId: string, answerId: string) => {
     if (isFinished) return;
@@ -79,14 +69,9 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
   const checkAnswers = async () => {
     try {
-      if (!user) {
-        toast.show({
-          title: "Error",
-          description: "You are not logged in",
-        });
-      }
-
       setIsLoading(true);
+
+      const timeSpent = Date.now() - trackTime.current;
 
       const score = Object.entries(answers).reduce(
         (acc, [questionId, answer]) => {
@@ -98,20 +83,18 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
         0
       );
 
-      const timeSpent = new Date().getTime() - trackTime.current;
-
       const studentRef = doc(
         firestore,
         CollectionNames.ACTIVITIES,
         activityId,
         ActivityCollectionNames.STUDENTS,
-        user.uid
+        userId
       ) as DocumentReference<ActivityStudentResultDocType>;
 
       const studentUserRef = doc(
         firestore,
-        CollectionNames.STUDENTS,
-        user.uid,
+        CollectionNames.USERS,
+        userId,
         StudentCollectionNames.RESULTS,
         activityId
       ) as DocumentReference<StudentResultDocType>;
@@ -122,67 +105,61 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
         );
 
         if (!studentDoc.exists()) {
-          toast.show({
-            title: "Error",
-            description: "You are not enrolled in this activity",
-          });
           return;
         }
 
-        const key = type === "PRE" ? "PRE_TEST" : "POST_TEST";
+        const previousData = studentDoc.data().scores[gameType];
 
-        const previousData = studentDoc.data().scores[key];
-
-        const newScores = [...previousData.scores, { score, time: timeSpent }];
+        const newAverageScores = [
+          ...previousData.scores,
+          { score, time: timeSpent },
+        ];
         const newAverage = {
           score:
-            newScores.reduce((acc, curr) => acc + curr.score, 0) /
-            newScores.length,
+            newAverageScores.reduce((acc, curr) => acc + curr.score, 0) /
+            newAverageScores.length,
           time:
-            newScores.reduce((acc, curr) => acc + curr.time, 0) /
-            newScores.length,
+            newAverageScores.reduce((acc, curr) => acc + curr.time, 0) /
+            newAverageScores.length,
         };
 
         const newStatus = {
           ...studentDoc.data().status,
-          [type === "PRE" ? "preGameDone" : "postGameDone"]: true,
+          [gameType === GameType.PRE_TEST ? "preGameDone" : "postGameDone"]:
+            true,
         };
-        const _newScores = {
+        const newScores = {
           ...studentDoc.data().scores,
-          [key]: {
+          [gameType]: {
             ...previousData,
-            scores: newScores,
+            scores: newAverageScores,
             latestScore: score,
             average: newAverage,
-            latestDate: new Date(),
-            baseDate: previousData?.baseDate || new Date(),
+            latestDate: serverTimestamp(),
+            baseDate: previousData?.baseDate || serverTimestamp(),
           },
         };
 
         transaction.update(studentRef, {
           status: newStatus,
-          // @ts-ignore
-          scores: _newScores,
+          scores: newScores,
         });
 
         transaction.update(studentUserRef, {
           status: newStatus,
-          // @ts-ignore
-          scores: _newScores,
+          scores: newScores,
         });
       });
 
       const passingScore = data.total * 0.5;
 
-      setShow(true);
-
-      setModalData({
+      modal.setModalData({
         score: `${score}/${data.questions.length}`,
         time: `${moment(timeSpent).format("mm:ss")}`,
         status: score >= passingScore ? "PASS" : "FAIL",
       });
 
-      onOpen();
+      modal.disclose.onOpen();
     } catch (error) {
       console.log(error);
     } finally {
@@ -197,86 +174,7 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        onClose={() => {
-          onClose();
-          setModalData(null);
-        }}
-      >
-        {modalData && (
-          <>
-            {show && modalData.status === "PASS" && (
-              <Confetti setShowConfetti={setShow} />
-            )}
-            {show && modalData.status === "FAIL" && (
-              <TryAgain setShowConfetti={setShow} />
-            )}
-            <Modal.Content px={4} py={8} w="90%" borderRadius={24}>
-              <VStack space={8} alignItems="center">
-                <VStack space={2}>
-                  <Text
-                    fontFamily="Inter-Bold"
-                    fontSize={28}
-                    textAlign="center"
-                    color={
-                      modalData.status === "PASS" ? "green.600" : "red.600"
-                    }
-                  >
-                    {modalData.status === "PASS" ? "Congratulations!" : "Oops!"}
-                  </Text>
-                  <Text textAlign="center" fontFamily="Inter-Regular">
-                    You have {modalData.status === "PASS" ? "passed" : "failed"}{" "}
-                    the quiz
-                  </Text>
-                </VStack>
-                <HStack w="full">
-                  <Center flexGrow={1}>
-                    <Text
-                      fontSize={28}
-                      fontFamily="Inter-Bold"
-                      color={
-                        modalData.status === "PASS" ? "green.600" : "red.600"
-                      }
-                    >
-                      {modalData.score}
-                    </Text>
-                    <Text fontSize={12} fontFamily="Inter-Medium">
-                      SCORE
-                    </Text>
-                  </Center>
-                  <Center flexGrow={1}>
-                    <HStack alignItems="center" space={1}>
-                      <Text fontSize={28} fontFamily="Inter-Bold">
-                        {modalData.time}
-                      </Text>
-                      <Text fontSize={10} fontFamily="Inter-SemiBold">
-                        mins
-                      </Text>
-                    </HStack>
-                    <Text fontSize={12} fontFamily="Inter-Medium">
-                      TIME ELAPSED
-                    </Text>
-                  </Center>
-                </HStack>
-                <Button
-                  borderRadius={12}
-                  onPress={() => {
-                    onClose();
-                    setModalData(null);
-                  }}
-                  colorScheme="orange"
-                  _text={{ fontFamily: "Inter-Bold" }}
-                  px={8}
-                >
-                  Okay!
-                </Button>
-              </VStack>
-            </Modal.Content>
-          </>
-        )}
-      </Modal>
-
+      <ResultModal modal={modal} />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 36, position: "relative" }}
       >
@@ -515,59 +413,5 @@ const ChoiceCard: React.FC<ChoiceProps> = ({ choice, onPress, status }) => {
         </Text>
       </HStack>
     </TouchableOpacity>
-  );
-};
-
-interface ConfettiProps {
-  setShowConfetti: (value: boolean) => void;
-}
-
-const Confetti: React.FC<ConfettiProps> = ({ setShowConfetti }) => {
-  const confettieRef = useRef<AnimatedLottieView>(null);
-
-  useEffect(() => {
-    confettieRef.current?.play();
-  }, []);
-
-  return (
-    <TouchableWithoutFeedback onPress={() => setShowConfetti(false)}>
-      <AnimatedLottieView
-        ref={confettieRef}
-        style={{
-          position: "absolute",
-          zIndex: 999,
-          height: Dimensions.get("window").height,
-          width: Dimensions.get("window").width,
-        }}
-        source={require("../../../assets/lottie/confetti.json")}
-        loop={false}
-        onAnimationFinish={() => setShowConfetti(false)}
-      />
-    </TouchableWithoutFeedback>
-  );
-};
-
-const TryAgain: React.FC<ConfettiProps> = ({ setShowConfetti }) => {
-  const confettieRef = useRef<AnimatedLottieView>(null);
-
-  useEffect(() => {
-    confettieRef.current?.play();
-  }, []);
-
-  return (
-    <TouchableWithoutFeedback onPress={() => setShowConfetti(false)}>
-      <AnimatedLottieView
-        ref={confettieRef}
-        style={{
-          position: "absolute",
-          zIndex: 999,
-          height: Dimensions.get("window").height,
-          width: Dimensions.get("window").width,
-        }}
-        source={require("../../../assets/lottie/failed.json")}
-        loop={false}
-        onAnimationFinish={() => setShowConfetti(false)}
-      />
-    </TouchableWithoutFeedback>
   );
 };

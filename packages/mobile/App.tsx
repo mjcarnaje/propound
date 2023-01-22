@@ -21,6 +21,7 @@ import {
 } from "react-native";
 import "react-native-gesture-handler";
 import "react-native-get-random-values";
+import Toast from "react-native-toast-message";
 import {
   Home as HomeIcon,
   Profile as ProfileIcon,
@@ -79,11 +80,14 @@ export default function App() {
   }
 
   return (
-    <NativeBaseProvider>
-      <Box flexGrow={1} onLayout={onLayoutRootView}>
-        <PropoundNavigation />
-      </Box>
-    </NativeBaseProvider>
+    <>
+      <NativeBaseProvider>
+        <Box flexGrow={1} onLayout={onLayoutRootView}>
+          <PropoundNavigation />
+        </Box>
+      </NativeBaseProvider>
+      <Toast />
+    </>
   );
 }
 
@@ -127,6 +131,9 @@ const PropoundNavigation: React.FC = () => {
                 headerShown: true,
                 headerShadowVisible: false,
                 headerTitleAlign: "center",
+                headerBackgroundContainerStyle: {
+                  backgroundColor: "#f9f9fb",
+                },
               }}
               name="About"
               component={AboutScreen}

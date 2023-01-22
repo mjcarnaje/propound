@@ -4,51 +4,59 @@ import {
   GameDocTemplate,
   GameType,
 } from "@propound/types";
-import { isGameShowTemplate, isMatchUpTemplate } from "@propound/utils";
+import {
+  isGameShowTemplate,
+  isMatchUpTemplate,
+  isMissingWordTemplate,
+} from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
-import { Center, Text, useToast } from "native-base";
+import { Center, Spinner, Text, useToast } from "native-base";
 import React, { useEffect, useState } from "react";
 import BaseScreen from "../components/BaseScreen";
 import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
+import MissingWordGame from "../components/games/missing-word/MissingWordGame";
 import { firestore } from "../configs/firebase";
 import { RootStackParamList } from "../navigation";
 import LoadingScreen from "./LoadingScreen";
+import Toast from "react-native-toast-message";
+import { useAuthStore } from "../store/auth";
 
 const PostGameScreen: React.FC<
   StackScreenProps<RootStackParamList, "PostGame">
 > = ({ route, navigation }) => {
-  const toast = useToast();
+  const { user } = useAuthStore();
   const [activity, setActivity] = useState<GameDocTemplate | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function getActivity() {
     try {
-      const postTestRef = doc(
+      const docRef = doc(
         firestore,
         CollectionNames.ACTIVITIES,
         route.params.id,
         ActivityCollectionNames.GAMES,
         GameType.POST_TEST
       ) as DocumentReference<GameDocTemplate>;
+      const docSnap = await getDoc(docRef);
 
-      const postTestDoc = await getDoc(postTestRef);
-
-      if (postTestDoc.exists()) {
-        const data = postTestDoc.data();
+      if (docSnap.exists()) {
+        const data = docSnap.data();
         navigation.setOptions({ title: data.title });
         setActivity(data);
       } else {
-        toast.show({
-          title: "Activity not found",
-          description: "The activity you are looking for does not exist",
+        Toast.show({
+          type: "error",
+          text1: "Activity not found",
+          text2: "The activity you are looking for does not exist",
         });
       }
     } catch (err) {
-      toast.show({
-        title: "Error",
-        description: "There was an error fetching the activity",
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "There was an error fetching the activity",
       });
     } finally {
       setLoading(false);
@@ -60,7 +68,13 @@ const PostGameScreen: React.FC<
   }, []);
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <BaseScreen>
+        <Center flexGrow={1}>
+          <Spinner size="lg" colorScheme="orange" />
+        </Center>
+      </BaseScreen>
+    );
   }
 
   if (!activity) {
@@ -74,13 +88,22 @@ const PostGameScreen: React.FC<
   }
 
   return (
-    <BaseScreen>
-      {isMatchUpTemplate(activity) && <MatchUpGame data={activity} />}
+    <BaseScreen isScrollable>
+      {isMatchUpTemplate(activity) && (
+        <MatchUpGame
+          data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
+        />
+      )}
+      {isMissingWordTemplate(activity) && <MissingWordGame data={activity} />}
       {isGameShowTemplate(activity) && (
         <GameShowQuiz
-          activityId={route.params.id}
-          type="POST"
           data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
         />
       )}
     </BaseScreen>

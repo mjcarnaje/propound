@@ -1,5 +1,6 @@
 import {
   ActivityCollectionNames,
+  ActivityDocType,
   ActivityStudentResultDocType,
   CollectionNames,
   StudentCollectionNames,
@@ -16,16 +17,9 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import {
-  Button,
-  Input,
-  Modal,
-  Text,
-  useDisclose,
-  useToast,
-  VStack,
-} from "native-base";
+import { Button, Input, Modal, Text, useDisclose, VStack } from "native-base";
 import React from "react";
+import Toast from "react-native-toast-message";
 import { collections, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
 
@@ -36,7 +30,6 @@ interface JoinLearningSpaceModalProps {
 const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
   disclose,
 }) => {
-  const toast = useToast();
   const { user, setEnrolledGames } = useAuthStore();
   const [code, setCode] = React.useState("");
   const [isJoining, setIsJoining] = React.useState(false);
@@ -48,7 +41,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
     try {
       const [activityId] = code.split("-");
 
-      const q = query(
+      const q = query<ActivityDocType>(
         collections.activities,
         where("id", "==", activityId),
         where("code", "==", code),
@@ -58,9 +51,10 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
       const docSnap = await getDocs(q);
 
       if (docSnap.empty) {
-        toast.show({
-          title: "Error",
-          description: "Invalid code",
+        Toast.show({
+          type: "error",
+          text1: "Invalid code",
+          text2: "Sorry, the code you entered is invalid",
         });
 
         return;
@@ -80,9 +74,10 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
             const enrolledGames = userData.enrolledGames;
 
             if (enrolledGames.includes(activityId)) {
-              toast.show({
-                title: "You're already enrolled",
-                description: "Sorry, you are already enrolled in this game",
+              Toast.show({
+                type: "error",
+                text1: "You're already enrolled",
+                text2: "Sorry, you are already enrolled in this game",
               });
 
               setCode("");
@@ -105,7 +100,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
 
             const studentUserRef = doc(
               firestore,
-              CollectionNames.STUDENTS,
+              CollectionNames.USERS,
               user.uid,
               StudentCollectionNames.RESULTS,
               activityId
@@ -118,6 +113,8 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
                 photoURL: user.photoURL,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                courseSection: user.courseSection,
+                year: user.year,
               },
               ...defaultStatusAndScore,
             });
@@ -132,15 +129,17 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
             setCode("");
             onClose();
 
-            toast.show({
-              title: "Joined space",
-              description: "You  have successfully joined the learning space",
+            Toast.show({
+              type: "error",
+              text1: "Joined space",
+              text2: "You  have successfully joined the learning space",
             });
           }
         } else {
-          toast.show({
-            title: "Error",
-            description: "User not found",
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: "User not found",
           });
         }
       }
