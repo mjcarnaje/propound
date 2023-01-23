@@ -15,7 +15,6 @@ import {
   runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
-import moment from "moment";
 import {
   Box,
   Button,
@@ -28,11 +27,14 @@ import {
   useToken,
   VStack,
 } from "native-base";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
-import ResultModal, { useModalState } from "../result-modal/ResultModal";
+import ResultModal, {
+  getTime,
+  useModalState,
+} from "../result-modal/ResultModal";
 
 interface MissingWordGameProps {
   data: MissingWordTemplate;
@@ -78,7 +80,7 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
     try {
       setIsLoading(true);
 
-      const timeSpent = Date.now() - trackTime.current;
+      const time = Date.now() - trackTime.current;
 
       const score = Object.entries(answers).reduce(
         (acc, [questionId, answer]) => {
@@ -120,10 +122,7 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
 
         const previousData = studentDoc.data().scores[gameType];
 
-        const newAverageScores = [
-          ...previousData.scores,
-          { score, time: timeSpent },
-        ];
+        const newAverageScores = [...previousData.scores, { score, time }];
         const newAverage = {
           score:
             newAverageScores.reduce((acc, curr) => acc + curr.score, 0) /
@@ -165,7 +164,7 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
 
       modal.setModalData({
         score: `${score}/${data.questions.length}`,
-        time: `${moment(timeSpent).format("mm:ss")}`,
+        time: getTime(time),
         status: score >= passingScore ? "PASS" : "FAIL",
       });
 
@@ -177,6 +176,10 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    trackTime.current = Date.now();
+  }, []);
 
   return (
     <>
@@ -374,6 +377,19 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
                 opacity={current === data.total - 1 ? 0.5 : 1}
               />
             </HStack>
+          )}
+          {isFinished && (
+            <Button
+              isLoading={isLoading}
+              isLoadingText="Checking..."
+              onPress={navigation.goBack}
+              py={4}
+              borderRadius="lg"
+              colorScheme="orange"
+              _text={{ fontFamily: "Inter-Bold" }}
+            >
+              Done
+            </Button>
           )}
         </VStack>
       </ScrollView>

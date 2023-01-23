@@ -14,7 +14,6 @@ import {
   runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
-import moment from "moment";
 import {
   AspectRatio,
   Box,
@@ -26,14 +25,16 @@ import {
   Image,
   Text,
   useDisclose,
-  useToken,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
-import ResultModal, { useModalState } from "../result-modal/ResultModal";
+import ResultModal, {
+  getTime,
+  useModalState,
+} from "../result-modal/ResultModal";
 
 interface MatchUpGameProps {
   userId: string;
@@ -53,7 +54,6 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
 
   const photos = data.items.map((item) => item.photo);
   const definitions = data.items.map((item) => item.text);
-  const [coolGray] = useToken("colors", ["coolGray.200"]);
   const [activePictureId, setActivePictureId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -170,7 +170,7 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
 
       modal.setModalData({
         score: `${score}/${data.items.length}`,
-        time: moment(time).format("mm:ss"),
+        time: getTime(time),
         status: score >= passingScore ? "PASS" : "FAIL",
       });
 

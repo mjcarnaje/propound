@@ -11,16 +11,15 @@ import {
 } from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
 import { doc, DocumentReference, getDoc } from "firebase/firestore";
-import { Center, Spinner, Text, useToast } from "native-base";
+import { Center, Spinner, Text } from "native-base";
 import React, { useEffect, useState } from "react";
+import Toast from "react-native-toast-message";
 import BaseScreen from "../components/BaseScreen";
 import GameShowQuiz from "../components/games/game-show/GameShowGame";
 import MatchUpGame from "../components/games/match-up/MatchUpGame";
 import MissingWordGame from "../components/games/missing-word/MissingWordGame";
 import { firestore } from "../configs/firebase";
 import { RootStackParamList } from "../navigation";
-import LoadingScreen from "./LoadingScreen";
-import Toast from "react-native-toast-message";
 import { useAuthStore } from "../store/auth";
 
 const PostGameScreen: React.FC<
@@ -97,7 +96,14 @@ const PostGameScreen: React.FC<
           userId={user.uid}
         />
       )}
-      {isMissingWordTemplate(activity) && <MissingWordGame data={activity} />}
+      {isMissingWordTemplate(activity) && (
+        <MissingWordGame
+          data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
+        />
+      )}
       {isGameShowTemplate(activity) && (
         <GameShowQuiz
           data={activity}

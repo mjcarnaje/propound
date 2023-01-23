@@ -15,7 +15,6 @@ import {
   runTransaction,
   serverTimestamp,
 } from "firebase/firestore";
-import moment from "moment";
 import {
   AspectRatio,
   Box,
@@ -31,7 +30,10 @@ import React, { useEffect, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
-import ResultModal, { useModalState } from "../result-modal/ResultModal";
+import ResultModal, {
+  getTime,
+  useModalState,
+} from "../result-modal/ResultModal";
 
 interface GameShowQuizProps {
   userId: string;
@@ -71,7 +73,7 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
     try {
       setIsLoading(true);
 
-      const timeSpent = Date.now() - trackTime.current;
+      const time = Date.now() - trackTime.current;
 
       const score = Object.entries(answers).reduce(
         (acc, [questionId, answer]) => {
@@ -110,10 +112,7 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
         const previousData = studentDoc.data().scores[gameType];
 
-        const newAverageScores = [
-          ...previousData.scores,
-          { score, time: timeSpent },
-        ];
+        const newAverageScores = [...previousData.scores, { score, time }];
         const newAverage = {
           score:
             newAverageScores.reduce((acc, curr) => acc + curr.score, 0) /
@@ -155,7 +154,7 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
       modal.setModalData({
         score: `${score}/${data.questions.length}`,
-        time: `${moment(timeSpent).format("mm:ss")}`,
+        time: getTime(time),
         status: score >= passingScore ? "PASS" : "FAIL",
       });
 

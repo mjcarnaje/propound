@@ -27,6 +27,7 @@ import { FlatList } from "react-native";
 import BaseScreen from "../components/BaseScreen";
 import { collections, firestore } from "../configs/firebase";
 import { useAuthStore } from "../store/auth";
+import { round } from "../utils/misc";
 
 type ResultAndActivity = {
   activity: ActivityDocType;
@@ -211,8 +212,4 @@ const ResultType: React.FC<ResultTypeProps> = ({ result, gameType }) => {
       )}
     </VStack>
   );
-};
-
-export const round = (value: number, decimals: number = 2) => {
-  return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 };
