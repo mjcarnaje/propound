@@ -38,7 +38,7 @@ export const signOut = createAsyncThunk("auth/signOut", async () => {
 
 const ADMIN_EMAILS = [
   "propound2022@gmail.com",
-  "proPound2023@gmail.com",
+  "propound2023@gmail.com",
   "michaeljamescarnaje1@gmail.com",
 ];
 
