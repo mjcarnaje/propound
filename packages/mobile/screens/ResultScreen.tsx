@@ -1,6 +1,7 @@
 import {
   ActivityDocType,
   CollectionNames,
+  GameType,
   StudentCollectionNames,
   StudentResultDocType,
 } from "@propound/types";
@@ -44,7 +45,7 @@ const ResultScreen = () => {
       const resultsRef = query(
         collection(
           firestore,
-          CollectionNames.STUDENTS,
+          CollectionNames.USERS,
           user.uid,
           StudentCollectionNames.RESULTS
         ) as CollectionReference<StudentResultDocType>
@@ -148,116 +149,70 @@ const ResultCard = ({ activity, result }: ResultAndActivity) => {
 
         {showResult && (
           <>
-            <VStack space={2}>
-              <Text fontFamily="Inter-Bold" fontSize={24}>
-                Pre test
-              </Text>
-              <VStack bg="gray.100" p={2} borderRadius="lg">
-                <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
-                  Taken count:{" "}
-                  <Text fontFamily="Inter-Bold">
-                    {result.scores["PRE_TEST"].scores.length}
-                  </Text>
-                </Text>
-              </VStack>
-              <VStack bg="gray.100" p={2} borderRadius="lg">
-                <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
-                  Average time:{" "}
-                  <Text fontFamily="Inter-Bold">
-                    {result.scores["PRE_TEST"]?.average.time
-                      ? result.scores["PRE_TEST"].average.time / 1000
-                      : 0}{" "}
-                    seconds
-                  </Text>
-                </Text>
-              </VStack>
-              <VStack bg="gray.100" p={2} borderRadius="lg">
-                <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
-                  Average score:{" "}
-                  <Text fontFamily="Inter-Bold">
-                    {result.scores["PRE_TEST"]?.average.score}
-                  </Text>
-                </Text>
-              </VStack>
-              <VStack bg="gray.100" p={2} borderRadius="lg">
-                <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
-                  Scores:{" "}
-                  <Text fontFamily="Inter-Bold">
-                    {result.scores["PRE_TEST"]?.scores
-                      .map((s) => s.score)
-                      .join(", ")}
-                  </Text>
-                </Text>
-              </VStack>
-            </VStack>
-
-            <VStack space={2}>
-              <Text fontFamily="Inter-Bold" fontSize={24}>
-                Post test
-              </Text>
-              {result.status.postGameDone ? (
-                <>
-                  <VStack bg="gray.100" p={2} borderRadius="lg">
-                    <Text
-                      fontSize={16}
-                      fontFamily="Inter-Regular"
-                      lineHeight={20}
-                    >
-                      Taken count:{" "}
-                      <Text fontFamily="Inter-Bold">
-                        {result.scores["POST_TEST"].scores.length}
-                      </Text>
-                    </Text>
-                  </VStack>
-                  <VStack bg="gray.100" p={2} borderRadius="lg">
-                    <Text
-                      fontSize={16}
-                      fontFamily="Inter-Regular"
-                      lineHeight={20}
-                    >
-                      Average time:{" "}
-                      <Text fontFamily="Inter-Bold">
-                        {result.scores["POST_TEST"]?.average.time
-                          ? result.scores["POST_TEST"].average.time / 1000
-                          : 0}{" "}
-                        seconds
-                      </Text>
-                    </Text>
-                  </VStack>
-                  <VStack bg="gray.100" p={2} borderRadius="lg">
-                    <Text
-                      fontSize={16}
-                      fontFamily="Inter-Regular"
-                      lineHeight={20}
-                    >
-                      Average score:{" "}
-                      <Text fontFamily="Inter-Bold">
-                        {result.scores["POST_TEST"]?.average.score}
-                      </Text>
-                    </Text>
-                  </VStack>
-                  <VStack bg="gray.100" p={2} borderRadius="lg">
-                    <Text
-                      fontSize={16}
-                      fontFamily="Inter-Regular"
-                      lineHeight={20}
-                    >
-                      Scores:{" "}
-                      <Text fontFamily="Inter-Bold">
-                        {result.scores["POST_TEST"]?.scores
-                          .map((s) => s.score)
-                          .join(", ")}
-                      </Text>
-                    </Text>
-                  </VStack>
-                </>
-              ) : (
-                <Text fontFamily="Inter-Regular">Not done yet.</Text>
-              )}
-            </VStack>
+            <ResultType result={result} gameType={GameType.PRE_TEST} />
+            <ResultType result={result} gameType={GameType.POST_TEST} />
           </>
         )}
       </VStack>
     </VStack>
   );
+};
+
+interface ResultTypeProps {
+  result: StudentResultDocType;
+  gameType: GameType;
+}
+
+const ResultType: React.FC<ResultTypeProps> = ({ result, gameType }) => {
+  const data = result.scores[gameType];
+
+  return (
+    <VStack space={2}>
+      <Text fontFamily="Inter-Bold" fontSize={24}>
+        Post test
+      </Text>
+      {result.status.postGameDone ? (
+        <>
+          <VStack bg="gray.100" p={2} borderRadius="lg">
+            <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
+              Taken count:{" "}
+              <Text fontFamily="Inter-Bold">{data?.scores?.length}</Text>
+            </Text>
+          </VStack>
+          <VStack bg="gray.100" p={2} borderRadius="lg">
+            <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
+              Average time:{" "}
+              <Text fontFamily="Inter-Bold">
+                {`${round((data?.average?.time || 0) / 1000, 2)} seconds`}
+              </Text>
+            </Text>
+          </VStack>
+          <VStack bg="gray.100" p={2} borderRadius="lg">
+            <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
+              Average score:{" "}
+              <Text fontFamily="Inter-Bold">
+                {round(data?.average?.score || 0, 2)}
+              </Text>
+            </Text>
+          </VStack>
+          <VStack bg="gray.100" p={2} borderRadius="lg">
+            <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>
+              Scores:{" "}
+              <Text fontFamily="Inter-Bold">
+                {JSON.stringify(data?.scores.map((x) => x.score) || [])
+                  .replace(/[\[\]"]+/g, "")
+                  .replace(/,/g, ", ")}
+              </Text>
+            </Text>
+          </VStack>
+        </>
+      ) : (
+        <Text fontFamily="Inter-Regular">Not done yet.</Text>
+      )}
+    </VStack>
+  );
+};
+
+export const round = (value: number, decimals: number = 2) => {
+  return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 };

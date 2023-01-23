@@ -95,7 +95,7 @@ const MissingWord: React.FC<MissingWordProps> = ({
 
   const onSubmit: SubmitHandler<MissingWordTemplate> = async (data) => {
     await mutate(
-      { ...data, totaL: data.questions.length },
+      { ...data, total: data.questions.length },
       {
         onError: async (error) => {
           toast({
