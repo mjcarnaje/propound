@@ -117,7 +117,14 @@ const PropoundNavigation: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          headerStyle: {
+            backgroundColor: "#f9f9f9",
+          },
+        }}
+      >
         {user ? (
           <>
             <Stack.Screen name="Main" component={MainScreens} />
@@ -131,9 +138,6 @@ const PropoundNavigation: React.FC = () => {
                 headerShown: true,
                 headerShadowVisible: false,
                 headerTitleAlign: "center",
-                headerBackgroundContainerStyle: {
-                  backgroundColor: "#f9f9fb",
-                },
               }}
               name="About"
               component={AboutScreen}

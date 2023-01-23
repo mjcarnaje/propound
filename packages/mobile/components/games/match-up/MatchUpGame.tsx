@@ -22,13 +22,12 @@ import {
   CheckIcon,
   CloseIcon,
   HStack,
-  Image,
   Text,
   useDisclose,
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { FlatList, TouchableOpacity, View, Image } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
 import ResultModal, {
@@ -201,10 +200,13 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
           </Text>
         </VStack>
 
-        <Box bg="gray.200" borderRadius={8} p={2} w="full">
+        <Box bg="gray.100" borderRadius={8} p={2} w="full">
           <View>
             <FlatList
-              contentContainerStyle={{ flexGrow: 1 }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                minWidth: 100 * (photos.length + 1),
+              }}
               ItemSeparatorComponent={() => <Box w={2} />}
               data={photos}
               keyExtractor={(item) => item.id}
@@ -215,21 +217,24 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
                   <TouchableOpacity
                     onPress={() => onPressPicture(item.id)}
                     disabled={isFinished}
+                    style={{ width: 100, height: 100 }}
                   >
                     <AspectRatio
-                      opacity={isAnswered ? 0.75 : 1}
+                      opacity={isAnswered ? 0.6 : 1}
                       ratio={1}
-                      maxW="100px"
                       w="full"
                       borderRadius="lg"
+                      bg="coolGray.200"
                       overflow="hidden"
-                      borderWidth={2}
-                      borderColor={isActive ? "orange.500" : "transparent"}
+                      borderWidth={isAnswered ? 1 : 2}
+                      borderColor={
+                        isActive || isAnswered ? "orange.500" : "transparent"
+                      }
                     >
                       <Image
                         source={{ uri: item.photo }}
+                        resizeMode="center"
                         style={{ width: "100%", height: "100%" }}
-                        alt={item.id}
                       />
                     </AspectRatio>
                   </TouchableOpacity>
@@ -266,7 +271,12 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
                   disabled={!isSelecting}
                   onPress={() => onPressText(text.id)}
                 >
-                  <Center maxW="100px" w="full" bg="coolGray.200">
+                  <Center
+                    maxW="100px"
+                    borderRadius="lg"
+                    w="full"
+                    bg="coolGray.200"
+                  >
                     {isFinished && (
                       <Center
                         zIndex={10}
@@ -290,37 +300,37 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
                       w="full"
                       borderRadius="lg"
                       overflow="hidden"
-                      borderWidth={2}
+                      borderWidth={isSelecting ? 2 : 0}
                       borderStyle="dashed"
                       bg="coolGray.200"
                       borderColor={!isSelecting ? "transparent" : "amber.500"}
                       position="relative"
-                      opacity={isFinished && !isCorrect ? 0.75 : 1}
+                      opacity={isFinished && !isCorrect ? 0.6 : 1}
                     >
                       <Image
                         source={{ uri: photoURL }}
+                        resizeMode="center"
                         style={{ width: "100%", height: "100%" }}
-                        alt="user answer"
                       />
                     </AspectRatio>
+
                     {isFinished && !isCorrect && (
                       <AspectRatio
                         ratio={1}
                         w="50%"
                         borderRadius="lg"
                         overflow="hidden"
-                        borderWidth={2}
-                        borderStyle="dashed"
+                        borderWidth={1}
                         bg="coolGray.200"
-                        borderColor={!isSelecting ? "transparent" : "amber.500"}
+                        borderColor="orange.400"
                         position="absolute"
                         bottom={0}
                         left={0}
                       >
                         <Image
                           source={{ uri: correctAnswer.photo }}
+                          resizeMode="center"
                           style={{ width: "100%", height: "100%" }}
-                          alt="user answer"
                         />
                       </AspectRatio>
                     )}

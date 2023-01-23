@@ -4,6 +4,7 @@ import {
   ActivityStudentResultDocType,
   CollectionNames,
   GameType,
+  MissingWordQuestionType,
   MissingWordTemplate,
   StudentCollectionNames,
   StudentResultDocType,
@@ -31,6 +32,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
+import { getUnique, shuffle } from "../../../utils/misc";
+import GameProgress from "../common/GameProgress";
+import TitleInstruction from "../common/TitleInstruction";
 import ResultModal, {
   getTime,
   useModalState,
@@ -188,208 +192,83 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
         contentContainerStyle={{ paddingBottom: 36, position: "relative" }}
       >
         <VStack space={8} w="90%" mx="auto">
-          <VStack>
-            <Text fontFamily="Inter-Bold" fontSize={28}>
-              {data.title}
-            </Text>
-            <Text fontFamily="Inter-Regular" color="muted.500">
-              {data.instruction}
-            </Text>
-          </VStack>
+          <TitleInstruction title={data.title} instruction={data.instruction} />
+
           {!isFinished && (
-            <VStack space={2} alignItems="center">
-              <Text fontFamily="Montserrat-Bold" color="muted.700">
-                {`${current + 1} OF ${data.total}`}
-              </Text>
-              <Box borderRadius="xl" w="full" bg="gray.300" h={2.5}>
-                <Box
-                  bg="orange.400"
-                  w={`${((current + 1) / data.total) * 100}%`}
-                  h="full"
-                  borderRadius="xl"
+            <GameProgress current={current} total={data.questions.length} />
+          )}
+
+          {isFinished && (
+            <VStack space={4}>
+              {data.questions.map((question) => (
+                <QuestionResult
+                  key={question.id}
+                  question={question}
+                  answers={answers}
                 />
-              </Box>
+              ))}
+              <Button
+                onPress={navigation.goBack}
+                py={4}
+                borderRadius="lg"
+                colorScheme="orange"
+                _text={{ fontFamily: "Inter-Bold" }}
+              >
+                Done!
+              </Button>
             </VStack>
           )}
 
-          <VStack borderRadius="xl" bg="#F5F5F5" p={4} space={6}>
-            <Text
-              fontFamily="Inter-Bold"
-              fontSize={12}
-              textTransform="uppercase"
-            >
-              Select an answer
-            </Text>
-            <HStack flexWrap="wrap">
-              {choices.map((choice, idx) => {
-                const correctAnswer =
-                  currentQuestion.question.split(" ")[
-                    currentQuestion.answerIdx
-                  ];
-                const isCorrect = choice === correctAnswer;
-                return (
-                  <Box p={2}>
-                    <Button
-                      disabled={isFinished}
-                      opacity={isFinished ? 0.8 : 1}
-                      key={idx}
-                      borderRadius="lg"
-                      onPress={() => handleAnswer(currentQuestion.id, choice)}
-                      colorScheme="orange"
-                      bg={["#E49557", "#2F3356"][idx % 2]}
-                      _text={{ fontFamily: "Inter-Bold" }}
-                      p={2}
-                      position="relative"
-                    >
-                      {isFinished && isCorrect && (
-                        <Center
-                          position="absolute"
-                          top={-16}
-                          right={-16}
-                          borderRadius="full"
-                          boxSize={"20px"}
-                          bg="green.600"
-                        >
-                          <CheckIcon size={3} style={{ color: "white" }} />
-                        </Center>
-                      )}
-                      {choice}
-                    </Button>
-                  </Box>
-                );
-              })}
-            </HStack>
-            <HStack alignItems="center" flexWrap="wrap" textAlign="justify">
-              {currentQuestionArr.map((text, idx) => {
-                if (idx === currentQuestion.answerIdx) {
-                  const questionId = currentQuestion.id;
-                  const answer = answers[questionId];
-                  if (answer) {
-                    const isCorrect = answer === text;
-                    return (
-                      <Button
-                        onPress={() => handleAnswer(currentQuestion.id, null)}
-                        key={idx}
-                        borderRadius="lg"
-                        bg="#E49557"
-                        _text={{ fontFamily: "Inter-Bold" }}
-                        py={2}
-                        position="relative"
-                      >
-                        {isFinished && isCorrect && (
-                          <Center
-                            position="absolute"
-                            top={-16}
-                            right={-16}
-                            borderRadius="full"
-                            boxSize={"20px"}
-                            bg="green.600"
-                          >
-                            <CheckIcon size={3} style={{ color: "white" }} />
-                          </Center>
-                        )}
-                        {isFinished && !isCorrect && (
-                          <Center
-                            position="absolute"
-                            top={-16}
-                            right={-16}
-                            borderRadius="full"
-                            boxSize={"20px"}
-                            bg="red.600"
-                          >
-                            <CloseIcon size={3} style={{ color: "white" }} />
-                          </Center>
-                        )}
-                        {isFinished && isCorrect && (
-                          <Center
-                            position="absolute"
-                            top={-16}
-                            right={-16}
-                            borderRadius="full"
-                            boxSize={"20px"}
-                            bg="green.500"
-                          >
-                            <CheckIcon size={3} style={{ color: "white" }} />
-                          </Center>
-                        )}
-                        {answer}
-                      </Button>
-                    );
-                  }
-                  return (
-                    <Box
-                      key={idx}
-                      w={136}
-                      h={"30px"}
-                      bg="coolGray.300"
-                      borderRadius="md"
-                      mx={2}
-                    />
-                  );
-                }
-                return (
-                  <Text
-                    key={idx}
-                    fontSize={14}
-                    lineHeight={30}
-                    fontFamily="Inter-Medium"
-                  >{` ${text} `}</Text>
-                );
-              })}
-            </HStack>
-          </VStack>
-
           {!isFinished && (
-            <HStack w="full" justifyContent="space-between">
-              <IconButton
-                colorScheme="orange"
-                boxSize={12}
-                icon={
-                  <FontAwesome name="chevron-left" size={24} color={orange} />
-                }
-                onPress={() => setCurrent((prev) => prev - 1)}
-                isDisabled={current === 0}
-                opacity={current === 0 ? 0.5 : 1}
+            <VStack space={4}>
+              <CurrentQuestion
+                question={data.questions[current]}
+                handleAnswer={handleAnswer}
+                answers={answers}
               />
 
-              {current === data.total - 1 && (
-                <Button
-                  isLoading={isLoading}
-                  isLoadingText="Checking..."
-                  onPress={checkAnswers}
+              <HStack w="full" justifyContent="space-between">
+                <IconButton
                   colorScheme="orange"
-                  _text={{ fontFamily: "Inter-Bold" }}
-                  borderRadius="lg"
-                  px={12}
-                >
-                  Finish
-                </Button>
-              )}
+                  boxSize={12}
+                  icon={
+                    <FontAwesome name="chevron-left" size={24} color={orange} />
+                  }
+                  onPress={() => setCurrent((prev) => prev - 1)}
+                  isDisabled={current === 0}
+                  opacity={current === 0 ? 0.5 : 1}
+                />
 
-              <IconButton
-                colorScheme="orange"
-                boxSize={12}
-                icon={
-                  <FontAwesome name="chevron-right" size={24} color={orange} />
-                }
-                onPress={() => setCurrent((prev) => prev + 1)}
-                isDisabled={current === data.total - 1}
-                opacity={current === data.total - 1 ? 0.5 : 1}
-              />
-            </HStack>
-          )}
-          {isFinished && (
-            <Button
-              isLoading={isLoading}
-              isLoadingText="Checking..."
-              onPress={navigation.goBack}
-              py={4}
-              borderRadius="lg"
-              colorScheme="orange"
-              _text={{ fontFamily: "Inter-Bold" }}
-            >
-              Done
-            </Button>
+                {current === data.total - 1 && (
+                  <Button
+                    isLoading={isLoading}
+                    isLoadingText="Checking..."
+                    onPress={checkAnswers}
+                    colorScheme="orange"
+                    _text={{ fontFamily: "Inter-Bold" }}
+                    borderRadius="lg"
+                    px={12}
+                  >
+                    Finish
+                  </Button>
+                )}
+
+                <IconButton
+                  colorScheme="orange"
+                  boxSize={12}
+                  icon={
+                    <FontAwesome
+                      name="chevron-right"
+                      size={24}
+                      color={orange}
+                    />
+                  }
+                  onPress={() => setCurrent((prev) => prev + 1)}
+                  isDisabled={current === data.total - 1}
+                  opacity={current === data.total - 1 ? 0.5 : 1}
+                />
+              </HStack>
+            </VStack>
           )}
         </VStack>
       </ScrollView>
@@ -398,3 +277,220 @@ const MissingWordGame: React.FC<MissingWordGameProps> = ({
 };
 
 export default MissingWordGame;
+
+interface CurrentQuestionProps {
+  question: MissingWordQuestionType;
+  handleAnswer: (id: string, answer: string | null) => void;
+  answers: Record<string, string | null>;
+}
+
+const CurrentQuestion: React.FC<CurrentQuestionProps> = (props) => {
+  const { handleAnswer, answers } = props;
+  const { id, question, incorrect, answerIdx } = props.question;
+  const correctAnswer = question.split(" ")[answerIdx];
+  const choices = useMemo(() => shuffle([correctAnswer, ...incorrect]), [id]);
+  const userAnswer = answers[id];
+
+  return (
+    <VStack borderRadius="xl" bg="#F5F5F5" p={4} space={6}>
+      <Text fontFamily="Inter-Bold" fontSize={12} textTransform="uppercase">
+        Select an answer
+      </Text>
+      <HStack flexWrap="wrap">
+        {choices
+          .filter(getUnique)
+          .filter((choice) => choice !== userAnswer)
+          .map((choice, choiceIdx) => {
+            return (
+              <Box key={choiceIdx} p={2}>
+                <Button
+                  borderRadius="lg"
+                  onPress={() => handleAnswer(id, choice)}
+                  colorScheme="orange"
+                  bg="#2F3356"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  p={2}
+                  position="relative"
+                >
+                  {choice}
+                </Button>
+              </Box>
+            );
+          })}
+      </HStack>
+      <HStack alignItems="center" flexWrap="wrap" textAlign="justify">
+        {question.split(" ").map((text, wordIdx) => {
+          if (wordIdx === answerIdx) {
+            const hasAnswer = !!answers[id];
+
+            if (hasAnswer) {
+              return (
+                <Button
+                  key={wordIdx}
+                  onPress={() => handleAnswer(id, null)}
+                  borderRadius="lg"
+                  bg="#E49557"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  py={2}
+                  position="relative"
+                >
+                  {answers[id]}
+                </Button>
+              );
+            }
+
+            return (
+              <Box
+                key={wordIdx}
+                w={136}
+                h={"30px"}
+                bg="coolGray.300"
+                borderRadius="md"
+                mx={2}
+              />
+            );
+          }
+
+          return (
+            <Text
+              key={wordIdx}
+              fontSize={14}
+              lineHeight={30}
+              fontFamily="Inter-Medium"
+            >
+              {` ${text} `}
+            </Text>
+          );
+        })}
+      </HStack>
+    </VStack>
+  );
+};
+
+interface QuestionResultProps {
+  question: MissingWordQuestionType;
+  answers: Record<string, string | null>;
+}
+
+const QuestionResult: React.FC<QuestionResultProps> = (props) => {
+  const { answers } = props;
+  const { id, question, incorrect, answerIdx } = props.question;
+  const correctAnswer = question.split(" ")[answerIdx];
+  const choices = [correctAnswer, ...incorrect];
+  const userAnswer = answers[id];
+  const isCorrectAnswer = userAnswer === correctAnswer;
+
+  return (
+    <VStack
+      borderRadius="xl"
+      p={4}
+      space={6}
+      borderWidth={2}
+      borderColor={isCorrectAnswer ? "green.600" : "red.600"}
+      bg={isCorrectAnswer ? "green.50" : "red.50"}
+    >
+      <HStack flexWrap="wrap">
+        {choices
+          .filter(getUnique)
+          .filter((choice) => choice !== userAnswer)
+          .map((choice, choiceIdx) => {
+            const isCorrectAnswer = choice === correctAnswer;
+            return (
+              <Box key={choiceIdx} p={2}>
+                <Button
+                  disabled
+                  opacity={0.8}
+                  borderRadius="lg"
+                  colorScheme="orange"
+                  bg="#2F3356"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  p={2}
+                  position="relative"
+                >
+                  {isCorrectAnswer && (
+                    <Center
+                      position="absolute"
+                      top={-16}
+                      right={-16}
+                      borderRadius="full"
+                      boxSize={"20px"}
+                      bg="green.600"
+                    >
+                      <CheckIcon size={3} style={{ color: "white" }} />
+                    </Center>
+                  )}
+
+                  {choice}
+                </Button>
+              </Box>
+            );
+          })}
+      </HStack>
+      <HStack alignItems="center" flexWrap="wrap" textAlign="justify">
+        {question.split(" ").map((word, wordIdx) => {
+          if (wordIdx === answerIdx) {
+            if (!!userAnswer) {
+              const isCorrect = userAnswer === correctAnswer;
+              return (
+                <Button
+                  disabled={true}
+                  key={wordIdx}
+                  borderRadius="lg"
+                  bg="#E49557"
+                  _text={{ fontFamily: "Inter-Bold" }}
+                  py={2}
+                  position="relative"
+                >
+                  {isCorrect && (
+                    <Center
+                      position="absolute"
+                      top={-16}
+                      right={-16}
+                      borderRadius="full"
+                      boxSize={"20px"}
+                      bg="green.600"
+                    >
+                      <CheckIcon size={3} style={{ color: "white" }} />
+                    </Center>
+                  )}
+                  {!isCorrect && (
+                    <Center
+                      position="absolute"
+                      top={-16}
+                      right={-16}
+                      borderRadius="full"
+                      boxSize={"20px"}
+                      bg="red.600"
+                    >
+                      <CloseIcon size={3} style={{ color: "white" }} />
+                    </Center>
+                  )}
+
+                  {userAnswer}
+                </Button>
+              );
+            }
+            return (
+              <Box
+                key={wordIdx}
+                w={136}
+                h={"30px"}
+                bg="coolGray.300"
+                borderRadius="md"
+                mx={2}
+              />
+            );
+          }
+          return (
+            <Text
+              key={wordIdx}
+              fontSize={14}
+              lineHeight={30}
+              fontFamily="Inter-Medium"
+            >{` ${word} `}</Text>
+          );
+        })}
+      </HStack>
+    </VStack>
+  );
+};

@@ -150,7 +150,13 @@ const LearnScreen: React.FC<StackScreenProps<RootStackParamList, "Learn">> = ({
                   {MaterialIcon}
                 </Center>
                 <VStack>
-                  <Text fontSize={18} fontFamily="Inter-Bold" color="muted.700">
+                  <Text
+                    width="95%"
+                    fontSize={18}
+                    fontFamily="Inter-Bold"
+                    color="muted.700"
+                    lineHeight={23}
+                  >
                     {item.title}
                   </Text>
                   <Text

@@ -3,6 +3,7 @@ import {
   ActivityCollectionNames,
   ActivityStudentResultDocType,
   CollectionNames,
+  GameShowQuestionType,
   GameShowTemplate,
   GameType,
   StudentCollectionNames,
@@ -17,7 +18,6 @@ import {
 } from "firebase/firestore";
 import {
   AspectRatio,
-  Box,
   Button,
   HStack,
   IconButton,
@@ -30,6 +30,8 @@ import React, { useEffect, useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { firestore } from "../../../configs/firebase";
 import { MainScreensParamList } from "../../../navigation";
+import GameProgress from "../common/GameProgress";
+import TitleInstruction from "../common/TitleInstruction";
 import ResultModal, {
   getTime,
   useModalState,
@@ -59,7 +61,6 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isFinished, setIsFinished] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const currentQuestion = data.questions[current];
   const trackTime = React.useRef(0);
 
   const modal = useModalState();
@@ -178,193 +179,84 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
         contentContainerStyle={{ paddingBottom: 36, position: "relative" }}
       >
         <VStack space={8} w="90%" mx="auto">
-          <VStack>
-            <Text fontFamily="Inter-Bold" fontSize={28}>
-              {data.title}
-            </Text>
-            <Text fontFamily="Inter-Regular" color="muted.500">
-              {data.instruction}
-            </Text>
-          </VStack>
+          <TitleInstruction title={data.title} instruction={data.instruction} />
+
           {!isFinished && (
-            <VStack space={2} alignItems="center">
-              <Text fontFamily="Montserrat-Bold" color="muted.700">
-                {`${current + 1} OF ${data.total}`}
-              </Text>
-              <Box borderRadius="xl" w="full" bg="gray.300" h={2.5}>
-                <Box
-                  bg="orange.400"
-                  w={`${((current + 1) / data.total) * 100}%`}
-                  h="full"
-                  borderRadius="xl"
-                />
-              </Box>
-            </VStack>
+            <GameProgress current={current} total={data.questions.length} />
           )}
 
           {isFinished && (
             <VStack space={4}>
-              {data.questions.map((question) => {
-                const { id } = question;
-                const isCorrect = correctAnswers[id] === answers[id];
-
-                return (
-                  <VStack
-                    key={id}
-                    bg="gray.100"
-                    space={4}
-                    p={4}
-                    borderRadius="lg"
-                    borderWidth={2}
-                    borderColor={isCorrect ? "green.600" : "red.600"}
-                  >
-                    <VStack space={3}>
-                      {question.photoURL && (
-                        <AspectRatio
-                          ratio={16 / 9}
-                          w="full"
-                          borderRadius="lg"
-                          overflow="hidden"
-                        >
-                          <Image
-                            source={{ uri: question.photoURL }}
-                            style={{ width: "100%", height: "100%" }}
-                          />
-                        </AspectRatio>
-                      )}
-
-                      <Text fontFamily="Inter-Bold" fontSize={18}>
-                        {question.question}
-                      </Text>
-                    </VStack>
-
-                    <VStack space={2}>
-                      {question.choices.map((choice) => {
-                        const isSelected = answers[id] === choice.id;
-
-                        let status: ChoiceStatus = "DEFAULT";
-
-                        if (isSelected) {
-                          status = isCorrect ? "CORRECT" : "WRONG";
-                        } else if (correctAnswers[id] === choice.id) {
-                          status = "CORRECT";
-                        }
-
-                        return (
-                          <ChoiceCard
-                            key={choice.id}
-                            choice={choice}
-                            onPress={() => handleAnswer(question.id, choice.id)}
-                            status={status}
-                          />
-                        );
-                      })}
-                    </VStack>
-                  </VStack>
-                );
-              })}
-
+              {data.questions.map((question) => (
+                <QuestionResult
+                  key={question.id}
+                  question={question}
+                  answers={answers}
+                  correctAnswer={correctAnswers[question.id]}
+                />
+              ))}
               <Button
-                onPress={() => {
-                  navigation.goBack();
-                }}
+                onPress={navigation.goBack}
                 py={4}
                 borderRadius="lg"
                 colorScheme="orange"
                 _text={{ fontFamily: "Inter-Bold" }}
               >
-                Go Back
+                Done!
               </Button>
             </VStack>
           )}
 
           {!isFinished && (
-            <VStack bg="gray.100" space={4} p={4} borderRadius="lg">
-              <VStack space={3}>
-                <Text
-                  fontFamily="Inter-Medium"
-                  textTransform="uppercase"
-                  color="muted.600"
-                  fontSize={12}
-                >
-                  Select an answer
-                </Text>
+            <VStack space={4}>
+              <CurrentQuestion
+                question={data.questions[current]}
+                answers={answers}
+                handleAnswer={handleAnswer}
+              />
 
-                {currentQuestion.photoURL && (
-                  <AspectRatio
-                    ratio={16 / 9}
-                    w="full"
+              <HStack w="full" justifyContent="space-between">
+                <IconButton
+                  colorScheme="orange"
+                  boxSize={12}
+                  icon={
+                    <FontAwesome name="chevron-left" size={24} color={orange} />
+                  }
+                  onPress={() => setCurrent((prev) => prev - 1)}
+                  isDisabled={current === 0}
+                  opacity={current === 0 ? 0.5 : 1}
+                />
+
+                {current === data.total - 1 && (
+                  <Button
+                    isLoading={isLoading}
+                    isLoadingText="Checking..."
+                    onPress={checkAnswers}
+                    colorScheme="orange"
+                    _text={{ fontFamily: "Inter-Bold" }}
                     borderRadius="lg"
-                    overflow="hidden"
+                    px={12}
                   >
-                    <Image
-                      source={{ uri: currentQuestion.photoURL }}
-                      style={{ width: "100%", height: "100%" }}
-                    />
-                  </AspectRatio>
+                    Finish
+                  </Button>
                 )}
 
-                <Text fontFamily="Inter-Bold" fontSize={18}>
-                  {currentQuestion.question}
-                </Text>
-              </VStack>
-
-              <VStack space={2}>
-                {currentQuestion.choices.map((choice) => {
-                  const isSelected = answers[currentQuestion.id] === choice.id;
-
-                  return (
-                    <ChoiceCard
-                      key={choice.id}
-                      choice={choice}
-                      onPress={() =>
-                        handleAnswer(currentQuestion.id, choice.id)
-                      }
-                      status={isSelected ? "SELECTED" : "DEFAULT"}
-                    />
-                  );
-                })}
-              </VStack>
-            </VStack>
-          )}
-          {!isFinished && (
-            <HStack w="full" justifyContent="space-between">
-              <IconButton
-                colorScheme="orange"
-                boxSize={12}
-                icon={
-                  <FontAwesome name="chevron-left" size={24} color={orange} />
-                }
-                onPress={() => setCurrent((prev) => prev - 1)}
-                isDisabled={current === 0}
-                opacity={current === 0 ? 0.5 : 1}
-              />
-
-              {current === data.total - 1 && (
-                <Button
-                  isLoading={isLoading}
-                  isLoadingText="Checking..."
-                  onPress={checkAnswers}
+                <IconButton
                   colorScheme="orange"
-                  _text={{ fontFamily: "Inter-Bold" }}
-                  borderRadius="lg"
-                  px={12}
-                >
-                  Finish
-                </Button>
-              )}
-
-              <IconButton
-                colorScheme="orange"
-                boxSize={12}
-                icon={
-                  <FontAwesome name="chevron-right" size={24} color={orange} />
-                }
-                onPress={() => setCurrent((prev) => prev + 1)}
-                isDisabled={current === data.total - 1}
-                opacity={current === data.total - 1 ? 0.5 : 1}
-              />
-            </HStack>
+                  boxSize={12}
+                  icon={
+                    <FontAwesome
+                      name="chevron-right"
+                      size={24}
+                      color={orange}
+                    />
+                  }
+                  onPress={() => setCurrent((prev) => prev + 1)}
+                  isDisabled={current === data.total - 1}
+                  opacity={current === data.total - 1 ? 0.5 : 1}
+                />
+              </HStack>
+            </VStack>
           )}
         </VStack>
       </ScrollView>
@@ -374,11 +266,135 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
 
 export default GameShowQuiz;
 
+interface CurrentQuestionProps {
+  question: GameShowQuestionType;
+  answers: Record<string, string>;
+  handleAnswer: (questionId: string, choiceId: string) => void;
+}
+
+const CurrentQuestion: React.FC<CurrentQuestionProps> = ({
+  question,
+  answers,
+  handleAnswer,
+}) => {
+  return (
+    <VStack bg="gray.100" space={4} p={4} borderRadius="lg">
+      <VStack space={3}>
+        <Text
+          fontFamily="Inter-Medium"
+          textTransform="uppercase"
+          color="muted.600"
+          fontSize={12}
+        >
+          Select an answer
+        </Text>
+
+        {question.photoURL && (
+          <AspectRatio
+            ratio={16 / 9}
+            w="full"
+            borderRadius="lg"
+            overflow="hidden"
+          >
+            <Image
+              source={{ uri: question.photoURL }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </AspectRatio>
+        )}
+
+        <Text fontFamily="Inter-Bold" fontSize={18}>
+          {question.question}
+        </Text>
+      </VStack>
+
+      <VStack space={2}>
+        {question.choices.map((choice) => {
+          const isSelected = answers[question.id] === choice.id;
+
+          return (
+            <ChoiceCard
+              key={choice.id}
+              choice={choice}
+              onPress={() => handleAnswer(question.id, choice.id)}
+              status={isSelected ? "SELECTED" : "DEFAULT"}
+            />
+          );
+        })}
+      </VStack>
+    </VStack>
+  );
+};
+
+interface QuestionResultProps {
+  question: GameShowQuestionType;
+  answers: Record<string, string>;
+  correctAnswer: string;
+}
+
+const QuestionResult: React.FC<QuestionResultProps> = ({
+  question,
+  answers,
+  correctAnswer,
+}) => {
+  const { id } = question;
+  const userAnswer = answers[id];
+  const isCorrectAnswer = userAnswer === correctAnswer;
+
+  return (
+    <VStack
+      key={id}
+      space={4}
+      p={4}
+      borderRadius="lg"
+      borderWidth={2}
+      borderColor={isCorrectAnswer ? "green.600" : "red.600"}
+      bg={isCorrectAnswer ? "green.50" : "red.50"}
+    >
+      <VStack space={3}>
+        {question.photoURL && (
+          <AspectRatio
+            ratio={16 / 9}
+            w="full"
+            borderRadius="lg"
+            overflow="hidden"
+          >
+            <Image
+              source={{ uri: question.photoURL }}
+              style={{ width: "100%", height: "100%" }}
+            />
+          </AspectRatio>
+        )}
+
+        <Text fontFamily="Inter-Bold" fontSize={18}>
+          {question.question}
+        </Text>
+      </VStack>
+
+      <VStack space={2}>
+        {question.choices.map((choice) => {
+          const isSelected = answers[id] === choice.id;
+
+          let status: ChoiceStatus = "DEFAULT";
+
+          if (isSelected) {
+            status = isCorrectAnswer ? "CORRECT" : "WRONG";
+          } else if (correctAnswer === choice.id) {
+            status = "CORRECT";
+          }
+
+          return <ChoiceCard key={choice.id} choice={choice} status={status} />;
+        })}
+      </VStack>
+    </VStack>
+  );
+};
+
 type ChoiceStatus = "CORRECT" | "WRONG" | "SELECTED" | "DEFAULT";
 
 interface ChoiceProps {
   choice: GameShowTemplate["questions"][0]["choices"][0];
-  onPress: () => void;
+  onPress?: () => void;
   status: ChoiceStatus;
 }
 

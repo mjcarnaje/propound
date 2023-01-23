@@ -80,7 +80,9 @@ const PostGameScreen: React.FC<
     return (
       <BaseScreen>
         <Center flexGrow={1}>
-          <Text>Pre Game Not Found</Text>
+          <Text>
+            The activity you are looking for does not exist or has been deleted
+          </Text>
         </Center>
       </BaseScreen>
     );
@@ -92,7 +94,7 @@ const PostGameScreen: React.FC<
         <MatchUpGame
           data={activity}
           activityId={route.params.id}
-          gameType={GameType.PRE_TEST}
+          gameType={GameType.POST_TEST}
           userId={user.uid}
         />
       )}
@@ -100,7 +102,7 @@ const PostGameScreen: React.FC<
         <MissingWordGame
           data={activity}
           activityId={route.params.id}
-          gameType={GameType.PRE_TEST}
+          gameType={GameType.POST_TEST}
           userId={user.uid}
         />
       )}
@@ -108,7 +110,7 @@ const PostGameScreen: React.FC<
         <GameShowQuiz
           data={activity}
           activityId={route.params.id}
-          gameType={GameType.PRE_TEST}
+          gameType={GameType.POST_TEST}
           userId={user.uid}
         />
       )}

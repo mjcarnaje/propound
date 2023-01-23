@@ -24,7 +24,7 @@ export function isAuthoredDocType(user: UserDocType): user is TeacherDocType {
 }
 
 export function getFullName(user: BaseUserDocType) {
-  return `${user.firstName} ${user.lastName}`;
+  return `${user?.firstName} ${user?.lastName}`;
 }
 
 export function getRomanYearLevel(str: StudentYear) {
@@ -35,4 +35,18 @@ export function getRomanYearLevel(str: StudentYear) {
     Senior: "IV",
   };
   return map[str];
+}
+
+export function getYearLevel(str: StudentYear) {
+  const map = {
+    Freshman: "1st year",
+    Sophomore: "2nd year",
+    Junior: "3rd year",
+    Senior: "4th year",
+  };
+  return map[str];
+}
+
+export function getYearAndSection(user: StudentDocType) {
+  return `${getYearLevel(user.year)} — ${user.courseSection}`;
 }

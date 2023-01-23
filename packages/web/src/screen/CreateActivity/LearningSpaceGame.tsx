@@ -29,7 +29,11 @@ import {
   isMissingWordTemplate,
 } from "../../utils/template";
 
-const DashboardPostGame: React.FC = () => {
+interface LearningSpaceGameProps {
+  gameType: GameType;
+}
+
+const LearningSpaceGame: React.FC<LearningSpaceGameProps> = ({ gameType }) => {
   const { id } = useParams() as { id: string };
   const [gameTemplate, setGameTemplate] = useState<GameTemplate | null>(null);
   const [activityData, setActivityData] = useState<GameDocTemplate | null>(
@@ -41,6 +45,7 @@ const DashboardPostGame: React.FC = () => {
   const getActivityData = async () => {
     const activityRef = doc(firestore, CollectionNames.ACTIVITIES, id);
     const activitySnap = await getDoc(activityRef);
+
     if (activitySnap.exists()) {
       setStatus(activitySnap.data()?.status as GameStatus);
     }
@@ -50,41 +55,33 @@ const DashboardPostGame: React.FC = () => {
       CollectionNames.ACTIVITIES,
       id,
       ActivityCollectionNames.GAMES,
-      GameType.POST_TEST
+      gameType
     );
+
     setIsLoading(true);
+
     const docSnap = await getDoc(postGameRef);
 
     if (docSnap.exists()) {
       setActivityData(docSnap.data() as GameDocTemplate);
     }
+
     setIsLoading(false);
   };
 
   useEffect(() => {
     getActivityData();
   }, []);
+
   const GameTemplates: Record<GameTemplate, JSX.Element> = {
     GAME_SHOW: (
-      <GameShow
-        activityId={id!}
-        type={GameType.POST_TEST}
-        refetch={getActivityData}
-      />
+      <GameShow activityId={id!} type={gameType} refetch={getActivityData} />
     ),
     MATCH_UP: (
-      <MatchUp
-        activityId={id!}
-        type={GameType.POST_TEST}
-        refetch={getActivityData}
-      />
+      <MatchUp activityId={id!} type={gameType} refetch={getActivityData} />
     ),
     MISSING_WORD: (
-      <MissingWord
-        activityId={id!}
-        type={GameType.POST_TEST}
-        refetch={getActivityData}
-      />
+      <MissingWord activityId={id!} type={gameType} refetch={getActivityData} />
     ),
   };
 
@@ -120,7 +117,7 @@ const DashboardPostGame: React.FC = () => {
         <GameShow
           activityId={id!}
           gameData={activityData}
-          type={GameType.POST_TEST}
+          type={gameType}
           refetch={getActivityData}
           isPublished={status === "PUBLISHED"}
         />
@@ -129,7 +126,7 @@ const DashboardPostGame: React.FC = () => {
         <MissingWord
           activityId={id!}
           gameData={activityData}
-          type={GameType.POST_TEST}
+          type={gameType}
           refetch={getActivityData}
           isPublished={status === "PUBLISHED"}
         />
@@ -138,7 +135,7 @@ const DashboardPostGame: React.FC = () => {
         <MatchUp
           activityId={id!}
           gameData={activityData}
-          type={GameType.POST_TEST}
+          type={gameType}
           refetch={getActivityData}
           isPublished={status === "PUBLISHED"}
         />
@@ -148,4 +145,4 @@ const DashboardPostGame: React.FC = () => {
   );
 };
 
-export default DashboardPostGame;
+export default LearningSpaceGame;

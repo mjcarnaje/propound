@@ -1,4 +1,4 @@
-import { getFullName } from "@propound/utils";
+import { getFullName, getYearAndSection } from "@propound/utils";
 import { StackScreenProps } from "@react-navigation/stack";
 import * as ImagePicker from "expo-image-picker";
 import { signOut } from "firebase/auth";
@@ -94,7 +94,7 @@ const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
               {getFullName(user)}
             </Text>
             <Text fontFamily="Inter-Medium" fontSize={15} color="muted.600">
-              Student
+              {getYearAndSection(user)}
             </Text>
           </VStack>
         </VStack>
@@ -130,6 +130,7 @@ const ProfileScreen: React.FC<StackScreenProps<MainScreensParamList>> = ({
             borderRadius="lg"
             onPress={async () => {
               await signOut(auth);
+              navigation.getParent().navigate("SignIn");
               setUser(null);
             }}
           >

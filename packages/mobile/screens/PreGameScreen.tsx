@@ -80,7 +80,9 @@ const PreGameScreen: React.FC<
     return (
       <BaseScreen>
         <Center flexGrow={1}>
-          <Text>Pre Game Not Found</Text>
+          <Text>
+            The activity you are looking for does not exist or has been deleted
+          </Text>
         </Center>
       </BaseScreen>
     );

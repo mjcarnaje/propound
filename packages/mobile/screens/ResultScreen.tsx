@@ -170,9 +170,11 @@ const ResultType: React.FC<ResultTypeProps> = ({ result, gameType }) => {
   return (
     <VStack space={2}>
       <Text fontFamily="Inter-Bold" fontSize={24}>
-        Post test
+        {gameType === GameType.PRE_TEST ? "Pre-test" : "Post-test"}
       </Text>
-      {result.status.postGameDone ? (
+      {result.status[
+        gameType === GameType.PRE_TEST ? "preGameDone" : "postGameDone"
+      ] ? (
         <>
           <VStack bg="gray.100" p={2} borderRadius="lg">
             <Text fontSize={16} fontFamily="Inter-Regular" lineHeight={20}>

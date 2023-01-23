@@ -1,23 +1,23 @@
 import { Center, Spinner } from "@chakra-ui/react";
+import { GameType } from "@propound/types";
 import { isAuthoredDocType } from "@propound/utils";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { ActivitySummaryPage } from "./screen/ActivitySummaryPage";
-import { Dashboard as MyDashboard } from "./screen/Dashboard";
 import { auth, collections } from "./firebase/config";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import { AboutPage } from "./screen/AboutPage";
+import { ActivitySummaryPage } from "./screen/ActivitySummaryPage";
 import Dashboard from "./screen/CreateActivity/Dashboard";
 import DashboardIndex from "./screen/CreateActivity/DashboardIndex";
 import DashboardLearn from "./screen/CreateActivity/DashboardLearn";
-import DashboardPostGame from "./screen/CreateActivity/DashboardPostGame";
-import DashboardPreGame from "./screen/CreateActivity/DashboardPreGame";
 import DashboardSettings from "./screen/CreateActivity/DashboardSettings";
 import DashboardStudents from "./screen/CreateActivity/DashboardStudents";
+import LearningSpaceGame from "./screen/CreateActivity/LearningSpaceGame";
 import CreateLearningSpace from "./screen/CreateLearningSpace";
+import { Dashboard as MyDashboard } from "./screen/Dashboard";
 import { LandingPage } from "./screen/LandingPage";
 import NotFoundPage from "./screen/NotFoundPage";
 import RootPage from "./screen/RootPage";
@@ -88,14 +88,12 @@ function App() {
           <Route path="settings" element={<DashboardSettings />} />
           <Route
             path="pre-game"
-            element={<DashboardPreGame />}
-            loader={async ({ request, params }) => {
-              return fetch(`/fake/api/teams/${params.teamId}.json`, {
-                signal: request.signal,
-              });
-            }}
+            element={<LearningSpaceGame gameType={GameType.PRE_TEST} />}
           />
-          <Route path="post-game" element={<DashboardPostGame />} />
+          <Route
+            path="post-game"
+            element={<LearningSpaceGame gameType={GameType.POST_TEST} />}
+          />
           <Route path="learn" element={<DashboardLearn />} />
           <Route path="results" element={<DashboardStudents />} />
         </Route>

@@ -3,6 +3,7 @@ import { Role, StudentDocType, StudentYear } from "@propound/types";
 import {
   getRefinedFirebaseErrorCode,
   getRefinedFirebaseErrorMessage,
+  getYearLevel,
 } from "@propound/utils";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -191,7 +192,10 @@ const SignUpScreen: React.FC<
             label="Year"
             control={control}
             name="year"
-            options={Object.values(StudentYear)}
+            options={Object.entries(StudentYear).map(([_, value]) => ({
+              label: getYearLevel(value),
+              value,
+            }))}
           />
 
           <SignUpInput
@@ -272,7 +276,7 @@ const SignUpInput: React.FC<SignUpInputProps> = ({
 };
 
 interface SignUpPickerProps extends SignUpInputProps {
-  options: string[];
+  options: { label: string; value: string }[];
 }
 
 const SignUpPicker: React.FC<SignUpPickerProps> = ({
@@ -308,7 +312,11 @@ const SignUpPicker: React.FC<SignUpPickerProps> = ({
         >
           <Picker.Item label="None" value="" />
           {options.map((option) => (
-            <Picker.Item key={option} label={option} value={option} />
+            <Picker.Item
+              key={option.value}
+              label={option.label}
+              value={option.value}
+            />
           ))}
         </Picker>
       </Box>
