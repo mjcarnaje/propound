@@ -15,11 +15,11 @@ import {
 } from "firebase/firestore";
 import moment from "moment";
 import {
-  Actionsheet,
-  Box,
+  AspectRatio,
   Button,
-  Heading,
+  Center,
   HStack,
+  Image,
   Text,
   useDisclose,
   VStack,
@@ -44,10 +44,10 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
 }) => {
   const disclose = useDisclose();
 
-  const keywords = data.items.map((item) => item.keyword);
-  const definitions = data.items.map((item) => item.definition);
+  const photos = data.items.map((item) => item.photo);
+  const definitions = data.items.map((item) => item.text);
 
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activePictureId, setActivePictureId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
@@ -55,27 +55,31 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
 
   const modal = useModalState();
 
-  function onPressDefinition(id: string) {
-    setActiveId(id);
-    disclose.onOpen();
+  function onPressPicture(id: string) {
+    setActivePictureId((prev) => (prev === id ? null : id));
   }
 
-  function onPressKeyword(id: string, selected: boolean) {
+  function onPressText(id: string) {
     setAnswers((prev) => {
-      const sameAnswer = prev[activeId] && prev[activeId] === id;
+      const sameAnswer = prev[id] && prev[id] === activePictureId;
 
       if (sameAnswer) {
-        return { ...prev, [activeId]: null };
+        return { ...prev, [id]: null };
       }
 
-      if (selected) {
-        const [key] = Object.entries(prev).find(([_, value]) => value === id);
-        return { ...prev, [activeId]: id, [key]: null };
+      const isAlreadyAnswered = Object.values(prev).includes(activePictureId);
+
+      if (isAlreadyAnswered) {
+        const prevId = Object.keys(prev).find(
+          (key) => prev[key] === activePictureId
+        );
+
+        return { ...prev, [id]: activePictureId, [prevId!]: null };
       }
 
-      return { ...prev, [activeId]: id };
+      return { ...prev, [id]: activePictureId };
     });
-    setActiveId(null);
+    setActivePictureId(null);
     disclose.onClose();
   }
 
@@ -189,46 +193,79 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
             {data.instruction}
           </Text>
         </VStack>
+        <HStack
+          bg="coolGray.100"
+          p={2}
+          space={2}
+          justifyContent="space-between"
+          w="full"
+          borderRadius="lg"
+        >
+          {photos.map((photo) => {
+            const isActive = activePictureId === photo.id;
+            return (
+              <TouchableOpacity onPress={() => onPressPicture(photo.id)}>
+                <AspectRatio
+                  key={photo.id}
+                  ratio={1}
+                  maxW="100px"
+                  w="full"
+                  borderRadius="lg"
+                  overflow="hidden"
+                  borderWidth={2}
+                  borderColor={isActive ? "orange.500" : "transparent"}
+                >
+                  <Image
+                    source={{ uri: photo.photo }}
+                    style={{ width: "100%", height: "100%" }}
+                    alt={photo.id}
+                  />
+                </AspectRatio>
+              </TouchableOpacity>
+            );
+          })}
+        </HStack>
         <VStack space={4} borderRadius={20}>
-          {definitions.map((definition) => {
-            const userAnswer = answers[definition.id];
+          {definitions.map((text) => {
+            const isSelecting = !!activePictureId;
+
+            const userAnswer = answers[text.id];
+
+            const photoURL = photos.find(
+              (photo) => photo.id === userAnswer
+            )?.photo;
 
             return (
-              <TouchableOpacity
-                key={definition.id}
-                onPress={() => onPressDefinition(definition.id)}
-              >
-                <VStack space={2} bg="white" py={4} px={4} borderRadius="lg">
-                  <HStack>
-                    <Text fontFamily="Inter-Bold" fontSize={20}>
-                      {definition.text}
-                    </Text>
-                  </HStack>
-                  <HStack
-                    bg="#f9f9fb"
-                    minH={12}
+              <HStack space={8} bg="coolGray.100" p={2} borderRadius="lg">
+                <TouchableOpacity
+                  disabled={!isSelecting}
+                  onPress={() => onPressText(text.id)}
+                >
+                  <AspectRatio
+                    key={text.id}
+                    ratio={1}
+                    maxW="100px"
+                    w="full"
                     borderRadius="lg"
-                    borderWidth={1}
-                    borderColor="muted.200"
+                    overflow="hidden"
+                    borderWidth={2}
                     borderStyle="dashed"
-                    justifyContent="center"
-                    alignItems="center"
+                    bg="coolGray.200"
+                    borderColor={!isSelecting ? "transparent" : "amber.500"}
                   >
-                    {!!userAnswer ? (
-                      <Text fontFamily="Inter-Regular" color="muted.500">
-                        {
-                          keywords.find((keyword) => keyword.id === userAnswer)
-                            ?.text
-                        }
-                      </Text>
-                    ) : (
-                      <Text fontFamily="Inter-Regular" color="muted.500">
-                        Select your answer
-                      </Text>
-                    )}
-                  </HStack>
-                </VStack>
-              </TouchableOpacity>
+                    <Image
+                      source={{ uri: photoURL }}
+                      style={{ width: "100%", height: "100%" }}
+                      alt="user answer"
+                    />
+                  </AspectRatio>
+                </TouchableOpacity>
+                <Center>
+                  <Text fontFamily="Inter-Bold" fontSize={18}>
+                    {text.text}
+                  </Text>
+                </Center>
+              </HStack>
             );
           })}
         </VStack>
@@ -245,87 +282,8 @@ const MatchUpGame: React.FC<MatchUpGameProps> = ({
           Submit
         </Button>
       </VStack>
-
-      <MatchUpActionSheet
-        activeId={activeId}
-        disclose={disclose}
-        keywords={keywords}
-        onPressKeyword={onPressKeyword}
-        answer={answers}
-      />
     </>
   );
 };
 
 export default MatchUpGame;
-
-interface MatchUpActionSheetProps {
-  activeId: string | null;
-  disclose: ReturnType<typeof useDisclose>;
-  keywords: { id: string; text: string }[];
-  onPressKeyword: (id: string, selected: boolean) => void;
-  answer: Record<string, string>;
-}
-
-const MatchUpActionSheet: React.FC<MatchUpActionSheetProps> = ({
-  disclose,
-  keywords,
-  onPressKeyword,
-  answer,
-}) => {
-  const { isOpen, onClose } = disclose;
-
-  return (
-    <Actionsheet isOpen={isOpen} onClose={onClose}>
-      <Actionsheet.Content px={4}>
-        <Box w="full" py={4}>
-          <Heading>Choose your answer</Heading>
-        </Box>
-        <VStack w="full" space={4} pb={4}>
-          {keywords.map((keyword) => {
-            const selected = Object.values(answer).includes(keyword.id);
-
-            return (
-              <TouchableOpacity
-                key={keyword.id}
-                onPress={() => onPressKeyword(keyword.id, selected)}
-              >
-                <HStack
-                  position="relative"
-                  bg="#f9f9fb"
-                  minH={12}
-                  borderRadius="lg"
-                  borderWidth={1}
-                  borderColor="muted.200"
-                  borderStyle="dashed"
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  {selected && (
-                    <Box
-                      h={5}
-                      w={16}
-                      px={2}
-                      borderRadius="lg"
-                      position="absolute"
-                      top={-10}
-                      right={-8}
-                      bg="orange.500"
-                      justifyContent={"center"}
-                      alignItems={"center"}
-                    >
-                      <Text fontFamily="Inter-Bold" fontSize={10} color="white">
-                        Selected
-                      </Text>
-                    </Box>
-                  )}
-                  <Text>{keyword.text}</Text>
-                </HStack>
-              </TouchableOpacity>
-            );
-          })}
-        </VStack>
-      </Actionsheet.Content>
-    </Actionsheet>
-  );
-};

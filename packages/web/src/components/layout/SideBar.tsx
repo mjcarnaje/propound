@@ -2,7 +2,7 @@ import { Divider, Flex, Stack } from "@chakra-ui/react";
 import { Role } from "@propound/types";
 import { IconType } from "react-icons";
 import { BiLogOut } from "react-icons/bi";
-import { FiBarChart, FiBarChart2, FiPlus } from "react-icons/fi";
+import { FiBarChart2, FiPlus } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { selectAuth, signOut } from "../../store/reducer/auth";
@@ -41,7 +41,6 @@ export const Sidebar = () => {
     <Flex as="section" minH="100vh" boxShadow="sm" zIndex="1" bg="white">
       <Flex
         flex="1"
-        overflowY="auto"
         w="320px"
         py={{ base: "6", sm: "8" }}
         px={{ base: "4", sm: "6" }}

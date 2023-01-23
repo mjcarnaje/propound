@@ -2,6 +2,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Center,
   chakra,
   FormControl,
   FormErrorMessage,
@@ -56,6 +57,8 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
   const missingWord = answerIdx ? question?.split(" ")[answerIdx] : "NONE";
   const incorectWords = watch(`questions.${questionIdx}.incorrect`);
 
+  const Wrapper = question ? Box : Center;
+
   return (
     <>
       <HStack w="full" align="flex-start">
@@ -70,12 +73,12 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
           <Box w="full">
             <FormControl isInvalid={!!error?.question}>
               <FormLabel htmlFor={`questions.${questionIdx}.question`}>
-                {`Question ${questionIdx + 1}`}
+                {`Statement ${questionIdx + 1}`}
               </FormLabel>
 
               <HStack align="flex-start">
                 <VStack align="flex-start" w="full">
-                  <Box
+                  <Wrapper
                     minH="100px"
                     maxH="300px"
                     lineHeight="28px"
@@ -86,31 +89,43 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                     borderColor="gray.300"
                     w="full"
                   >
-                    {question.split(" ").map((word, idx) => {
-                      const selected =
-                        watch(`questions.${questionIdx}.answerIdx`) === idx;
-                      if (selected) {
-                        return (
-                          <chakra.span
-                            key={idx}
-                            borderWidth={2}
-                            borderColor="orange.500"
-                            borderRadius="md"
-                            px={1}
-                            color="orange.500"
-                            cursor={!isPublished ? "pointer" : "default"}
-                            fontWeight="bold"
-                          >
-                            {word}
-                          </chakra.span>
-                        );
-                      } else {
-                        return (
-                          <chakra.span key={idx}>{`${word} `}</chakra.span>
-                        );
-                      }
-                    })}
-                  </Box>
+                    {question ? (
+                      question.split(" ").map((word, idx) => {
+                        const selected =
+                          watch(`questions.${questionIdx}.answerIdx`) === idx;
+                        if (selected) {
+                          return (
+                            <chakra.span
+                              key={idx}
+                              borderWidth={2}
+                              borderColor="orange.500"
+                              borderRadius="md"
+                              px={1}
+                              color="orange.500"
+                              cursor={!isPublished ? "pointer" : "default"}
+                              fontWeight="bold"
+                            >
+                              {word}
+                            </chakra.span>
+                          );
+                        } else {
+                          return (
+                            <chakra.span key={idx}>{`${word} `}</chakra.span>
+                          );
+                        }
+                      })
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          inputModal.onOpen();
+                        }}
+                        size="sm"
+                        colorScheme="orange"
+                      >
+                        Add Statement
+                      </Button>
+                    )}
+                  </Wrapper>
 
                   <FormErrorMessage>
                     {error?.question && error.question.message}
@@ -119,22 +134,27 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
               </HStack>
             </FormControl>
           </Box>
-          <HStack>
-            <Button
-              onClick={() => {
-                if (isPublished) return;
-                inputModal.onOpen();
-              }}
-              size="sm"
-              colorScheme="orange"
-            >
-              Edit Question
-            </Button>
-          </HStack>
+          {question && (
+            <HStack>
+              <Button
+                onClick={() => {
+                  if (isPublished) return;
+                  inputModal.onOpen();
+                }}
+                size="sm"
+                colorScheme="orange"
+                variant="solid"
+              >
+                Edit Statement
+              </Button>
+            </HStack>
+          )}
           <HStack w="full">
             <Text>
               Missing word:{" "}
-              <chakra.span fontWeight="bold">{missingWord}</chakra.span>
+              <chakra.span fontWeight="bold" color="orange.500">
+                {missingWord}
+              </chakra.span>
             </Text>
             <Button
               onClick={() => {
@@ -151,7 +171,6 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                 missingModal.onOpen();
               }}
               size="sm"
-              colorScheme="orange"
             >
               Choose word
             </Button>
@@ -159,7 +178,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
           <HStack w="full">
             <Text>
               Incorrect words:{" "}
-              <chakra.span fontWeight="bold">
+              <chakra.span fontWeight="bold" color="orange.500">
                 {incorectWords?.length ? incorectWords.join(", ") : "NONE"}
               </chakra.span>
             </Text>
@@ -168,7 +187,6 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
                 incorrectModal.onOpen();
               }}
               size="sm"
-              colorScheme="orange"
             >
               Add words
             </Button>
@@ -191,13 +209,8 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
       <Modal isOpen={inputModal.isOpen} onClose={inputModal.onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalCloseButton />
-          <ModalBody>
+          <ModalBody pt={6}>
             <FormControl isInvalid={!!error?.question}>
-              <FormLabel htmlFor={`questions.${questionIdx}.question`}>
-                {`Question ${questionIdx + 1}`}
-              </FormLabel>
-
               <HStack align="flex-start">
                 <VStack align="flex-start" w="full">
                   <Textarea
@@ -232,7 +245,10 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalBody py={8}>
+          <ModalBody pt={8}>
+            <Text fontSize={14} fontStyle="italic" mb={2}>
+              Choose the missing word in the statement below by clicking on it.
+            </Text>
             {question.split(" ").map((word, idx) => {
               const selected =
                 watch(`questions.${questionIdx}.answerIdx`) === idx;

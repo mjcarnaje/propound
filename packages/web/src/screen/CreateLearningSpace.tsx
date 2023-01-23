@@ -273,7 +273,7 @@ const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
       title: data.title + " (copy)",
       description: data.description,
       code: `${id}-${generateCode()}`,
-      coverPhoto: "",
+      coverPhoto: data.coverPhoto,
       author: {
         uid: user.uid,
         email: user.email,

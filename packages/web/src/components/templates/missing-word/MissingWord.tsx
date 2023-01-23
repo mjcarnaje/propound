@@ -94,23 +94,26 @@ const MissingWord: React.FC<MissingWordProps> = ({
   });
 
   const onSubmit: SubmitHandler<MissingWordTemplate> = async (data) => {
-    await mutate(data, {
-      onError: async (error) => {
-        toast({
-          title: "Error",
-          description: error.message,
-          status: "error",
-        });
-      },
-      onSuccess: async () => {
-        toast({
-          title: "Success",
-          description: "Missing Word game saved successfully",
-          status: "success",
-        });
-        refetch && refetch();
-      },
-    });
+    await mutate(
+      { ...data, totaL: data.questions.length },
+      {
+        onError: async (error) => {
+          toast({
+            title: "Error",
+            description: error.message,
+            status: "error",
+          });
+        },
+        onSuccess: async () => {
+          toast({
+            title: "Success",
+            description: "Missing Word game saved successfully",
+            status: "success",
+          });
+          refetch && refetch();
+        },
+      }
+    );
   };
 
   return (

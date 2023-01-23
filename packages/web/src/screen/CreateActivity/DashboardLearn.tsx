@@ -82,7 +82,9 @@ const DashboardLearn: React.FC = () => {
 
     const allowedExtensions = ["pdf", "doc", "docx", "ppt", "pptx"];
 
-    if (!allowedExtensions.includes(file.name.split(".")[1])) {
+    const fileExtension = file.name.split(".").pop();
+
+    if (!allowedExtensions.includes(fileExtension)) {
       toast({
         title: "Error",
         description: "File type not supported",

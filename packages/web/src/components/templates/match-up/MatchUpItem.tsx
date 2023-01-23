@@ -46,20 +46,72 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
     name: `items.${itemIdx}.text.text`,
   });
 
+  const { url, uploading, uploadFile } = useStorage();
+
+  async function fileChangeHandler(e: ChangeEvent<HTMLInputElement>) {
+    const file = checkImage(e);
+    if (file) {
+      await uploadFile(file, `${activityId}/${file.name}`);
+    }
+  }
+
+  useEffect(() => {
+    if (url) {
+      setValue(`items.${itemIdx}.photo.photo`, url);
+    }
+  }, [url]);
   return (
     <>
       <HStack p={4} spacing={4} w="full" align="center">
         <Text>{`${itemIdx + 1})`}</Text>
         <HStack w="full">
           <HStack w="full">
-            <MatchUpPhoto
-              activityId={activityId}
-              photo={photo}
-              setValue={(url) => {
-                setValue(`items.${itemIdx}.photo.photo`, url);
-              }}
-              isPublished={isPublished}
-            />
+            <Center>
+              {photo ? (
+                <AspectRatio
+                  borderRadius={4}
+                  overflow="hidden"
+                  cursor="pointer"
+                  w="80px"
+                  ratio={1}
+                >
+                  <Image src={photo} alt="choice photo" objectFit="cover" />
+                </AspectRatio>
+              ) : (
+                <>
+                  <input
+                    hidden
+                    id="fileUpload"
+                    type="file"
+                    name="file"
+                    onChange={fileChangeHandler}
+                    disabled={isPublished}
+                  />
+                  <AspectRatio
+                    borderRadius={4}
+                    overflow="hidden"
+                    cursor="pointer"
+                    w="80px"
+                    ratio={1}
+                  >
+                    <IconButton
+                      cursor={isPublished ? "default" : "pointer"}
+                      as="label"
+                      htmlFor="fileUpload"
+                      isLoading={uploading}
+                      colorScheme="orange"
+                      variant="ghost"
+                      aria-label="Upload keyword photo"
+                      icon={<Icon fontSize={44} as={BsImage} />}
+                      w="full"
+                      h="full"
+                      disabled={isPublished}
+                      _disabled={{ opacity: 1, cursor: "default" }}
+                    />
+                  </AspectRatio>
+                </>
+              )}
+            </Center>
             <VStack align="flex-start" w="full">
               <Input
                 id={`items.${itemIdx}.text.text`}
@@ -93,81 +145,3 @@ const MatchUpItem: React.FC<MatchUpItemProps> = ({
 };
 
 export default MatchUpItem;
-
-interface MatchUpPhotoProps {
-  photo: string;
-  activityId: string;
-  setValue: (value: string) => void;
-  isPublished?: boolean;
-}
-
-const MatchUpPhoto: React.FC<MatchUpPhotoProps> = ({
-  photo,
-  activityId,
-  setValue,
-  isPublished,
-}) => {
-  const { url, uploading, uploadFile } = useStorage();
-
-  async function fileChangeHandler(e: ChangeEvent<HTMLInputElement>) {
-    const file = checkImage(e);
-    if (file) {
-      await uploadFile(file, `${activityId}/${file.name}`);
-    }
-  }
-
-  useEffect(() => {
-    if (url) {
-      setValue(url);
-    }
-  }, [url]);
-
-  return (
-    <Center>
-      {photo ? (
-        <AspectRatio
-          borderRadius={4}
-          overflow="hidden"
-          cursor="pointer"
-          w="80px"
-          ratio={1}
-        >
-          <Image src={photo} alt="choice photo" objectFit="cover" />
-        </AspectRatio>
-      ) : (
-        <>
-          <input
-            hidden
-            id="fileUpload"
-            type="file"
-            name="file"
-            onChange={fileChangeHandler}
-            disabled={isPublished}
-          />
-          <AspectRatio
-            borderRadius={4}
-            overflow="hidden"
-            cursor="pointer"
-            w="80px"
-            ratio={1}
-          >
-            <IconButton
-              cursor={isPublished ? "default" : "pointer"}
-              as="label"
-              htmlFor="fileUpload"
-              isLoading={uploading}
-              colorScheme="orange"
-              variant="ghost"
-              aria-label="Upload keyword photo"
-              icon={<Icon fontSize={44} as={BsImage} />}
-              w="full"
-              h="full"
-              disabled={isPublished}
-              _disabled={{ opacity: 1, cursor: "default" }}
-            />
-          </AspectRatio>
-        </>
-      )}
-    </Center>
-  );
-};

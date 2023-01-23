@@ -184,7 +184,7 @@ const GameShowQuiz: React.FC<GameShowQuizProps> = ({
               {data.title}
             </Text>
             <Text fontFamily="Inter-Regular" color="muted.500">
-              Game Show Quiz
+              {data.instruction}
             </Text>
           </VStack>
           {!isFinished && (

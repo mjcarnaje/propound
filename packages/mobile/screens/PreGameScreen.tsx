@@ -96,7 +96,14 @@ const PreGameScreen: React.FC<
           userId={user.uid}
         />
       )}
-      {isMissingWordTemplate(activity) && <MissingWordGame data={activity} />}
+      {isMissingWordTemplate(activity) && (
+        <MissingWordGame
+          data={activity}
+          activityId={route.params.id}
+          gameType={GameType.PRE_TEST}
+          userId={user.uid}
+        />
+      )}
       {isGameShowTemplate(activity) && (
         <GameShowQuiz
           data={activity}
