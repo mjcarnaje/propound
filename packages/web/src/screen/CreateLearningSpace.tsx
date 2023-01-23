@@ -270,7 +270,7 @@ const LearningSpaceTemplate: React.FC<LearningSpaceTemplateProps> = ({
 
     await setDoc(doc(collections.activities, id), {
       id,
-      title: data.title + " (copy)",
+      title: data.title,
       description: data.description,
       code: `${id}-${generateCode()}`,
       coverPhoto: data.coverPhoto,

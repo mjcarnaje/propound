@@ -322,9 +322,16 @@ function PublishLearningSpace(props: PublishLearningSpaceProps) {
           <ModalBody>
             <Text>
               Once you publish this learning space, you will not be able to edit{" "}
-              <strong>Pre-game</strong> and <strong>Post-game</strong> , but you
+              <strong>Pre-game</strong> and <strong>Post-game</strong>, but you
               can still edit settings like title, description and cover photo
               and you can still add new learning materials.
+            </Text>
+            <Text>
+              Once you have published this learning space, you will not be able
+              to edit the <strong>Pre-game</strong> and{" "}
+              <strong>Post-game</strong>, sections, but you can still edit
+              settings such as the title, description, and cover photo, and you
+              can still add new learning materials.
             </Text>
           </ModalBody>
 

@@ -54,7 +54,8 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
   const question = watch(`questions.${questionIdx}.question`);
   const answerIdx = watch(`questions.${questionIdx}.answerIdx`);
 
-  const missingWord = answerIdx ? question?.split(" ")[answerIdx] : "NONE";
+  const missingWord =
+    answerIdx != null ? question?.split(" ")[answerIdx] : "NONE";
   const incorectWords = watch(`questions.${questionIdx}.incorrect`);
 
   const Wrapper = question ? Box : Center;
@@ -246,7 +247,7 @@ const MissingWordQuestion: React.FC<MissingWordQuestionProps> = ({
         <ModalOverlay />
         <ModalContent>
           <ModalBody pt={8}>
-            <Text fontSize={14} fontStyle="italic" mb={2}>
+            <Text fontSize={14} fontStyle="italic" mb={3}>
               Choose the missing word in the statement below by clicking on it.
             </Text>
             {question.split(" ").map((word, idx) => {

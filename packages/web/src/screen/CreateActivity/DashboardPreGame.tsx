@@ -1,4 +1,12 @@
-import { Box, Center, Spinner, VStack } from "@chakra-ui/react";
+import { ArrowBackIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Center,
+  HStack,
+  IconButton,
+  Spinner,
+  VStack,
+} from "@chakra-ui/react";
 import {
   ActivityCollectionNames,
   CollectionNames,
@@ -90,7 +98,16 @@ const DashboardPreGame: React.FC = () => {
   }
 
   return (
-    <VStack w="full" py={4}>
+    <VStack w="full" spacing={4}>
+      {!activityData && gameTemplate && (
+        <HStack py={2} justify="flex-start" w="full">
+          <IconButton
+            onClick={() => setGameTemplate(null)}
+            icon={<ArrowBackIcon />}
+            aria-label="arrow-back"
+          />
+        </HStack>
+      )}
       {!activityData && !gameTemplate && (
         <Box textAlign="center">
           <SetGameType setGameTemplate={setGameTemplate} id={id!} />

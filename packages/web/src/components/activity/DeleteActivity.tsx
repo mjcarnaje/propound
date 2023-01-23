@@ -56,7 +56,7 @@ const DeleteActivity: React.FC<DeleteActivityProps> = ({ id }) => {
     <>
       <Box py={2}>
         <Button onClick={onOpen} leftIcon={<DeleteIcon />} colorScheme="red">
-          Delete Activity
+          Delete Learning Space
         </Button>
       </Box>
       <Modal isCentered isOpen={isOpen} onClose={onClose}>
@@ -65,7 +65,7 @@ const DeleteActivity: React.FC<DeleteActivityProps> = ({ id }) => {
           <ModalHeader>Delete?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Are you sure you want to delete this activity?</Text>
+            <Text>Are you sure you want to delete this learning space?</Text>
           </ModalBody>
 
           <ModalFooter>
