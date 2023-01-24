@@ -16,7 +16,7 @@ import {
   CollectionNames,
   GameType,
 } from "@propound/types";
-import { getFullName, getRomanYearLevel } from "@propound/utils";
+import { getFullName, getGameType, getRomanYearLevel } from "@propound/utils";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query } from "firebase/firestore";
 import React, { useState } from "react";
@@ -145,7 +145,7 @@ const ResultGameType: React.FC<ResultGameTypeProps> = ({
     <VStack w="full">
       <HStack w="full">
         <Text fontWeight="bold" fontSize={18}>
-          Pre game
+          {getGameType(gameType)}
         </Text>
       </HStack>
       <VStack w="full">

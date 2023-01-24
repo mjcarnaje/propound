@@ -1,6 +1,7 @@
 import {
   GameDocTemplate,
   GameShowTemplate,
+  GameType,
   MatchUpTemplate,
   MissingWordTemplate,
   StatusAndScore,
@@ -41,8 +42,17 @@ export function isMissingWordTemplate(
 ): template is MissingWordTemplate {
   return template.__typename === "MISSING_WORD";
 }
+
 export function isMatchUpTemplate(
   template: GameDocTemplate
 ): template is MatchUpTemplate {
   return template.__typename === "MATCH_UP";
 }
+
+export const getGameType = (gameType: GameType): string => {
+  const obj: Record<GameType, string> = {
+    POST_TEST: "Post-game",
+    PRE_TEST: "Pre-game",
+  };
+  return obj[gameType];
+};

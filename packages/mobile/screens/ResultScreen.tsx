@@ -5,6 +5,7 @@ import {
   StudentCollectionNames,
   StudentResultDocType,
 } from "@propound/types";
+import { getGameType } from "@propound/utils";
 import {
   collection,
   CollectionReference,
@@ -99,7 +100,7 @@ const ResultScreen = () => {
           )}
           keyExtractor={(item) => item.activity.id}
           ListEmptyComponent={() => (
-            <Center flexGrow={1}>
+            <Center py={8} flexGrow={1}>
               {isLoading && <Spinner size="lg" color="orange.600" />}
               {!isLoading && (
                 <Text
@@ -108,7 +109,7 @@ const ResultScreen = () => {
                   textAlign="center"
                   w="70%"
                 >
-                  Have not signed up to any learning spaces
+                  You have not joined to any learning spaces yet.
                 </Text>
               )}
             </Center>
@@ -170,7 +171,7 @@ const ResultType: React.FC<ResultTypeProps> = ({ result, gameType }) => {
   return (
     <VStack space={2}>
       <Text fontFamily="Inter-Bold" fontSize={24}>
-        {gameType === GameType.PRE_TEST ? "Pre-test" : "Post-test"}
+        {getGameType(gameType)}
       </Text>
       {result.status[
         gameType === GameType.PRE_TEST ? "preGameDone" : "postGameDone"
