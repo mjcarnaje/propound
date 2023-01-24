@@ -47,6 +47,8 @@ export function getYearLevel(str: StudentYear) {
   return map[str];
 }
 
-export function getYearAndSection(user: StudentDocType) {
+export function getYearAndSection<
+  T extends { year: StudentYear; courseSection: string }
+>(user: T) {
   return `${getYearLevel(user.year)} — ${user.courseSection}`;
 }

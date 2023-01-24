@@ -16,7 +16,7 @@ import {
   CollectionNames,
   GameType,
 } from "@propound/types";
-import { getFullName, getGameType, getRomanYearLevel } from "@propound/utils";
+import { getFullName, getGameType, getYearAndSection } from "@propound/utils";
 import { useFirestoreQuery } from "@react-query-firebase/firestore";
 import { collection, query } from "firebase/firestore";
 import React, { useState } from "react";
@@ -107,9 +107,7 @@ const StudentCard: React.FC<StudentCardProps> = ({ result }) => {
             <Text fontSize={17} fontWeight="medium">
               {getFullName(student)}
             </Text>
-            <Text fontWeight="medium">
-              {`${getRomanYearLevel(student.year)}-${student.courseSection}`}
-            </Text>
+            <Text fontWeight="medium">{getYearAndSection(student)}</Text>
           </VStack>
         </HStack>
         <IconButton
