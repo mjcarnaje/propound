@@ -7,7 +7,7 @@ const SvgPreGame = (props: SvgProps) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <G clipPath="url(#pre-game_svg__a)">
+    <G clipPath="url(#pre-quiz_svg__a)">
       <Path
         d="M38.114 12.12h-10.97a3.984 3.984 0 0 0-2.81 1.165 3.97 3.97 0 0 0-1.166 2.806v11.872a14.038 14.038 0 0 1-7.552-2.902 14.001 14.001 0 0 1-4.548-6.189 13.979 13.979 0 0 1 2.938-14.47 14.047 14.047 0 0 1 20.752.364 13.991 13.991 0 0 1 3.356 7.355Z"
         fill="#F2F2F2"
@@ -146,7 +146,7 @@ const SvgPreGame = (props: SvgProps) => (
       />
     </G>
     <Defs>
-      <ClipPath id="pre-game_svg__a">
+      <ClipPath id="pre-quiz_svg__a">
         <Path fill="#fff" d="M0 0h172v121H0z" />
       </ClipPath>
     </Defs>

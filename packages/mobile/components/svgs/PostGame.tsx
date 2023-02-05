@@ -7,7 +7,7 @@ const SvgPostGame = (props: SvgProps) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <G clipPath="url(#post-game_svg__a)">
+    <G clipPath="url(#post-quiz_svg__a)">
       <Path
         d="M121 63a65.282 65.282 0 0 1-3.569 21.371 63.854 63.854 0 0 1-9.625 17.903 61.83 61.83 0 0 1-8.255 8.845c-8.453 7.464-18.722 12.354-29.674 14.128h-.001A59.023 59.023 0 0 1 60.5 126a58.248 58.248 0 0 1-23.5-4.929c-7.438-3.265-14.171-8.05-19.8-14.074a63.28 63.28 0 0 1-5.379-6.585 63.488 63.488 0 0 1-7.203-13.23 63.634 63.634 0 0 1-2.48-7.519A65.52 65.52 0 0 1 0 63C0 28.206 27.087 0 60.5 0S121 28.206 121 63Z"
         fill="#F2F2F2"
@@ -86,7 +86,7 @@ const SvgPostGame = (props: SvgProps) => (
       />
     </G>
     <Defs>
-      <ClipPath id="post-game_svg__a">
+      <ClipPath id="post-quiz_svg__a">
         <Path fill="#fff" d="M0 0h121v126H0z" />
       </ClipPath>
     </Defs>

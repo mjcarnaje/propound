@@ -48,8 +48,8 @@ const DashboardNavigation: React.FC<{ id: string }> = ({ id }) => {
       show: !hideNavigation,
     },
     {
-      label: "Pre-game",
-      to: `/g/${id}/pre-game`,
+      label: "Pre-quiz",
+      to: `/g/${id}/pre-quiz`,
       show: !hideNavigation,
     },
     {
@@ -58,12 +58,12 @@ const DashboardNavigation: React.FC<{ id: string }> = ({ id }) => {
       show: !hideNavigation,
     },
     {
-      label: "Post-game",
-      to: `/g/${id}/post-game`,
+      label: "Post-quiz",
+      to: `/g/${id}/post-quiz`,
       show: !hideNavigation,
     },
     {
-      label: "Students and their Progress",
+      label: "Learners and their Statistics",
       to: `/g/${id}/results`,
       show: hideNavigation,
     },

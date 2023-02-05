@@ -69,7 +69,7 @@ const SetGameType: React.FC<SetGameTypeProps> = ({
   return (
     <VStack spacing={8} py={12}>
       <Text fontSize={22} fontWeight="semibold">
-        Choose game type
+        Choose quiz type
       </Text>
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         {gameTemplates.map((template) => (
@@ -91,7 +91,7 @@ const SetGameType: React.FC<SetGameTypeProps> = ({
           size="xl"
           isLoading={copying}
         >
-          Copy Pre-game
+          Copy Pre-quiz
         </Button>
       )}
     </VStack>

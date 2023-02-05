@@ -51,8 +51,8 @@ export function isMatchUpTemplate(
 
 export const getGameType = (gameType: GameType): string => {
   const obj: Record<GameType, string> = {
-    POST_TEST: "Post-game",
-    PRE_TEST: "Pre-game",
+    POST_TEST: "Post-quiz",
+    PRE_TEST: "Pre-quiz",
   };
   return obj[gameType];
 };

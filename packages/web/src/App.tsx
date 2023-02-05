@@ -87,11 +87,11 @@ function App() {
           <Route path="/g/:id" element={<DashboardIndex />} />
           <Route path="settings" element={<DashboardSettings />} />
           <Route
-            path="pre-game"
+            path="pre-quiz"
             element={<LearningSpaceGame gameType={GameType.PRE_TEST} />}
           />
           <Route
-            path="post-game"
+            path="post-quiz"
             element={<LearningSpaceGame gameType={GameType.POST_TEST} />}
           />
           <Route path="learn" element={<DashboardLearn />} />

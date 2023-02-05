@@ -39,24 +39,16 @@ export const AboutPage = () => {
               About proPound
             </Heading>
             <Text fontSize="lg" textAlign="justify" lineHeight="1.7">
-              Propound is a game-based learning web and mobile application, a
-              research product of John Paul Carnaje and Kim Kim Joy Zagado that
-              aims to assist learning through game-based activities. Its main
-              objective is to be a medium of fun learning in Civil Technology
-              course. Game-based learning is a type of game play with defined
-              learning outcomes (Shaffer, Halverson, Squire, & Gee, 2005).
-              Game-based learning prompts the attention and the motivation of
-              students to learn. The most frequently mentioned feature of games
-              is their ability to motivate learners. The premise is that through
-              a variety of motivational game features, games for enjoyment have
-              been found to drive learners to stay engaged for lengthy periods
-              of time (Plass, et al., 2015). Through game-based activities,
-              propound yearns to provide a fun learning environment as research
-              shows that having fun while learning provides unique cognitive
-              resources, correlates reward and pleasure with information,
-              strengthens and broadens memory networks, and switches between two
-              basic brain modes — diffused mind-wandering and focused attention
-              (Shukla, 2020).
+              proPound is a User-Friendly Learning Content Management System
+              (LCMS) for Civil Technology with Rote Learning Scheme and
+              Interactive Quizzes. The word propound is conceptually derived
+              from the word "profound" that means deep or insightful. In
+              relation to the civil technology course, we used the hammer tool
+              as an analogy to represent the function of the proPound. The
+              hammer is commonly known as an instrument to pound something,
+              especially the nail to push it deeper from the surface. That is
+              what propound does, it aims to assist the learners to have a
+              deeper understanding and a long-term memory of the topic.
             </Text>
           </Box>
           <Box>

@@ -43,7 +43,8 @@ export const LandingPage = () => {
                 fontStyle="italic"
                 fontWeight="medium"
               >
-                A fun learning medium for Civil Technology
+                A User-Friendly Learning Content Management System for Civil
+                Technology
               </Text>
             </Box>
             <Box

@@ -102,7 +102,7 @@ const MyLearningSpaces: React.FC = () => {
                   textAlign="center"
                 >
                   Add learning space provided by your{"\n"} teacher to view
-                  learning materials and take{"\n"} pre-game and post-game.
+                  learning materials and take{"\n"} pre-quiz and post-quiz.
                 </Text>
                 <Button
                   leftIcon={<Icon as={FontAwesome5} name="plus" />}

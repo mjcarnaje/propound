@@ -128,15 +128,15 @@ const GameShow: React.FC<GameShowProps> = ({
 
   useBeforeUnload(
     React.useCallback(() => {
-      localStorage.setItem("pre-game-show", JSON.stringify(watch()));
+      localStorage.setItem("pre-quiz-show", JSON.stringify(watch()));
     }, [watch])
   );
 
   useEffect(() => {
-    const preGameShow = localStorage.getItem("pre-game-show");
+    const preGameShow = localStorage.getItem("pre-quiz-show");
     if (preGameShow) {
       methods.reset(JSON.parse(preGameShow));
-      localStorage.removeItem("pre-game-show");
+      localStorage.removeItem("pre-quiz-show");
     }
   }, [gameData]);
 

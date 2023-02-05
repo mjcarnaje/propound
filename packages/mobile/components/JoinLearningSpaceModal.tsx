@@ -77,7 +77,7 @@ const JoinLearningSpaceModal: React.FC<JoinLearningSpaceModalProps> = ({
               Toast.show({
                 type: "error",
                 text1: "You're already enrolled",
-                text2: "Sorry, you are already enrolled in this game",
+                text2: "Sorry, you are already enrolled in this quiz",
               });
 
               setCode("");

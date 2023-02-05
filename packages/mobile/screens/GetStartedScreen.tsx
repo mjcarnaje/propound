@@ -30,8 +30,8 @@ const GetStartedScreen: React.FC<
             Get Started
           </Text>
           <Text fontSize={18} color="muted.500">
-            proPound is a game based web learning application aims to assist
-            learning through game based activities.
+            proPound is a User-Friendly Learning Content Management System for
+            Civil Technology with Rote Learning Scheme and Interactive Quizzes
           </Text>
         </VStack>
       </VStack>

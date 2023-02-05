@@ -144,7 +144,7 @@ const PropoundNavigation: React.FC = () => {
             />
             <Stack.Screen
               options={{
-                title: "Pre Game",
+                title: "Pre Quiz",
                 headerShown: true,
                 headerShadowVisible: false,
               }}
@@ -163,7 +163,7 @@ const PropoundNavigation: React.FC = () => {
             />
             <Stack.Screen
               options={{
-                title: "Post Game",
+                title: "Post Quiz",
                 headerShown: true,
                 headerTitleAlign: "center",
                 headerShadowVisible: false,
