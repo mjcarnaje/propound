@@ -287,7 +287,7 @@ const AboutScreen = () => {
                 BS Computer Science
               </Text>
               <Text fontSize={12} fontFamily="Inter-Regular" color="#4A5568">
-                College of Computer Studies, MSU - IIT
+                Web and Mobile Developer
               </Text>
             </VStack>
             <Center boxSize="64px">
@@ -318,10 +318,10 @@ const AboutScreen = () => {
                 lineHeight={18}
                 color="#718096"
               >
-                Science Technology Engineering{"\n"}and Mathematics
+                Senior High School, ICNHS
               </Text>
               <Text fontSize={12} fontFamily="Inter-Regular" color="#4A5568">
-                Senior High School, ICNHS
+                UI Designer
               </Text>
             </VStack>
             <Center boxSize="64px">

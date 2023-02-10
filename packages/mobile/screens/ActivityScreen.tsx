@@ -110,7 +110,7 @@ const ActivityScreen: React.FC<
     <BaseScreen>
       <VStack space={4} mx="auto" alignItems="center" w="90%">
         <NavCard
-          title="Pre - Game"
+          title="Pre - Quiz"
           description="Tap to take the pre-quiz"
           svg={<SvgPreGame />}
           bg="#4B5563"
@@ -131,7 +131,7 @@ const ActivityScreen: React.FC<
         />
 
         <NavCard
-          title="Post - Game"
+          title="Post - Quiz"
           description="Tap to take the post-quiz"
           svg={<SvgPostGame />}
           bg="#FB923C"
