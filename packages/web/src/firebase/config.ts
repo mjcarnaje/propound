@@ -31,8 +31,8 @@ function getStorageWrapper() {
 }
 
 export const analytics = getAnalytics(app);
-export const firestore = getFirestore(app);
 export const storage = getStorageWrapper();
+export const firestore = getFirestore(app);
 export const auth = getAuth(app);
 export const collections = {
   activities: collection(
